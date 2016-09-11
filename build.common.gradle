@@ -100,4 +100,10 @@ repositories {
     }
 }
 
+repositories {
+    flatDir {
+        dirs '../libs/navx-micro/android/libs'
+    }
+}
+
 apply from: 'build.release.gradle'
