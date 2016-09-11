@@ -17,7 +17,6 @@ import org.firstinspires.ftc.robotcontroller.internal.LinearOpModeCamera;
 //@Disabled
 
 public class Test20166322 extends LinearOpModeCamera {
-//Arman is doing a test (1)
 
     DcMotor FrontRight;
     DcMotor FrontLeft;
