@@ -175,9 +175,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       android:visibility="invisible"
       android:text="" />
 
-  </RelativeLayout>
-
-  //added for camera
   <FrameLayout
       android:layout_width="100dp"
       android:layout_height="125dp"
@@ -185,7 +182,9 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       android:layout_above="@+id/textGamepad1"
       android:layout_centerHorizontal="true">
   </FrameLayout>
-  //end
+
+  </RelativeLayout>
+
 
   <WebView
     android:id="@+id/webViewBlocksRuntime"

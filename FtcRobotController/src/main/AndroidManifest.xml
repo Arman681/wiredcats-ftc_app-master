@@ -5,11 +5,10 @@
           android:versionCode="12"
           android:versionName="2.2">
 
-  // added for camera
   <uses-permission android:name="android.permission.CAMERA"/>
   <uses-feature android:name="android.hardware.camera"/>
   <uses-feature android:name="android.hardware.camera.front"/>
-  //end
+  <uses-feature android:name="android.hardware.camera.back"/>
 
   <application
     android:allowBackup="true"

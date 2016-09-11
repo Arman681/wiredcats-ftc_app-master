@@ -51,7 +51,7 @@ public class LinearDetectColor extends LinearOpModeCamera {
 
             waitForStart();
 
-            stopCameraInSecs(30);   // set independent thread to kill the camera
+            stopCameraInSecs(60);   // set independent thread to kill the camera
                                     // when the mode is done
                                     // use 30 for auto, 120 for teleop
 
@@ -69,26 +69,31 @@ public class LinearDetectColor extends LinearOpModeCamera {
         */
 
             while (opModeIsActive()) {
+                int redValue = 0;
+                int blueValue = 0;
+                int greenValue = 0;
                 if (imageReady()) { // only do this if an image has been returned from the camera
-                    int redValue = 0;
-                    int blueValue = 0;
-                    int greenValue = 0;
+
 
                     Bitmap rgbImage;
                     rgbImage = convertYuvImageToRgb(yuvImage, width, height, ds2);
-                    for (int x = 0; x < width / ds2; x++) {
-                        for (int y = 0; y < height / ds2; y++) {
-                            int pixel = rgbImage.getPixel(x, y);
-                            redValue += red(pixel);
-                            blueValue += blue(pixel);
-                            greenValue += green(pixel);
-                        }
-                    }
-                    int color = highestColor(redValue, greenValue, blueValue);
+//                    for (int x = 0; x < width / ds2; x++) {
+//                        for (int y = 0; y < height / ds2; y++) {
+//                            int pixel = rgbImage.getPixel(x, y);
+//                            redValue += red(pixel);
+//                            blueValue += blue(pixel);
+//                            greenValue += green(pixel);
+//                        }
+//                    }
+//                    int color = highestColor(redValue, greenValue, blueValue);
+
+                    int pixel = rgbImage.getPixel(width/2/ds2, height/2/ds2);
+                    redValue = red(pixel);
+                    blueValue = blue(pixel);
+                    greenValue = green(pixel);
 
                     //checks the center of the image only
-                    //int pixel = rgbImage.getPixel(width/2/ds2, height/2/ds2);
-                    //int color = highestColor(red(pixel), green(pixel), blue(pixel));
+                    int color = highestColor(redValue, greenValue, blueValue);
 
                     switch (color) {
                         case 0:
@@ -105,7 +110,10 @@ public class LinearDetectColor extends LinearOpModeCamera {
                     colorString = "NONE";
                 }
 
-                telemetry.addData("Color:", "Color detected is: " + colorString);
+                telemetry.addData("Color:", "highest color: " + colorString);
+                telemetry.addData("Color:", "Red value: " + redValue);
+                telemetry.addData("Color:", "Green value: " + greenValue);
+                telemetry.addData("Color:", "Blue value: " + blueValue);
                 telemetry.update();
                 sleep(10);
             }
