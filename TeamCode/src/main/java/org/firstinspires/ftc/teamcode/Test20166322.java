@@ -33,8 +33,8 @@ public class Test20166322 extends LinearOpModeCamera {
 
     	FrontRight = hardwareMap.dcMotor.get("FrontRight");
     	FrontLeft = hardwareMap.dcMotor.get("FrontLeft");
-    	BackRight = hardwareMap.dcMotor.get("BacktRight");
-    	BackLeft = hardwareMap.dcMotor.get("BacktLeft");
+    	BackRight = hardwareMap.dcMotor.get("BackRight");
+    	BackLeft = hardwareMap.dcMotor.get("BackLeft");
 
     	FrontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     	FrontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -62,7 +62,6 @@ public class Test20166322 extends LinearOpModeCamera {
             stopCameraInSecs(30);   // set independent thread to kill the camera
 						            // when the mode is done
 						            // use 30 for auto, 120 for teleop
-
 
             while (opModeIsActive()) {
 
