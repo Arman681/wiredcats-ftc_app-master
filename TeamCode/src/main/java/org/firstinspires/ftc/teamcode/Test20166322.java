@@ -38,18 +38,12 @@ public class Test20166322 extends LinearOpModeCamera {
     public void runOpMode() throws InterruptedException {
 
     	FrontRight = hardwareMap.dcMotor.get("FrontRight");
-<<<<<<< HEAD
     	FrontLeft = hardwareMap.dcMotor.get("FrontLeft");
     	BackRight = hardwareMap.dcMotor.get("BackRight");
     	BackLeft = hardwareMap.dcMotor.get("BackLeft");
-=======
-    	FrontLeft  = hardwareMap.dcMotor.get("FrontLeft");
-    	BackRight  = hardwareMap.dcMotor.get("BackRight");
-    	BackLeft   = hardwareMap.dcMotor.get("BackLeft");
 
     	for (DcMotor motor : motors)
     		motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
->>>>>>> a6cac5f897d783bc864f356175294bd187c74872
 
     	for (DcMotor motor : motors)
     		motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
