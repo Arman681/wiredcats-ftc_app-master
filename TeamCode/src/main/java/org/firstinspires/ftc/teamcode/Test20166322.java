@@ -17,29 +17,42 @@ import org.firstinspires.ftc.robotcontroller.internal.LinearOpModeCamera;
 //@Disabled
 
 public class Test20166322 extends LinearOpModeCamera {
-//Arman is doing a test (1)
 
     DcMotor FrontRight;
     DcMotor FrontLeft;
     DcMotor BackRight;
     DcMotor BackLeft;
-    DcMotor[] motor = {FrontRight, FrontLeft, BackRight, BackLeft};
+    
+    DcMotor[] motors = {FrontRight, FrontLeft, BackRight, BackLeft};
 
     int ds2 = 2;  // additional downsampling of the image
 				  // set to 1 to disable further downsampling
+
+    static final double TAU/*doesthis work*/ = 6.283185;
+    static final double COUNTS_PER_MOTOR_REV = 1120;    // eg: neverrest 40
+    static final double DRIVE_GEAR_REDUCTION = 2.0;     // This is < 1.0 if geared UP
+    static final double WHEEL_RADIUS_INCHES  = 2.0;     // For figuring circumference
+    static final double COUNTS_PER_INCH      = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) / (WHEEL_RADIUS_INCHES * TAU);
 
     @Override
     public void runOpMode() throws InterruptedException {
 
     	FrontRight = hardwareMap.dcMotor.get("FrontRight");
+<<<<<<< HEAD
     	FrontLeft = hardwareMap.dcMotor.get("FrontLeft");
     	BackRight = hardwareMap.dcMotor.get("BackRight");
     	BackLeft = hardwareMap.dcMotor.get("BackLeft");
+=======
+    	FrontLeft  = hardwareMap.dcMotor.get("FrontLeft");
+    	BackRight  = hardwareMap.dcMotor.get("BackRight");
+    	BackLeft   = hardwareMap.dcMotor.get("BackLeft");
 
-    	FrontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-    	FrontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-    	BackRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-    	BackLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+    	for (DcMotor motor : motors)
+    		motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+>>>>>>> a6cac5f897d783bc864f356175294bd187c74872
+
+    	for (DcMotor motor : motors)
+    		motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
     	FrontLeft.setDirection(DcMotor.Direction.REVERSE);
     	BackLeft.setDirection(DcMotor.Direction.REVERSE);
@@ -99,39 +112,34 @@ public class Test20166322 extends LinearOpModeCamera {
 
     public void timedMovement(double power, int time) throws InterruptedException {
 
-    	FrontRight.setPower(power);
-    	FrontLeft.setPower(power);
-    	BackRight.setPower(power);
-    	BackLeft.setPower(power);
+    	for(DcMotor motor : motors)
+    		motor.setPower(power);    	
 
     	sleep(time);
 
-    	FrontRight.setPowerFloat();
-    	FrontLeft.setPowerFloat();
-    	BackRight.setPowerFloat();
-    	BackLeft.setPowerFloat();
+    	for(DcMotor motor : motors)
+    		motor.setPower(0);
     }
 
     public void MoveBySteps(double power, int inches) throws InterruptedException {
 
-    	int startPosition;
+    	int[] startPosition = new int[4];
 
-    	for(int i = 0; i < motor.length; i++)
-    	{
-    		motor[i].setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-    	}
+    	for (DcMotor motor : motors)
+    		motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-    	startPosition = FrontRight.getCurrentPosition();
+		for (int i = 0; i < motors.length; i++)
+	    	startPosition[i] = motors[i].getCurrentPosition();
 
-    	FrontRight.setTargetPosition(inches + startPosition);
+	    for (int i = 0; i < motors.length; i++)
+	    	motors[i].setTargetPosition((int)(startPosition[i] + inches * COUNTS_PER_INCH));
 
-    	FrontRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+	    for (DcMotor motor : motors)
+    		motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-    	FrontRight.setPower(power);
-    	FrontLeft.setPower(power);
-    	BackRight.setPower(power);
-    	BackLeft.setPower(power);
+    	for(DcMotor motor : motors)
+    		motor.setPower(Math.abs(power));
 
-    	while(FrontRight.isBusy()) {}
+    	while(motors[0].isBusy() && motors[1].isBusy() && motors[2].isBusy() && motors[3].isBusy() && opModeIsActive()) {idle();}
     }
 }
