@@ -26,6 +26,9 @@ public class Teleop6322 extends OpMode {
         BackRight = hardwareMap.dcMotor.get("BackRight");
         BackLeft = hardwareMap.dcMotor.get("BackLeft");
 
+        FrontLeft.setDirection(DcMotor.Direction.REVERSE);
+        BackLeft.setDirection(DcMotor.Direction.REVERSE);
+
     }
 
     @Override
