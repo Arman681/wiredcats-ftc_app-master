@@ -5,6 +5,7 @@ import android.graphics.Bitmap;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Servo;
 
 import com.kauailabs.navx.ftc.AHRS;
 import com.kauailabs.navx.ftc.navXPIDController;
@@ -31,31 +32,31 @@ public class Test20166322 extends LinearOpModeCamera {
     
     DcMotor[] driveTrain = {FrontRight, FrontLeft, BackRight, BackLeft};
 
+    ElapsedTime runtime = new ElapsedTime();
+
+    Servo sensorArm;
+
     int ds2 = 2;  // additional downsampling of the image
-				  // set to 1 to disable further downsampling
 
     //Switch for camera operation
 
     boolean limit = false;
 
     //IMU setup
+    final int NAVX_DIM_I2C_PORT = 0;
+    AHRS navx_device;
+    navXPIDController yawPIDController;
 
-    private final int NAVX_DIM_I2C_PORT = 0;
-    private AHRS navx_device;
-    private navXPIDController yawPIDController;
-    private ElapsedTime runtime = new ElapsedTime();
+    final byte NAVX_DEVICE_UPDATE_RATE_HZ = 50;
 
-    private final byte NAVX_DEVICE_UPDATE_RATE_HZ = 50;
-
-    private final double TOLERANCE_DEGREES = 1.0;
-    private final double MIN_MOTOR_OUTPUT_VALUE = -1.0;
-    private final double MAX_MOTOR_OUTPUT_VALUE = 1.0;
-    private final double YAW_PID_P = 0.005;
-    private final double YAW_PID_I = 0.0;
-    private final double YAW_PID_D = 0.0;
+    final double TOLERANCE_DEGREES = 1.0;
+    final double MIN_MOTOR_OUTPUT_VALUE = -1.0;
+    final double MAX_MOTOR_OUTPUT_VALUE = 1.0;
+    final double YAW_PID_P = 0.005;
+    final double YAW_PID_I = 0.0;
+    final double YAW_PID_D = 0.0;
 
     //encoder constants
-
     static final double TAU                  = 6.283185;
     static final double COUNTS_PER_MOTOR_REV = 1120;    // eg: neverrest 40
     static final double DRIVE_GEAR_REDUCTION = 2.0;     // This is < 1.0 if geared UP
@@ -64,6 +65,7 @@ public class Test20166322 extends LinearOpModeCamera {
 
     static final double     DRIVE_SPEED             = 0.6;
     static final double     TURN_SPEED              = 0.5;
+    static final double DEGREES_TO_ENCODER_INCHES = 0;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -107,6 +109,8 @@ public class Test20166322 extends LinearOpModeCamera {
 
         telemetry.addData("Path", "Complete");
         telemetry.update();
+
+        sensorArm = hardwareMap.servo.get("sensorArm");
 
         navx_device = AHRS.getInstance(hardwareMap.deviceInterfaceModule.get("dim"),
                       NAVX_DIM_I2C_PORT,
@@ -174,7 +178,7 @@ public class Test20166322 extends LinearOpModeCamera {
         }
     }
 
-    public void timedMovement(double power, int time) throws InterruptedException {
+    public void moveByTime(double power, int time) throws InterruptedException {
 
 		for(DcMotor motor : driveTrain)
     		motor.setPower(power);    	
@@ -185,7 +189,32 @@ public class Test20166322 extends LinearOpModeCamera {
     		motor.setPower(0);
     }
 
-    public void moveBySteps(double power, int inches) throws InterruptedException {
+    public void moveBySteps(double power, double inches) throws InterruptedException {
+
+        int[] startPosition = new int[4];
+
+        for(DcMotor motor : driveTrain)
+            motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        for(int i = 0; i < driveTrain.length; i++)
+            startPosition[i] = driveTrain[i].getCurrentPosition();
+
+        for(int i = 0; i < driveTrain.length; i++)
+            driveTrain[i].setTargetPosition((int)(startPosition[i] + inches * COUNTS_PER_INCH));
+
+        for(DcMotor motor : driveTrain)
+            motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        for(DcMotor motor : driveTrain)
+            motor.setPower(Math.abs(power));
+
+        while(driveTrain[0].isBusy() && driveTrain[1].isBusy() && driveTrain[2].isBusy() && driveTrain[3].isBusy() && opModeIsActive()) {idle();}
+
+        for (DcMotor motor : driveTrain)
+            motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+    }
+
+    public void turnBySteps(double power, double inches) throws InterruptedException {
 
     	int[] startPosition = new int[4];
 
@@ -195,8 +224,12 @@ public class Test20166322 extends LinearOpModeCamera {
 		for(int i = 0; i < driveTrain.length; i++)
 	    	startPosition[i] = driveTrain[i].getCurrentPosition();
 
-		for(int i = 0; i < driveTrain.length; i++)
-	    	driveTrain[i].setTargetPosition((int)(startPosition[i] + inches * COUNTS_PER_INCH));
+		for(int i = 0; i < driveTrain.length; i++) {
+            if (i % 2 == 1)
+                driveTrain[i].setTargetPosition((int)(startPosition[i] + inches * COUNTS_PER_INCH)); // left motors
+            else
+                driveTrain[i].setTargetPosition((int)(startPosition[i] + -inches * COUNTS_PER_INCH)); // right motors
+        }
 
 	    for(DcMotor motor : driveTrain)
     		motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -205,6 +238,9 @@ public class Test20166322 extends LinearOpModeCamera {
     		motor.setPower(Math.abs(power));
 
 		while(driveTrain[0].isBusy() && driveTrain[1].isBusy() && driveTrain[2].isBusy() && driveTrain[3].isBusy() && opModeIsActive()) {idle();}
+
+        for (DcMotor motor : driveTrain)
+            motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
     public void encoderDrive(double speed,
@@ -272,8 +308,16 @@ public class Test20166322 extends LinearOpModeCamera {
     public void turnByAngle(double power, double angle) throws InterruptedException {
 
         boolean turnComplete = false;
+
         navx_device.zeroYaw();
         yawPIDController.setSetpoint(angle);
+
+        int startPosition;
+        double neededInches = angle * DEGREES_TO_ENCODER_INCHES;
+
+        FrontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        startPosition = FrontLeft.getCurrentPosition();
 
         try {
             yawPIDController.enable(true);
@@ -285,8 +329,7 @@ public class Test20166322 extends LinearOpModeCamera {
 
             DecimalFormat df = new DecimalFormat("#.##");
 
-            while ( (runtime.time() < TOTAL_RUN_TIME_SECONDS) &&
-                    !Thread.currentThread().isInterrupted() && !turnComplete) {
+            while ((runtime.time() < TOTAL_RUN_TIME_SECONDS) && !Thread.currentThread().isInterrupted() && !turnComplete) {
                 if (yawPIDController.waitForNewUpdate(yawPIDResult, DEVICE_TIMEOUT_MS)) {
 
                     if (yawPIDResult.isOnTarget()) {
@@ -313,6 +356,7 @@ public class Test20166322 extends LinearOpModeCamera {
                 else {
                 /* A timeout occurred */
                     telemetry.addData("navXRotateOp", "Yaw PID waitForNewUpdate() TIMEOUT.");
+                    turnBySteps(power, (neededInches + startPosition) - FrontLeft.getCurrentPosition());
                 }
                 telemetry.addData("Yaw", df.format(navx_device.getYaw()));
             }
