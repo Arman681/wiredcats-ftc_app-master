@@ -18,22 +18,21 @@ public class Teleop6322 extends OpMode {
     DcMotor BackRight;
 
     //DcMotor[] motor = {FrontRight, FrontLeft, BackRight, BackLeft};
-
-    float lefty1 = gamepad1.left_stick_y;
-    float righty1 = gamepad1.right_stick_y;
-
     @Override
     public void init(){
 
-        FrontRight = hardwareMap.dcMotor.get("fr");
-        FrontLeft = hardwareMap.dcMotor.get("fl");
-        BackRight = hardwareMap.dcMotor.get("br");
-        BackLeft = hardwareMap.dcMotor.get("bl");
+        FrontRight = hardwareMap.dcMotor.get("FrontRight");
+        FrontLeft = hardwareMap.dcMotor.get("FrontLeft");
+        BackRight = hardwareMap.dcMotor.get("BackRight");
+        BackLeft = hardwareMap.dcMotor.get("BackLeft");
 
     }
 
     @Override
     public void loop(){
+
+        float lefty1 = -gamepad1.left_stick_y;
+        float righty1 = -gamepad1.right_stick_y;
 
         FrontLeft.setPower(lefty1);
         FrontRight.setPower(righty1);
