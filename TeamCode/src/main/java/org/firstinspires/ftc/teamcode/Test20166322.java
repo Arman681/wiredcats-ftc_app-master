@@ -194,7 +194,7 @@ public class Test20166322 extends LinearOpModeCamera {
         final float values[] = hsvValues;
         colorSensor.enableLed(true);
 
-        Color.RGBToHSV(colorSensor.red( * 8, colorSensor.green() * 8, colorSensor.blue() * 8, hsvValues);
+        Color.RGBToHSV(colorSensor.red() * 8, colorSensor.green() * 8, colorSensor.blue() * 8, hsvValues);
 
         for(DcMotor motor : driveTrain)
             motor.setPower(power);
