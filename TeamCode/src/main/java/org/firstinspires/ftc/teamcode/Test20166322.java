@@ -22,8 +22,9 @@ import org.firstinspires.ftc.robotcontroller.internal.LinearOpModeCamera;
  * <p/>
  * Enables control of the robot via the gamepad
  */
-@Autonomous(name="6322AutoTest", group="planning")
+@Autonomous(name="6322AutoTest", group="Autonomous")
 //@Disabled
+
 
 public class Test20166322 extends LinearOpModeCamera {
 
@@ -34,11 +35,17 @@ public class Test20166322 extends LinearOpModeCamera {
     
     DcMotor[] driveTrain = {FrontRight, FrontLeft, BackRight, BackLeft};
 
+    ElapsedTime runtime = new ElapsedTime();
+
     Servo sensorArm;
 
     ColorSensor colorSensor;
 
     int ds2 = 2;  // additional downsampling of the image
+
+    //Switch for camera operation
+
+    boolean limit = false;
 
     //IMU setup
     final int NAVX_DIM_I2C_PORT = 0;
@@ -61,24 +68,52 @@ public class Test20166322 extends LinearOpModeCamera {
     static final double WHEEL_RADIUS_INCHES  = 2.0;     // For figuring circumference
     static final double COUNTS_PER_INCH      = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) / (WHEEL_RADIUS_INCHES * TAU);
 
+    static final double     DRIVE_SPEED             = 0.6;
+    static final double     TURN_SPEED              = 0.5;
     static final double DEGREES_TO_ENCODER_INCHES = 0;
 
     @Override
     public void runOpMode() throws InterruptedException {
 
+        FrontLeft = hardwareMap.dcMotor.get("FrontLeft");
     	FrontRight = hardwareMap.dcMotor.get("FrontRight");
-    	FrontLeft = hardwareMap.dcMotor.get("FrontLeft");
-    	BackRight = hardwareMap.dcMotor.get("BackRight");
-    	BackLeft = hardwareMap.dcMotor.get("BackLeft");
+        BackLeft = hardwareMap.dcMotor.get("BackLeft");
+        BackRight = hardwareMap.dcMotor.get("BackRight");
 
+        FrontLeft.setDirection(DcMotor.Direction.REVERSE);
+        BackLeft.setDirection(DcMotor.Direction.REVERSE);
+
+
+        // Send telemetry message to signify robot waiting;
+        telemetry.addData("Status", "Resetting Encoders");    //
+        telemetry.update();
     	for (DcMotor motor : driveTrain)
     		motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        idle();
 
     	for (DcMotor motor : driveTrain)
     		motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-    	FrontLeft.setDirection(DcMotor.Direction.REVERSE);
-    	BackLeft.setDirection(DcMotor.Direction.REVERSE);
+        // Send telemetry message to indicate successful Encoder reset
+        telemetry.addData("Path0",  "Starting at %7d :%7d",
+                FrontLeft.getCurrentPosition(),
+                FrontRight.getCurrentPosition(),
+                BackLeft.getCurrentPosition(),
+                BackRight.getCurrentPosition());
+        telemetry.update();
+
+        waitForStart();
+
+        // Step through each leg of the path,
+        // Note: Reverse movement is obtained by setting a negative distance (not speed)
+        encoderDrive(DRIVE_SPEED,  12,  12, 5.0);  // S1: Forward 47 Inches with 5 Sec timeout
+        //encoderDrive(TURN_SPEED,   12, -12, 4.0);  // S2: Turn Right 12 Inches with 4 Sec timeout
+        //encoderDrive(DRIVE_SPEED, -24, -24, 4.0);  // S3: Reverse 24 Inches with 4 Sec timeout
+
+        sleep(1000);     // pause for servos to move
+
+        telemetry.addData("Path", "Complete");
+        telemetry.update();
 
         sensorArm = hardwareMap.servo.get("sensorArm");
 
@@ -97,7 +132,7 @@ public class Test20166322 extends LinearOpModeCamera {
         yawPIDController.setTolerance(navXPIDController.ToleranceType.ABSOLUTE, TOLERANCE_DEGREES);
         yawPIDController.setPID(YAW_PID_P, YAW_PID_I, YAW_PID_D);
 
-        if (isCameraAvailable()) {
+        if (isCameraAvailable() && limit == true) {
 
             // setCameraDownsampling(8);
             // parameter determines how downsampled you want your images
@@ -250,9 +285,69 @@ public class Test20166322 extends LinearOpModeCamera {
             motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
-    public void turnByAngle(double power, double angle) throws InterruptedException {
+    public void encoderDrive(double speed,
+                             double leftInches, double rightInches,
+                             double timeoutS) throws InterruptedException {
+        int newLeftTarget;
+        int newRightTarget;
 
-        ElapsedTime runtime = new ElapsedTime();
+        // Ensure that the opmode is still active
+        if (opModeIsActive()) {
+
+            // Determine new target position, and pass to motor controller
+            newLeftTarget = FrontLeft.getCurrentPosition() + (int)(leftInches * COUNTS_PER_INCH);
+            newRightTarget = FrontRight.getCurrentPosition() + (int)(rightInches * COUNTS_PER_INCH);
+            FrontLeft.setTargetPosition(newLeftTarget);
+            BackLeft.setTargetPosition(newLeftTarget);
+            FrontRight.setTargetPosition(newRightTarget);
+            BackRight.setTargetPosition(newRightTarget);
+
+            // Turn On RUN_TO_POSITION
+            FrontLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            FrontRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            BackLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            BackRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+            // reset the timeout time and start motion.
+            runtime.reset();
+            FrontLeft.setPower(Math.abs(speed));
+            BackLeft.setPower(Math.abs(speed));
+            FrontRight.setPower(Math.abs(speed));
+            BackRight.setPower(Math.abs(speed));
+
+            // keep looping while we are still active, and there is time left, and both motors are running.
+            while (opModeIsActive() &&
+                    (runtime.seconds() < timeoutS) &&
+                    (FrontLeft.isBusy() && FrontRight.isBusy())) {
+
+                // Display it for the driver.
+                telemetry.addData("Path1",  "Running to %7d :%7d", newLeftTarget,  newRightTarget);
+                telemetry.addData("Path2",  "Running at %7d :%7d",
+                        FrontLeft.getCurrentPosition(),
+                        FrontRight.getCurrentPosition());
+                telemetry.update();
+
+                // Allow time for other processes to run.
+                idle();
+            }
+
+            // Stop all motion;
+            FrontLeft.setPower(0);
+            BackLeft.setPower(0);
+            FrontRight.setPower(0);
+            BackRight.setPower(0);
+
+            // Turn off RUN_TO_POSITION
+            FrontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            BackLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            FrontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            BackRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+            //  sleep(250);   // optional pause after each move
+        }
+    }
+
+    public void turnByAngle(double power, double angle) throws InterruptedException {
 
         boolean turnComplete = false;
 
