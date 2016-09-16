@@ -1,15 +1,18 @@
 package org.firstinspires.ftc.teamcode;
 
 import android.graphics.Bitmap;
+import android.graphics.Color;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
+import com.qualcomm.robotcore.hardware.ColorSensor;
+import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import com.kauailabs.navx.ftc.AHRS;
 import com.kauailabs.navx.ftc.navXPIDController;
-import com.qualcomm.robotcore.util.ElapsedTime;
+
 import java.text.DecimalFormat;
 
 import org.firstinspires.ftc.robotcontroller.internal.LinearOpModeCamera;
@@ -19,9 +22,8 @@ import org.firstinspires.ftc.robotcontroller.internal.LinearOpModeCamera;
  * <p/>
  * Enables control of the robot via the gamepad
  */
-@Autonomous(name="6322AutoTest", group="Autonomous")
+@Autonomous(name="6322AutoTest", group="planning")
 //@Disabled
-
 
 public class Test20166322 extends LinearOpModeCamera {
 
@@ -29,18 +31,14 @@ public class Test20166322 extends LinearOpModeCamera {
     DcMotor FrontLeft;
     DcMotor BackRight;
     DcMotor BackLeft;
-    
-    DcMotor[] driveTrain = {FrontRight, FrontLeft, BackRight, BackLeft};
 
-    ElapsedTime runtime = new ElapsedTime();
+    DcMotor[] driveTrain = {FrontRight, FrontLeft, BackRight, BackLeft};
 
     Servo sensorArm;
 
+    ColorSensor colorSensor;
+
     int ds2 = 2;  // additional downsampling of the image
-
-    //Switch for camera operation
-
-    boolean limit = false;
 
     //IMU setup
     final int NAVX_DIM_I2C_PORT = 0;
@@ -63,54 +61,28 @@ public class Test20166322 extends LinearOpModeCamera {
     static final double WHEEL_RADIUS_INCHES  = 2.0;     // For figuring circumference
     static final double COUNTS_PER_INCH      = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) / (WHEEL_RADIUS_INCHES * TAU);
 
-    static final double     DRIVE_SPEED             = 0.6;
-    static final double     TURN_SPEED              = 0.5;
     static final double DEGREES_TO_ENCODER_INCHES = 0;
 
     @Override
     public void runOpMode() throws InterruptedException {
 
-        FrontLeft = hardwareMap.dcMotor.get("FrontLeft");
     	FrontRight = hardwareMap.dcMotor.get("FrontRight");
-        BackLeft = hardwareMap.dcMotor.get("BackLeft");
-        BackRight = hardwareMap.dcMotor.get("BackRight");
+    	FrontLeft = hardwareMap.dcMotor.get("FrontLeft");
+    	BackRight = hardwareMap.dcMotor.get("BackRight");
+    	BackLeft = hardwareMap.dcMotor.get("BackLeft");
 
-        FrontLeft.setDirection(DcMotor.Direction.REVERSE);
-        BackLeft.setDirection(DcMotor.Direction.REVERSE);
-
-
-        // Send telemetry message to signify robot waiting;
-        telemetry.addData("Status", "Resetting Encoders");    //
-        telemetry.update();
     	for (DcMotor motor : driveTrain)
     		motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        idle();
 
     	for (DcMotor motor : driveTrain)
     		motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        // Send telemetry message to indicate successful Encoder reset
-        telemetry.addData("Path0",  "Starting at %7d :%7d",
-                FrontLeft.getCurrentPosition(),
-                FrontRight.getCurrentPosition(),
-                BackLeft.getCurrentPosition(),
-                BackRight.getCurrentPosition());
-        telemetry.update();
-
-        waitForStart();
-
-        // Step through each leg of the path,
-        // Note: Reverse movement is obtained by setting a negative distance (not speed)
-        encoderDrive(DRIVE_SPEED,  12,  12, 5.0);  // S1: Forward 47 Inches with 5 Sec timeout
-        //encoderDrive(TURN_SPEED,   12, -12, 4.0);  // S2: Turn Right 12 Inches with 4 Sec timeout
-        //encoderDrive(DRIVE_SPEED, -24, -24, 4.0);  // S3: Reverse 24 Inches with 4 Sec timeout
-
-        sleep(1000);     // pause for servos to move
-
-        telemetry.addData("Path", "Complete");
-        telemetry.update();
+    	FrontLeft.setDirection(DcMotor.Direction.REVERSE);
+    	BackLeft.setDirection(DcMotor.Direction.REVERSE);
 
         sensorArm = hardwareMap.servo.get("sensorArm");
+
+        colorSensor = hardwareMap.colorSensor.get("colorSensor");
 
         navx_device = AHRS.getInstance(hardwareMap.deviceInterfaceModule.get("dim"),
                       NAVX_DIM_I2C_PORT,
@@ -125,7 +97,7 @@ public class Test20166322 extends LinearOpModeCamera {
         yawPIDController.setTolerance(navXPIDController.ToleranceType.ABSOLUTE, TOLERANCE_DEGREES);
         yawPIDController.setPID(YAW_PID_P, YAW_PID_I, YAW_PID_D);
 
-        if (isCameraAvailable() && limit == true) {
+        if (isCameraAvailable()) {
 
             // setCameraDownsampling(8);
             // parameter determines how downsampled you want your images
@@ -181,7 +153,7 @@ public class Test20166322 extends LinearOpModeCamera {
     public void moveByTime(double power, int time) throws InterruptedException {
 
 		for(DcMotor motor : driveTrain)
-    		motor.setPower(power);    	
+    		motor.setPower(power);
 
     	sleep(time);
 
@@ -214,6 +186,41 @@ public class Test20166322 extends LinearOpModeCamera {
             motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
+    public void moveUntil(double power, String color) throws InterruptedException {
+
+        boolean dec = false;
+
+        float hsvValues[] = {0F,0F,0F};
+        final float values[] = hsvValues;
+        colorSensor.enableLed(true);
+
+        Color.RGBToHSV(colorSensor.red() * 8, colorSensor.green() * 8, colorSensor.blue() * 8, hsvValues);
+
+        for(DcMotor motor : driveTrain)
+            motor.setPower(power);
+
+        if (color.equals("white")) {
+            while (!dec) {
+                if (colorSensor.red() > 10 && colorSensor.green() > 10 && colorSensor.blue() > 10)
+                    dec = true;
+            }
+        }
+
+        if (color.equals("red")) {
+            while (!dec) {
+                if (colorSensor.red() > 10)
+                    dec = true;
+            }
+        }
+
+        if (color.equals("blue")) {
+            while (!dec) {
+                if (colorSensor.blue() > 10)
+                    dec = true;
+            }
+        }
+    }
+
     public void turnBySteps(double power, double inches) throws InterruptedException {
 
     	int[] startPosition = new int[4];
@@ -243,69 +250,9 @@ public class Test20166322 extends LinearOpModeCamera {
             motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
-    public void encoderDrive(double speed,
-                             double leftInches, double rightInches,
-                             double timeoutS) throws InterruptedException {
-        int newLeftTarget;
-        int newRightTarget;
-
-        // Ensure that the opmode is still active
-        if (opModeIsActive()) {
-
-            // Determine new target position, and pass to motor controller
-            newLeftTarget = FrontLeft.getCurrentPosition() + (int)(leftInches * COUNTS_PER_INCH);
-            newRightTarget = FrontRight.getCurrentPosition() + (int)(rightInches * COUNTS_PER_INCH);
-            FrontLeft.setTargetPosition(newLeftTarget);
-            BackLeft.setTargetPosition(newLeftTarget);
-            FrontRight.setTargetPosition(newRightTarget);
-            BackRight.setTargetPosition(newRightTarget);
-
-            // Turn On RUN_TO_POSITION
-            FrontLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            FrontRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            BackLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            BackRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-            // reset the timeout time and start motion.
-            runtime.reset();
-            FrontLeft.setPower(Math.abs(speed));
-            BackLeft.setPower(Math.abs(speed));
-            FrontRight.setPower(Math.abs(speed));
-            BackRight.setPower(Math.abs(speed));
-
-            // keep looping while we are still active, and there is time left, and both motors are running.
-            while (opModeIsActive() &&
-                    (runtime.seconds() < timeoutS) &&
-                    (FrontLeft.isBusy() && FrontRight.isBusy())) {
-
-                // Display it for the driver.
-                telemetry.addData("Path1",  "Running to %7d :%7d", newLeftTarget,  newRightTarget);
-                telemetry.addData("Path2",  "Running at %7d :%7d",
-                        FrontLeft.getCurrentPosition(),
-                        FrontRight.getCurrentPosition());
-                telemetry.update();
-
-                // Allow time for other processes to run.
-                idle();
-            }
-
-            // Stop all motion;
-            FrontLeft.setPower(0);
-            BackLeft.setPower(0);
-            FrontRight.setPower(0);
-            BackRight.setPower(0);
-
-            // Turn off RUN_TO_POSITION
-            FrontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            BackLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            FrontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            BackRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-            //  sleep(250);   // optional pause after each move
-        }
-    }
-
     public void turnByAngle(double power, double angle) throws InterruptedException {
+
+        ElapsedTime runtime = new ElapsedTime();
 
         boolean turnComplete = false;
 
