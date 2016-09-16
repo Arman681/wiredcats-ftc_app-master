@@ -1,15 +1,18 @@
 package org.firstinspires.ftc.teamcode;
 
 import android.graphics.Bitmap;
+import android.graphics.Color;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
+import com.qualcomm.robotcore.hardware.ColorSensor;
+import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import com.kauailabs.navx.ftc.AHRS;
 import com.kauailabs.navx.ftc.navXPIDController;
-import com.qualcomm.robotcore.util.ElapsedTime;
+
 import java.text.DecimalFormat;
 
 import org.firstinspires.ftc.robotcontroller.internal.LinearOpModeCamera;
@@ -32,6 +35,8 @@ public class Test20166322 extends LinearOpModeCamera {
     DcMotor[] driveTrain = {FrontRight, FrontLeft, BackRight, BackLeft};
 
     Servo sensorArm;
+
+    ColorSensor colorSensor;
 
     int ds2 = 2;  // additional downsampling of the image
 
@@ -76,6 +81,8 @@ public class Test20166322 extends LinearOpModeCamera {
     	BackLeft.setDirection(DcMotor.Direction.REVERSE);
 
         sensorArm = hardwareMap.servo.get("sensorArm");
+
+        colorSensor = hardwareMap.colorSensor.get("colorSensor");
 
         navx_device = AHRS.getInstance(hardwareMap.deviceInterfaceModule.get("dim"),
                       NAVX_DIM_I2C_PORT,
@@ -177,6 +184,41 @@ public class Test20166322 extends LinearOpModeCamera {
 
         for (DcMotor motor : driveTrain)
             motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+    }
+
+    public void moveUntil(double power, String color) throws InterruptedException {
+
+        boolean dec = false;
+
+        float hsvValues[] = {0F,0F,0F};
+        final float values[] = hsvValues;
+        colorSensor.enableLed(true);
+
+        Color.RGBToHSV(colorSensor.red() * 8, colorSensor.green() * 8, colorSensor.blue() * 8, hsvValues);
+
+        for(DcMotor motor : driveTrain)
+            motor.setPower(power);
+
+        if (color.equals("white")) {
+            while (!dec) {
+                if (colorSensor.red() > 10 && colorSensor.green() > 10 && colorSensor.blue() > 10)
+                    dec = true;
+            }
+        }
+
+        if (color.equals("red")) {
+            while (!dec) {
+                if (colorSensor.red() > 10)
+                    dec = true;
+            }
+        }
+
+        if (color.equals("blue")) {
+            while (!dec) {
+                if (colorSensor.blue() > 10)
+                    dec = true;
+            }
+        }
     }
 
     public void turnBySteps(double power, double inches) throws InterruptedException {
