@@ -175,7 +175,7 @@ public class Test20166322 extends LinearOpModeCamera {
         FrontRight.setPower(Math.abs(power));
 
         while(FrontRight.isBusy() && FrontLeft.isBusy() && BackRight.isBusy() && BackLeft.isBusy() && opModeIsActive()) {
-            idle();
+            sleep(10);
         }
 
         BackRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
