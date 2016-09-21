@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -17,6 +18,9 @@ public class Teleop6322 extends OpMode {
     DcMotor FrontRight;
     DcMotor BackLeft;
     DcMotor BackRight;
+
+    CRServo rightPusher;
+    CRServo leftPusher;
 
     //DcMotor[] motor = {FrontRight, FrontLeft, BackRight, BackLeft};
     @Override
