@@ -9,6 +9,7 @@ import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.CRServo;
 
 import com.kauailabs.navx.ftc.AHRS;
 import com.kauailabs.navx.ftc.navXPIDController;
@@ -22,7 +23,7 @@ import org.firstinspires.ftc.robotcontroller.internal.LinearOpModeCamera;
  * <p/>
  * Enables control of the robot via the gamepad
  */
-@Autonomous(name="6322AutoTest", group="planning")
+@Autonomous(name="6322AutoTest", group="Autonomous")
 //@Disabled
 
 public class Test20166322 extends LinearOpModeCamera {
@@ -34,16 +35,18 @@ public class Test20166322 extends LinearOpModeCamera {
 
     DcMotor[] driveTrain = {FrontRight, FrontLeft, BackRight, BackLeft};
 
-    Servo sensorArm;
+    CRServo rightPusher;
+    CRServo leftPusher;
+    // Servo sensorArm;
 
-    ColorSensor colorSensor;
+    // ColorSensor colorSensor;
 
     int ds2 = 2;  // additional downsampling of the image
 
     //IMU setup
     final int NAVX_DIM_I2C_PORT = 0;
-    AHRS navx_device;
-    navXPIDController yawPIDController;
+    // AHRS navx_device;
+    // navXPIDController yawPIDController;
 
     final byte NAVX_DEVICE_UPDATE_RATE_HZ = 50;
 
@@ -57,7 +60,7 @@ public class Test20166322 extends LinearOpModeCamera {
     //encoder constants
     static final double TAU                  = 6.283185;
     static final double COUNTS_PER_MOTOR_REV = 1120;    // eg: neverrest 40
-    static final double DRIVE_GEAR_REDUCTION = 2.0;     // This is < 1.0 if geared UP
+    static final double DRIVE_GEAR_REDUCTION = 1.0;     // This is < 1.0 if geared UP
     static final double WHEEL_RADIUS_INCHES  = 2.0;     // For figuring circumference
     static final double COUNTS_PER_INCH      = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) / (WHEEL_RADIUS_INCHES * TAU);
 
@@ -71,35 +74,38 @@ public class Test20166322 extends LinearOpModeCamera {
     	BackRight = hardwareMap.dcMotor.get("BackRight");
     	BackLeft = hardwareMap.dcMotor.get("BackLeft");
 
-    	for (DcMotor motor : driveTrain)
-    		motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//   	for (DcMotor motor : driveTrain)
+//   		motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-    	for (DcMotor motor : driveTrain)
-    		motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+//   	for (DcMotor motor : driveTrain)
+//   		motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
     	FrontLeft.setDirection(DcMotor.Direction.REVERSE);
     	BackLeft.setDirection(DcMotor.Direction.REVERSE);
 
-        sensorArm = hardwareMap.servo.get("sensorArm");
+        rightPusher = hardwareMap.crservo.get("rightPusher");
+        leftPusher = hardwareMap.crservo.get("leftPusher");
 
-        colorSensor = hardwareMap.colorSensor.get("colorSensor");
+        // sensorArm = hardwareMap.servo.get("sensorArm");
 
-        navx_device = AHRS.getInstance(hardwareMap.deviceInterfaceModule.get("dim"),
-                      NAVX_DIM_I2C_PORT,
-                      AHRS.DeviceDataType.kProcessedData,
-                      NAVX_DEVICE_UPDATE_RATE_HZ);
+        // colorSensor = hardwareMap.colorSensor.get("colorSensor");
+
+        // navx_device = AHRS.getInstance(hardwareMap.deviceInterfaceModule.get("dim"),
+                      // NAVX_DIM_I2C_PORT,
+                      // AHRS.DeviceDataType.kProcessedData,
+                      // NAVX_DEVICE_UPDATE_RATE_HZ);
 
         // Create a PID Controller which uses the Yaw Angle as input.
-        yawPIDController = new navXPIDController( navx_device, navXPIDController.navXTimestampedDataSource.YAW);
+        // yawPIDController = new navXPIDController( navx_device, navXPIDController.navXTimestampedDataSource.YAW);
 
-        yawPIDController.setContinuous(true);
-        yawPIDController.setOutputRange(MIN_MOTOR_OUTPUT_VALUE, MAX_MOTOR_OUTPUT_VALUE);
-        yawPIDController.setTolerance(navXPIDController.ToleranceType.ABSOLUTE, TOLERANCE_DEGREES);
-        yawPIDController.setPID(YAW_PID_P, YAW_PID_I, YAW_PID_D);
+        // yawPIDController.setContinuous(true);
+        // yawPIDController.setOutputRange(MIN_MOTOR_OUTPUT_VALUE, MAX_MOTOR_OUTPUT_VALUE);
+        // yawPIDController.setTolerance(navXPIDController.ToleranceType.ABSOLUTE, TOLERANCE_DEGREES);
+        // yawPIDController.setPID(YAW_PID_P, YAW_PID_I, YAW_PID_D);
 
         if (isCameraAvailable()) {
 
-            // setCameraDownsampling(8);
+            setCameraDownsampling(8);
             // parameter determines how downsampled you want your images
             // 8, 4, 2, or 1.
             // higher number is more downsampled, so less resolution but faster
@@ -113,36 +119,14 @@ public class Test20166322 extends LinearOpModeCamera {
             waitForStart();
 
             stopCameraInSecs(30);   // set independent thread to kill the camera
-						            // when the mode is done
-						            // use 30 for auto, 120 for teleop
+                                    // when the mode is done
+                                    // use 30 for auto, 120 for teleop
+
+            moveBySteps(.5, 12);
+            turnBySteps(.5, 6);
 
             while (opModeIsActive()) {
-
-                if (imageReady()) { // only do this if an image has been returned from the camera
-                    int redValue = 0;
-                    int blueValue = 0;
-                    int greenValue = 0;
-
-                    Bitmap rgbImage;
-                    rgbImage = convertYuvImageToRgb(yuvImage, width, height, ds2);
-                    for (int x = 0; x < width / ds2; x++) {
-                        for (int y = 0; y < height / ds2; y++) {
-                            int pixel = rgbImage.getPixel(x, y);
-                            redValue += red(pixel);
-                            blueValue += blue(pixel);
-                            greenValue += green(pixel);
-                        }
-                    }
-                    int color = highestColor(redValue, greenValue, blueValue);
-
-                    //checks the center of the image only
-                    //int pixel = rgbImage.getPixel(width/2/ds2, height/2/ds2);
-                    //int color = highestColor(red(pixel), green(pixel), blue(pixel));
-
-                }
-
-                telemetry.addData("Color:", "Color detected is: ");
-                telemetry.update();
+                findBlueButton();
                 sleep(10);
             }
 
@@ -150,43 +134,58 @@ public class Test20166322 extends LinearOpModeCamera {
         }
     }
 
-    public void moveByTime(double power, int time) throws InterruptedException {
-
-		for(DcMotor motor : driveTrain)
-    		motor.setPower(power);
-
-    	sleep(time);
-
-		for(DcMotor motor : driveTrain)
-    		motor.setPower(0);
-    }
+//    public void moveByTime(double power, int time) throws InterruptedException {
+//
+//		for(DcMotor motor : driveTrain)
+//    		motor.setPower(power);
+//
+//    	sleep(time);
+//
+//		for(DcMotor motor : driveTrain)
+//    		motor.setPower(0);
+//    }
 
     public void moveBySteps(double power, double inches) throws InterruptedException {
 
         int[] startPosition = new int[4];
 
-        for(DcMotor motor : driveTrain)
-            motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        BackRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        BackLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        FrontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        FrontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-        for(int i = 0; i < driveTrain.length; i++)
-            startPosition[i] = driveTrain[i].getCurrentPosition();
+        startPosition[0] = FrontRight.getCurrentPosition();
+        startPosition[1] = FrontLeft.getCurrentPosition();
+        startPosition[2] = BackRight.getCurrentPosition();
+        startPosition[3] = BackLeft.getCurrentPosition();
 
-        for(int i = 0; i < driveTrain.length; i++)
-            driveTrain[i].setTargetPosition((int)(startPosition[i] + inches * COUNTS_PER_INCH));
+        FrontRight.setTargetPosition((int)(startPosition[0] + inches * COUNTS_PER_INCH));
+        FrontLeft.setTargetPosition((int)(startPosition[1] + inches * COUNTS_PER_INCH));
+        BackRight.setTargetPosition((int)(startPosition[2] + inches * COUNTS_PER_INCH));
+        BackLeft.setTargetPosition((int)(startPosition[3] + inches * COUNTS_PER_INCH));
+ 
+        BackRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        BackLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        FrontRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        FrontLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-        for(DcMotor motor : driveTrain)
-            motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        BackLeft.setPower(Math.abs(power));
+        FrontLeft.setPower(Math.abs(power));
+        BackRight.setPower(Math.abs(power));
+        FrontRight.setPower(Math.abs(power));
 
-        for(DcMotor motor : driveTrain)
-            motor.setPower(Math.abs(power));
+        while(FrontRight.isBusy() && FrontLeft.isBusy() && BackRight.isBusy() && BackLeft.isBusy() && opModeIsActive()) {
+            idle();
+        }
 
-        while(driveTrain[0].isBusy() && driveTrain[1].isBusy() && driveTrain[2].isBusy() && driveTrain[3].isBusy() && opModeIsActive()) {idle();}
+        BackRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        FrontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        BackLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        FrontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        for (DcMotor motor : driveTrain)
-            motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
-    public void moveUntil(double power, String color) throws InterruptedException {
+   /* public void moveUntil(double power, String color) throws InterruptedException {
 
         boolean dec = false;
 
@@ -219,38 +218,49 @@ public class Test20166322 extends LinearOpModeCamera {
                     dec = true;
             }
         }
-    }
+    } */
 
     public void turnBySteps(double power, double inches) throws InterruptedException {
 
-    	int[] startPosition = new int[4];
+        int[] startPosition = new int[4];
 
-		for(DcMotor motor : driveTrain)
-    		motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        BackRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        BackLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        FrontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+   	    FrontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-		for(int i = 0; i < driveTrain.length; i++)
-	    	startPosition[i] = driveTrain[i].getCurrentPosition();
+        startPosition[0] = FrontRight.getCurrentPosition();
+        startPosition[1] = FrontLeft.getCurrentPosition();
+        startPosition[2] = BackRight.getCurrentPosition();
+        startPosition[3] = BackLeft.getCurrentPosition();
+      
+        FrontRight.setTargetPosition((int)(startPosition[0] + -inches * COUNTS_PER_INCH));
+        FrontLeft.setTargetPosition((int)(startPosition[1] + inches * COUNTS_PER_INCH));
+        BackRight.setTargetPosition((int)(startPosition[2] + -inches * COUNTS_PER_INCH));
+        BackLeft.setTargetPosition((int)(startPosition[3] + inches * COUNTS_PER_INCH));
 
-		for(int i = 0; i < driveTrain.length; i++) {
-            if (i % 2 == 1)
-                driveTrain[i].setTargetPosition((int)(startPosition[i] + inches * COUNTS_PER_INCH)); // left motors
-            else
-                driveTrain[i].setTargetPosition((int)(startPosition[i] + -inches * COUNTS_PER_INCH)); // right motors
+        BackRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        BackLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        FrontRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        FrontLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        BackLeft.setPower(Math.abs(power));
+        FrontLeft.setPower(Math.abs(power));
+        BackRight.setPower(Math.abs(power));
+        FrontRight.setPower(Math.abs(power));
+
+        while(FrontRight.isBusy() && FrontLeft.isBusy() && BackRight.isBusy() && BackLeft.isBusy() && opModeIsActive()) {
+            idle();
         }
 
-	    for(DcMotor motor : driveTrain)
-    		motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        BackRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        FrontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        BackLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        FrontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-		for(DcMotor motor : driveTrain)
-    		motor.setPower(Math.abs(power));
-
-		while(driveTrain[0].isBusy() && driveTrain[1].isBusy() && driveTrain[2].isBusy() && driveTrain[3].isBusy() && opModeIsActive()) {idle();}
-
-        for (DcMotor motor : driveTrain)
-            motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
-    public void turnByAngle(double power, double angle) throws InterruptedException {
+    /*public void turnByAngle(double power, double angle) throws InterruptedException {
 
         ElapsedTime runtime = new ElapsedTime();
 
@@ -301,7 +311,7 @@ public class Test20166322 extends LinearOpModeCamera {
                     }
                 }
                 else {
-                /* A timeout occurred */
+                // A timeout occurred 
                     telemetry.addData("navXRotateOp", "Yaw PID waitForNewUpdate() TIMEOUT.");
                     turnBySteps(power, (neededInches + startPosition) - FrontLeft.getCurrentPosition());
                 }
@@ -311,5 +321,56 @@ public class Test20166322 extends LinearOpModeCamera {
         catch(InterruptedException ex) {
              Thread.currentThread().interrupt();
         }
+        */
+
+    public int findBlueButton() {
+
+        int benum = 0;
+
+        int color = -1;
+        String colorString = "";
+
+        int redValue = 0;
+        int blueValue = 0;
+        int greenValue = 0;
+
+        if (imageReady()) {
+
+            Bitmap rgbImage;
+            rgbImage = convertYuvImageToRgb(yuvImage, width, height, ds2);
+
+            int pixel = rgbImage.getPixel(width/2/ds2, height/2/ds2);
+            redValue = red(pixel);
+            blueValue = blue(pixel);
+            greenValue = green(pixel);
+
+            color = highestColor(redValue, greenValue, blueValue);
+
+            switch (color) {
+                    case 0:
+                        colorString = "RED";
+                        break;
+                    case 1:
+                        colorString = "GREEN";
+                        break;
+                    case 2:
+                        colorString = "BLUE";
+            }
+
+            telemetry.addData("Color:", "highest color: " + colorString);
+            telemetry.addData("Color:", "Red value: " + redValue);
+            telemetry.addData("Color:", "Green value: " + greenValue);
+            telemetry.addData("Color:", "Blue value: " + blueValue);
+
+            telemetry.update();
+
+            if (colorString.equals("BLUE"))
+                benum = 1;
+            else if (colorString.equals("RED"))
+                benum = 2;
+
+        }
+
+        return benum;
     }
 }
