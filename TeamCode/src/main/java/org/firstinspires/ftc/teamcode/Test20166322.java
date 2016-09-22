@@ -28,30 +28,22 @@ import org.firstinspires.ftc.robotcontroller.internal.LinearOpModeCamera;
 
 public class Test20166322 extends LinearOpModeCamera {
 
-    DcMotor FrontRight;
-    DcMotor FrontLeft;
-    DcMotor BackRight;
-    DcMotor BackLeft;
-
+    DcMotor FrontRight, FrontLeft, BackRight, BackLeft;
     DcMotor[] driveTrain = {FrontRight, FrontLeft, BackRight, BackLeft};
 
     CRServo rightPusher;
     CRServo leftPusher;
-    // Servo sensorArm;
-
+    Servo sensorArm;
     ColorSensor colorSensor;
 
     int bnum = 0;
-
     int ds2 = 2;  // additional downsampling of the image
 
     //IMU setup
-    final int NAVX_DIM_I2C_PORT = 0;
     AHRS navx_device;
     navXPIDController yawPIDController;
-
+    final int NAVX_DIM_I2C_PORT = 0;
     final byte NAVX_DEVICE_UPDATE_RATE_HZ = 50;
-
     final double TOLERANCE_DEGREES = 1.0;
     final double MIN_MOTOR_OUTPUT_VALUE = -1.0;
     final double MAX_MOTOR_OUTPUT_VALUE = 1.0;
@@ -65,7 +57,6 @@ public class Test20166322 extends LinearOpModeCamera {
     static final double DRIVE_GEAR_REDUCTION = 1.0;     // This is < 1.0 if geared UP
     static final double WHEEL_RADIUS_INCHES  = 2.0;     // For figuring circumference
     static final double COUNTS_PER_INCH      = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) / (WHEEL_RADIUS_INCHES * TAU);
-
     static final double DEGREES_TO_ENCODER_INCHES = 0;
 
     @Override
@@ -288,7 +279,6 @@ public class Test20166322 extends LinearOpModeCamera {
             Thread.currentThread().interrupt();
         }
     }
-
 
     public int findBlueButton() {
 
