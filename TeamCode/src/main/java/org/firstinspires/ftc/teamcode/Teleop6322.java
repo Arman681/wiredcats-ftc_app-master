@@ -50,9 +50,13 @@ public class Teleop6322 extends OpMode {
             rightPusher.setDirection(DcMotorSimple.Direction.FORWARD);
         else if (gamepad1.b)
             rightPusher.setDirection(DcMotorSimple.Direction.REVERSE);
+        else
+            rightPusher.setPower(0.0);
         if (gamepad1.x)
             leftPusher.setDirection(DcMotorSimple.Direction.FORWARD);
         else if (gamepad1.a)
             leftPusher.setDirection(DcMotorSimple.Direction.REVERSE);
+        else
+            leftPusher.setPower(0.0);
     }
 }
