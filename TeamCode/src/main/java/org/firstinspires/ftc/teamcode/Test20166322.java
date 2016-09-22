@@ -39,14 +39,16 @@ public class Test20166322 extends LinearOpModeCamera {
     CRServo leftPusher;
     // Servo sensorArm;
 
-    // ColorSensor colorSensor;
+    ColorSensor colorSensor;
+
+    int bnum = 0;
 
     int ds2 = 2;  // additional downsampling of the image
 
     //IMU setup
     final int NAVX_DIM_I2C_PORT = 0;
-    // AHRS navx_device;
-    // navXPIDController yawPIDController;
+    AHRS navx_device;
+    navXPIDController yawPIDController;
 
     final byte NAVX_DEVICE_UPDATE_RATE_HZ = 50;
 
@@ -74,34 +76,27 @@ public class Test20166322 extends LinearOpModeCamera {
     	BackRight = hardwareMap.dcMotor.get("BackRight");
     	BackLeft = hardwareMap.dcMotor.get("BackLeft");
 
-//   	for (DcMotor motor : driveTrain)
-//   		motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
-//   	for (DcMotor motor : driveTrain)
-//   		motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-    	FrontLeft.setDirection(DcMotor.Direction.REVERSE);
-    	BackLeft.setDirection(DcMotor.Direction.REVERSE);
+        FrontLeft.setDirection(DcMotor.Direction.REVERSE);
+        BackLeft.setDirection(DcMotor.Direction.REVERSE);
 
         rightPusher = hardwareMap.crservo.get("rightPusher");
         leftPusher = hardwareMap.crservo.get("leftPusher");
 
-        // sensorArm = hardwareMap.servo.get("sensorArm");
+        //sensorArm = hardwareMap.servo.get("sensorArm");
 
-        // colorSensor = hardwareMap.colorSensor.get("colorSensor");
+        //colorSensor = hardwareMap.colorSensor.get("colorSensor");
 
-        // navx_device = AHRS.getInstance(hardwareMap.deviceInterfaceModule.get("dim"),
-                      // NAVX_DIM_I2C_PORT,
-                      // AHRS.DeviceDataType.kProcessedData,
-                      // NAVX_DEVICE_UPDATE_RATE_HZ);
+        navx_device = AHRS.getInstance(hardwareMap.deviceInterfaceModule.get("dim"),
+                      NAVX_DIM_I2C_PORT,
+                      AHRS.DeviceDataType.kProcessedData,
+                      NAVX_DEVICE_UPDATE_RATE_HZ);
 
         // Create a PID Controller which uses the Yaw Angle as input.
-        // yawPIDController = new navXPIDController( navx_device, navXPIDController.navXTimestampedDataSource.YAW);
-
-        // yawPIDController.setContinuous(true);
-        // yawPIDController.setOutputRange(MIN_MOTOR_OUTPUT_VALUE, MAX_MOTOR_OUTPUT_VALUE);
-        // yawPIDController.setTolerance(navXPIDController.ToleranceType.ABSOLUTE, TOLERANCE_DEGREES);
-        // yawPIDController.setPID(YAW_PID_P, YAW_PID_I, YAW_PID_D);
+        yawPIDController = new navXPIDController( navx_device, navXPIDController.navXTimestampedDataSource.YAW);
+        yawPIDController.setContinuous(true);
+        yawPIDController.setOutputRange(MIN_MOTOR_OUTPUT_VALUE, MAX_MOTOR_OUTPUT_VALUE);
+        yawPIDController.setTolerance(navXPIDController.ToleranceType.ABSOLUTE, TOLERANCE_DEGREES);
+        yawPIDController.setPID(YAW_PID_P, YAW_PID_I, YAW_PID_D);
 
         if (isCameraAvailable()) {
 
@@ -134,58 +129,47 @@ public class Test20166322 extends LinearOpModeCamera {
         }
     }
 
-//    public void moveByTime(double power, int time) throws InterruptedException {
-//
-//		for(DcMotor motor : driveTrain)
-//    		motor.setPower(power);
-//
-//    	sleep(time);
-//
-//		for(DcMotor motor : driveTrain)
-//    		motor.setPower(0);
-//    }
+    public void moveByTime(double power, int time) throws InterruptedException {
+
+		for(DcMotor motor : driveTrain)
+    		motor.setPower(power);
+
+    	sleep(time);
+
+		for(DcMotor motor : driveTrain)
+    		motor.setPower(0);
+    }
 
     public void moveBySteps(double power, double inches) throws InterruptedException {
 
         int[] startPosition = new int[4];
 
-        BackRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        BackLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        FrontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        FrontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+     	for (DcMotor motor : driveTrain)
+     	    motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-        startPosition[0] = FrontRight.getCurrentPosition();
-        startPosition[1] = FrontLeft.getCurrentPosition();
-        startPosition[2] = BackRight.getCurrentPosition();
-        startPosition[3] = BackLeft.getCurrentPosition();
+        for (DcMotor motor : driveTrain)
+            for (int i : startPosition)
+                startPosition[i] = motor.getCurrentPosition();
 
-        FrontRight.setTargetPosition((int)(startPosition[0] + inches * COUNTS_PER_INCH));
-        FrontLeft.setTargetPosition((int)(startPosition[1] + inches * COUNTS_PER_INCH));
-        BackRight.setTargetPosition((int)(startPosition[2] + inches * COUNTS_PER_INCH));
-        BackLeft.setTargetPosition((int)(startPosition[3] + inches * COUNTS_PER_INCH));
- 
-        BackRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        BackLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        FrontRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        FrontLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        for (DcMotor motor : driveTrain)
+            for (int i : startPosition)
+                motor.setTargetPosition((int)(startPosition[i] + inches * COUNTS_PER_INCH));
 
-        BackLeft.setPower(Math.abs(power));
-        FrontLeft.setPower(Math.abs(power));
-        BackRight.setPower(Math.abs(power));
-        FrontRight.setPower(Math.abs(power));
+        for (DcMotor motor : driveTrain)
+            motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-        while(FrontRight.isBusy() && FrontLeft.isBusy() && BackRight.isBusy() && BackLeft.isBusy() && opModeIsActive()) {
+        for (DcMotor motor : driveTrain)
+            motor.setPower(Math.abs(power));
+
+        while(FrontRight.isBusy() && FrontLeft.isBusy() && BackRight.isBusy() && BackLeft.isBusy() && opModeIsActive())
             sleep(10);
-        }
 
-        BackRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        FrontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        BackLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        FrontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        for (DcMotor motor : driveTrain)
+            motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
     }
 
-   /* public void moveUntil(double power, String color) throws InterruptedException {
+    public void moveUntil(double power, String color) throws InterruptedException {
 
         boolean dec = false;
 
@@ -198,69 +182,52 @@ public class Test20166322 extends LinearOpModeCamera {
         for(DcMotor motor : driveTrain)
             motor.setPower(power);
 
-        if (color.equals("white")) {
-            while (!dec) {
+        if (color.equals("white"))
+            while (!dec)
                 if (colorSensor.red() > 10 && colorSensor.green() > 10 && colorSensor.blue() > 10)
                     dec = true;
-            }
-        }
 
-        if (color.equals("red")) {
-            while (!dec) {
+        if (color.equals("red"))
+            while (!dec)
                 if (colorSensor.red() > 10)
                     dec = true;
-            }
-        }
 
-        if (color.equals("blue")) {
-            while (!dec) {
+        if (color.equals("blue"))
+            while (!dec)
                 if (colorSensor.blue() > 10)
                     dec = true;
-            }
-        }
-    } */
+    }
 
     public void turnBySteps(double power, double inches) throws InterruptedException {
 
         int[] startPosition = new int[4];
 
-        BackRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        BackLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        FrontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-   	    FrontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        for (DcMotor motor : driveTrain)
+            motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-        startPosition[0] = FrontRight.getCurrentPosition();
-        startPosition[1] = FrontLeft.getCurrentPosition();
-        startPosition[2] = BackRight.getCurrentPosition();
-        startPosition[3] = BackLeft.getCurrentPosition();
-      
+        for (DcMotor motor : driveTrain)
+            for (int i : startPosition)
+                startPosition[i] = motor.getCurrentPosition();
+
         FrontRight.setTargetPosition((int)(startPosition[0] + -inches * COUNTS_PER_INCH));
         FrontLeft.setTargetPosition((int)(startPosition[1] + inches * COUNTS_PER_INCH));
         BackRight.setTargetPosition((int)(startPosition[2] + -inches * COUNTS_PER_INCH));
         BackLeft.setTargetPosition((int)(startPosition[3] + inches * COUNTS_PER_INCH));
 
-        BackRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        BackLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        FrontRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        FrontLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        for (DcMotor motor : driveTrain)
+            motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-        BackLeft.setPower(Math.abs(power));
-        FrontLeft.setPower(Math.abs(power));
-        BackRight.setPower(Math.abs(power));
-        FrontRight.setPower(Math.abs(power));
+        for (DcMotor motor : driveTrain)
+            motor.setPower(Math.abs(power));
 
-        while(FrontRight.isBusy() && FrontLeft.isBusy() && BackRight.isBusy() && BackLeft.isBusy() && opModeIsActive()) {
+        while(FrontRight.isBusy() && FrontLeft.isBusy() && BackRight.isBusy() && BackLeft.isBusy() && opModeIsActive())
             idle();
-        }
 
-        BackRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        FrontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        BackLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        FrontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
+        for (DcMotor motor : driveTrain)
+            motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
-    /*public void turnByAngle(double power, double angle) throws InterruptedException {
+    public void turnByAngle(double power, double angle) throws InterruptedException {
 
         ElapsedTime runtime = new ElapsedTime();
 
@@ -291,14 +258,13 @@ public class Test20166322 extends LinearOpModeCamera {
 
                     if (yawPIDResult.isOnTarget()) {
 
-                        for(DcMotor motor : driveTrain)
+                        for (DcMotor motor : driveTrain)
                             motor.setPower(0);
 
                         turnComplete = true;
 
-                    }
-                    else {
-                        
+                    } else {
+
                         double output = yawPIDResult.getOutput();
 
                         FrontRight.setPower(-output);
@@ -311,17 +277,18 @@ public class Test20166322 extends LinearOpModeCamera {
                     }
                 }
                 else {
-                // A timeout occurred 
+                    // A timeout occurred
                     telemetry.addData("navXRotateOp", "Yaw PID waitForNewUpdate() TIMEOUT.");
                     turnBySteps(power, (neededInches + startPosition) - FrontLeft.getCurrentPosition());
                 }
                 telemetry.addData("Yaw", df.format(navx_device.getYaw()));
             }
         }
-        catch(InterruptedException ex) {
-             Thread.currentThread().interrupt();
+        catch (InterruptedException ex) {
+            Thread.currentThread().interrupt();
         }
-        */
+    }
+
 
     public int findBlueButton() {
 
@@ -371,6 +338,10 @@ public class Test20166322 extends LinearOpModeCamera {
 
         }
 
+        bnum = benum;
         return benum;
+    }
+
+    public void pushBlueButton() {
     }
 }
