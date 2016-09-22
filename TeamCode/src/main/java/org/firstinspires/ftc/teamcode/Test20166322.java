@@ -232,8 +232,8 @@ public class Test20166322 extends LinearOpModeCamera {
 
         boolean turnComplete = false;
 
-        navx_device.zeroYaw();
-        yawPIDController.setSetpoint(angle);
+        navx_device.zeroYaw(); //Resets yaw to zero
+        yawPIDController.setSetpoint(angle); //Sets desired angle
 
         int startPosition;
         double neededInches = angle * DEGREES_TO_ENCODER_INCHES;
