@@ -193,6 +193,9 @@ public class Test20166322 extends LinearOpModeCamera {
             while (!dec)
                 if (colorSensor.blue() > 10)
                     dec = true;
+
+        for(DcMotor motor : driveTrain)
+            motor.setPower(0);
     }
 
     public void turnBySteps(double power, double inches) throws InterruptedException {
