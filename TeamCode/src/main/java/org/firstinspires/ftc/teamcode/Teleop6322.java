@@ -22,7 +22,7 @@ public class Teleop6322 extends OpMode {
     CRServo rightPusher;
     CRServo leftPusher;
 
-    //DcMotor[] motor = {FrontRight, FrontLeft, BackRight, BackLeft};
+    //final DcMotor[] driveTrain = {FrontRight, FrontLeft, BackRight, BackLeft};
     @Override
     public void init() {
 
@@ -49,11 +49,10 @@ public class Teleop6322 extends OpMode {
         if (gamepad1.y)
             rightPusher.setDirection(DcMotorSimple.Direction.FORWARD);
         else if (gamepad1.b)
-            rightPusher.setDirection(DcMotorSimple.Direction.FORWARD);
+            rightPusher.setDirection(DcMotorSimple.Direction.REVERSE);
         if (gamepad1.x)
             leftPusher.setDirection(DcMotorSimple.Direction.FORWARD);
         else if (gamepad1.a)
-            leftPusher.setDirection(DcMotorSimple.Direction.FORWARD);
-
+            leftPusher.setDirection(DcMotorSimple.Direction.REVERSE);
     }
 }

@@ -29,7 +29,7 @@ import org.firstinspires.ftc.robotcontroller.internal.LinearOpModeCamera;
 public class Test20166322 extends LinearOpModeCamera {
 
     DcMotor FrontRight, FrontLeft, BackRight, BackLeft;
-    DcMotor[] driveTrain = {FrontRight, FrontLeft, BackRight, BackLeft};
+    final DcMotor[] driveTrain = {FrontRight, FrontLeft, BackRight, BackLeft};
 
     CRServo rightPusher;
     CRServo leftPusher;
@@ -42,7 +42,9 @@ public class Test20166322 extends LinearOpModeCamera {
     //IMU setup
     AHRS navx_device;
     navXPIDController yawPIDController;
+
     final int NAVX_DIM_I2C_PORT = 0;
+
     final byte NAVX_DEVICE_UPDATE_RATE_HZ = 50;
     final double TOLERANCE_DEGREES = 1.0;
     final double MIN_MOTOR_OUTPUT_VALUE = -1.0;
@@ -69,6 +71,12 @@ public class Test20166322 extends LinearOpModeCamera {
 
         FrontLeft.setDirection(DcMotor.Direction.REVERSE);
         BackLeft.setDirection(DcMotor.Direction.REVERSE);
+
+        for (DcMotor motor : driveTrain)
+            motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+    	for (DcMotor motor : driveTrain)
+       		motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         rightPusher = hardwareMap.crservo.get("rightPusher");
         leftPusher = hardwareMap.crservo.get("leftPusher");
@@ -112,7 +120,7 @@ public class Test20166322 extends LinearOpModeCamera {
             turnBySteps(.5, 6);
 
             while (opModeIsActive()) {
-                findBlueButton();
+                bnum = findBlueButton();
                 sleep(10);
             }
 
@@ -138,13 +146,11 @@ public class Test20166322 extends LinearOpModeCamera {
      	for (DcMotor motor : driveTrain)
      	    motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-        for (DcMotor motor : driveTrain)
-            for (int i : startPosition)
-                startPosition[i] = motor.getCurrentPosition();
+        for (int i = 0; i < driveTrain.length; i++)
+            startPosition[i] = driveTrain[i].getCurrentPosition();
 
-        for (DcMotor motor : driveTrain)
-            for (int i : startPosition)
-                motor.setTargetPosition((int)(startPosition[i] + inches * COUNTS_PER_INCH));
+        for (int i = 0; i < driveTrain.length; i++)
+            driveTrain[i].setTargetPosition((int)(startPosition[i] + inches * COUNTS_PER_INCH));
 
         for (DcMotor motor : driveTrain)
             motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -152,7 +158,7 @@ public class Test20166322 extends LinearOpModeCamera {
         for (DcMotor motor : driveTrain)
             motor.setPower(Math.abs(power));
 
-        while(FrontRight.isBusy() && FrontLeft.isBusy() && BackRight.isBusy() && BackLeft.isBusy() && opModeIsActive())
+        while(driveTrain[0].isBusy() && driveTrain[1].isBusy() && driveTrain[2].isBusy() && driveTrain[3].isBusy() && opModeIsActive())
             sleep(10);
 
         for (DcMotor motor : driveTrain)
@@ -165,7 +171,7 @@ public class Test20166322 extends LinearOpModeCamera {
         boolean dec = false;
 
         float hsvValues[] = {0F,0F,0F};
-        final float values[] = hsvValues;
+
         colorSensor.enableLed(true);
 
         Color.RGBToHSV(colorSensor.red() * 8, colorSensor.green() * 8, colorSensor.blue() * 8, hsvValues);
@@ -196,9 +202,8 @@ public class Test20166322 extends LinearOpModeCamera {
         for (DcMotor motor : driveTrain)
             motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-        for (DcMotor motor : driveTrain)
-            for (int i : startPosition)
-                startPosition[i] = motor.getCurrentPosition();
+        for (int i = 0; i < driveTrain.length; i++)
+            startPosition[i] = driveTrain[i].getCurrentPosition();
 
         FrontRight.setTargetPosition((int)(startPosition[0] + -inches * COUNTS_PER_INCH));
         FrontLeft.setTargetPosition((int)(startPosition[1] + inches * COUNTS_PER_INCH));
@@ -211,8 +216,8 @@ public class Test20166322 extends LinearOpModeCamera {
         for (DcMotor motor : driveTrain)
             motor.setPower(Math.abs(power));
 
-        while(FrontRight.isBusy() && FrontLeft.isBusy() && BackRight.isBusy() && BackLeft.isBusy() && opModeIsActive())
-            idle();
+        while(driveTrain[0].isBusy() && driveTrain[1].isBusy() && driveTrain[2].isBusy() && driveTrain[3].isBusy() && opModeIsActive())
+            sleep(10);
 
         for (DcMotor motor : driveTrain)
             motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -284,12 +289,13 @@ public class Test20166322 extends LinearOpModeCamera {
 
         int benum = 0;
 
-        int color = -1;
+        int color;
+
         String colorString = "";
 
-        int redValue = 0;
-        int blueValue = 0;
-        int greenValue = 0;
+        int redValue;
+        int blueValue;
+        int greenValue;
 
         if (imageReady()) {
 
@@ -328,7 +334,6 @@ public class Test20166322 extends LinearOpModeCamera {
 
         }
 
-        bnum = benum;
         return benum;
     }
 
