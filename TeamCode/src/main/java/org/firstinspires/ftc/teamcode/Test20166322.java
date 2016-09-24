@@ -126,8 +126,10 @@ public class Test20166322 extends LinearOpModeCamera {
                                     // when the mode is done
                                     // use 30 for auto, 120 for teleop
 
-            moveBySteps(0.5, 24);
-            turnBySteps(0.5, 12);
+            moveBySteps(0.75, 6);
+            turnBySteps(0.75, -6);
+            moveBySteps(0.75, 36);
+
 
             /*while (opModeIsActive()) {
                 bnum = findBlueButton();
