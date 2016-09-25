@@ -141,18 +141,16 @@ public class Test20166322 extends LinearOpModeCamera {
                                     // use 30 for auto, 120 for teleop
 
             moveBySteps(0.75, 6);
-            turnBySteps(0.75, -7);
+            turnBySteps(0.75, -8);
             moveBySteps(0.75, 62);
-            turnBySteps(0.25, 3);
-            moveBySteps(0.5, 12);
-            //turnBySteps(0.75, 4);
-            //moveBySteps(0.75, 4);
-            //moveBySteps(0.75, -6);
+            turnBySteps(0.1, 6);
 
-            /*while (opModeIsActive()) {
-                bnum = findBlueButton();
-                sleep(10);
-            }*/
+            while(ODSleft.getRawLightDetected() < 4.9 && ODSright.getRawLightDetected() < 4.9){
+                FrontLeft.setPower(0.5);
+                FrontRight.setPower(0.5);
+                BackLeft.setPower(0.5);
+                BackRight.setPower(0.5);
+            }
 
             stopCamera();
         }
