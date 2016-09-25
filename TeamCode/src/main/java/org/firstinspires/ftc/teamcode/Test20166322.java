@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.OpticalDistanceSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -33,6 +34,13 @@ public class Test20166322 extends LinearOpModeCamera {
     DcMotor FrontLeft;
     DcMotor BackRight;
     DcMotor BackLeft;
+
+    ColorSensor CSleft;
+    ColorSensor CSright;
+
+    OpticalDistanceSensor ODSleft;
+    OpticalDistanceSensor ODSright;
+
     final DcMotor[] driveTrain = new DcMotor[4];
     //DcMotor[] driveTrain = {FrontRight, FrontLeft, BackRight, BackLeft};
 
@@ -74,13 +82,19 @@ public class Test20166322 extends LinearOpModeCamera {
         BackRight = hardwareMap.dcMotor.get("BackRight");
         BackLeft = hardwareMap.dcMotor.get("BackLeft");
 
+        FrontRight.setDirection(DcMotorSimple.Direction.REVERSE);
+        BackRight.setDirection(DcMotorSimple.Direction.REVERSE);
+
         driveTrain[0] = FrontRight;
         driveTrain[1] = FrontLeft;
         driveTrain[2] = BackRight;
         driveTrain[3] = BackLeft;
 
-        FrontRight.setDirection(DcMotorSimple.Direction.REVERSE);
-        BackRight.setDirection(DcMotorSimple.Direction.REVERSE);
+        CSleft = hardwareMap.colorSensor.get("csleft");
+        CSright = hardwareMap.colorSensor.get("csright");
+
+        ODSleft = hardwareMap.opticalDistanceSensor.get("odsleft");
+        ODSright = hardwareMap.opticalDistanceSensor.get("odsright");
 
         for (DcMotor motor : driveTrain)
             motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -127,9 +141,13 @@ public class Test20166322 extends LinearOpModeCamera {
                                     // use 30 for auto, 120 for teleop
 
             moveBySteps(0.75, 6);
-            turnBySteps(0.75, -6);
-            moveBySteps(0.75, 36);
-
+            turnBySteps(0.75, -7);
+            moveBySteps(0.75, 62);
+            turnBySteps(0.25, 3);
+            moveBySteps(0.5, 12);
+            //turnBySteps(0.75, 4);
+            //moveBySteps(0.75, 4);
+            //moveBySteps(0.75, -6);
 
             /*while (opModeIsActive()) {
                 bnum = findBlueButton();
@@ -178,37 +196,37 @@ public class Test20166322 extends LinearOpModeCamera {
 
     }
 
-    /*public void moveUntil(double power, String color) throws InterruptedException {
+    public void moveUntil(double power, String color) throws InterruptedException {
 
         boolean dec = false;
 
         float hsvValues[] = {0F,0F,0F};
 
-        colorSensor.enableLed(true);
+        CSleft.enableLed(true);
 
-        Color.RGBToHSV(colorSensor.red() * 8, colorSensor.green() * 8, colorSensor.blue() * 8, hsvValues);
+        Color.RGBToHSV(CSleft.red() * 8, CSleft.green() * 8, CSleft.blue() * 8, hsvValues);
 
         for(DcMotor motor : driveTrain)
             motor.setPower(power);
 
         if (color.equals("white"))
             while (!dec)
-                if (colorSensor.red() > 10 && colorSensor.green() > 10 && colorSensor.blue() > 10)
+                if (CSleft.red() > 10 && CSleft.green() > 10 && CSleft.blue() > 10)
                     dec = true;
 
         if (color.equals("red"))
             while (!dec)
-                if (colorSensor.red() > 10)
+                if (CSleft.red() > 10)
                     dec = true;
 
         if (color.equals("blue"))
             while (!dec)
-                if (colorSensor.blue() > 10)
+                if (CSleft.blue() > 10)
                     dec = true;
 
         for(DcMotor motor : driveTrain)
             motor.setPower(0);
-    }*/
+    }
 
     public void turnBySteps(double power, double inches) throws InterruptedException {
 
