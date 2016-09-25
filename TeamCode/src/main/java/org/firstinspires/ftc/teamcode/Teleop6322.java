@@ -1,10 +1,12 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.hardware.CRServo;
+import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.OpticalDistanceSensor;
 
 /**
  * Created by Arman on 9/13/2016.
@@ -19,6 +21,12 @@ public class Teleop6322 extends OpMode {
     DcMotor BackLeft;
     DcMotor BackRight;
 
+    ColorSensor CSleft;
+    ColorSensor CSright;
+
+    OpticalDistanceSensor ODSleft;
+    OpticalDistanceSensor ODSright;
+
     //CRServo rightPusher;
     //CRServo leftPusher;
 
@@ -30,6 +38,12 @@ public class Teleop6322 extends OpMode {
         FrontLeft = hardwareMap.dcMotor.get("FrontLeft");
         BackRight = hardwareMap.dcMotor.get("BackRight");
         BackLeft = hardwareMap.dcMotor.get("BackLeft");
+
+        CSleft = hardwareMap.colorSensor.get("csleft");
+        CSright = hardwareMap.colorSensor.get("csright");
+
+        ODSleft = hardwareMap.opticalDistanceSensor.get("odsleft");
+        ODSright = hardwareMap.opticalDistanceSensor.get("odsright");
 
         BackRight.setDirection(DcMotor.Direction.REVERSE);
         FrontRight.setDirection(DcMotor.Direction.REVERSE);
