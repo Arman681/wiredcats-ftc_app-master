@@ -41,10 +41,26 @@ public class Teleop6322 extends OpMode {
         float lefty1 = -gamepad1.left_stick_y;
         float righty1 = -gamepad1.right_stick_y;
 
-        FrontLeft.setPower(lefty1);
-        FrontRight.setPower(righty1);
-        BackLeft.setPower(lefty1);
-        BackRight.setPower(righty1);
+        if (lefty1 < -.2 || lefty1 > .2) {
+            FrontLeft.setPower(lefty1);
+            BackLeft.setPower(lefty1);
+        }
+        else {
+         for (int i = 1; i > .0001; i *= .1) {
+             FrontLeft.setPower(lefty1*i);
+             BackLeft.setPower(lefty1*i);
+         }
+        }
+        if (righty1 < -.2 || righty1 > .2){
+            FrontRight.setPower(righty1);
+            BackRight.setPower(righty1);
+        }
+        else {
+            for (int i = 1; i > .0001; i *= .1) {
+                FrontRight.setPower(righty1*i);
+                BackRight.setPower(righty1*i);
+            }
+        }
 
         /*if (gamepad1.y)
             rightPusher.setDirection(DcMotorSimple.Direction.FORWARD);
