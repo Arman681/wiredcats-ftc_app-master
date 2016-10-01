@@ -30,24 +30,25 @@ import org.firstinspires.ftc.robotcontroller.internal.LinearOpModeCamera;
 
 public class Test20166322 extends LinearOpModeCamera {
 
+    //Drive Train Motor Declarations
     DcMotor FrontRight;
     DcMotor FrontLeft;
     DcMotor BackRight;
     DcMotor BackLeft;
 
+    final DcMotor[] driveTrain = new DcMotor[4];
+
+    //Color Sensor Declarations
     ColorSensor CSleft;
     ColorSensor CSright;
 
+    //Optical Distance Sensor Declarations
     OpticalDistanceSensor ODSleft;
     OpticalDistanceSensor ODSright;
 
-    final DcMotor[] driveTrain = new DcMotor[4];
-    //DcMotor[] driveTrain = {FrontRight, FrontLeft, BackRight, BackLeft};
-
-    //CRServo rightPusher;
-    //CRServo leftPusher;
-    //Servo sensorArm;
-    //ColorSensor colorSensor;
+    //Continuous Rotation Servo Declarations
+    CRServo rightPusher;
+    CRServo leftPusher;
 
     int bnum = 0;
     int ds2 = 2;  // additional downsampling of the image
@@ -77,37 +78,40 @@ public class Test20166322 extends LinearOpModeCamera {
     @Override
     public void runOpMode() throws InterruptedException {
 
+        //Drive Train Motors
         FrontRight = hardwareMap.dcMotor.get("FrontRight");
         FrontLeft = hardwareMap.dcMotor.get("FrontLeft");
         BackRight = hardwareMap.dcMotor.get("BackRight");
         BackLeft = hardwareMap.dcMotor.get("BackLeft");
-
-        FrontRight.setDirection(DcMotorSimple.Direction.REVERSE);
-        BackRight.setDirection(DcMotorSimple.Direction.REVERSE);
 
         driveTrain[0] = FrontRight;
         driveTrain[1] = FrontLeft;
         driveTrain[2] = BackRight;
         driveTrain[3] = BackLeft;
 
-        CSleft = hardwareMap.colorSensor.get("csleft");
-        CSright = hardwareMap.colorSensor.get("csright");
-
-        ODSleft = hardwareMap.opticalDistanceSensor.get("odsleft");
-        ODSright = hardwareMap.opticalDistanceSensor.get("odsright");
-
         for (DcMotor motor : driveTrain)
             motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-    	for (DcMotor motor : driveTrain)
-       		motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        for (DcMotor motor : driveTrain)
+            motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        //rightPusher = hardwareMap.crservo.get("rightPusher");
-        //leftPusher = hardwareMap.crservo.get("leftPusher");
+        FrontRight.setDirection(DcMotorSimple.Direction.REVERSE);
+        BackRight.setDirection(DcMotorSimple.Direction.REVERSE);
 
-        //sensorArm = hardwareMap.servo.get("sensorArm");
+        //Color Sensors
+        CSleft = hardwareMap.colorSensor.get("csleft");
+        CSright = hardwareMap.colorSensor.get("csright");
 
-        //colorSensor = hardwareMap.colorSensor.get("colorSensor");
+        CSright.enableLed(true);
+        CSleft.enableLed(true);
+
+        //Optical Distance Srnsors
+        ODSleft = hardwareMap.opticalDistanceSensor.get("odsleft");
+        ODSright = hardwareMap.opticalDistanceSensor.get("odsright");
+
+        //Continuous Rotation Sensors
+        rightPusher = hardwareMap.crservo.get("rightPusher");
+        leftPusher = hardwareMap.crservo.get("leftPusher");
 
         /*navx_device = AHRS.getInstance(hardwareMap.deviceInterfaceModule.get("dim"),
                       NAVX_DIM_I2C_PORT,
@@ -136,24 +140,32 @@ public class Test20166322 extends LinearOpModeCamera {
 
             waitForStart();
 
-            stopCameraInSecs(30);   // set independent thread to kill the camera
+            stopCameraInSecs(15);   // set independent thread to kill the camera
                                     // when the mode is done
                                     // use 30 for auto, 120 for teleop
 
-            moveBySteps(0.75, 6);
+            /*moveBySteps(0.75, 6);
             turnBySteps(0.75, -8);
             moveBySteps(0.75, 62);
-            turnBySteps(0.1, 6);
+            turnBySteps(0.1, 6);*/
 
-            while(ODSleft.getRawLightDetected() < 4.9 && ODSright.getRawLightDetected() < 4.9){
+            /*while(ODSleft.getRawLightDetected() < 4.9 && ODSright.getRawLightDetected() < 4.9){
                 FrontLeft.setPower(0.5);
                 FrontRight.setPower(0.5);
                 BackLeft.setPower(0.5);
                 BackRight.setPower(0.5);
-            }
+            }*/
+            moveUntil(0.1, "red");
 
             stopCamera();
         }
+    }
+
+    public void runMotorsAt(double power){
+
+        for (DcMotor motor : driveTrain)
+            motor.setPower(power);
+
     }
 
     public void moveByTime(double power, int time) throws InterruptedException {
@@ -200,30 +212,37 @@ public class Test20166322 extends LinearOpModeCamera {
 
         float hsvValues[] = {0F,0F,0F};
 
-        CSleft.enableLed(true);
+        Color.RGBToHSV(CSright.red() * 8, CSright.green() * 8, CSright.blue() * 8, hsvValues);
 
-        Color.RGBToHSV(CSleft.red() * 8, CSleft.green() * 8, CSleft.blue() * 8, hsvValues);
+        telemetry.addData("LED", true ? "On" : "Off");
+        telemetry.addData("Clear", CSright.alpha());
+        telemetry.addData("Red  ", CSright.red());
+        telemetry.addData("Green", CSright.green());
+        telemetry.addData("Blue ", CSright.blue());
+        telemetry.addData("Hue", hsvValues[0]);
+
+        telemetry.update();
 
         for(DcMotor motor : driveTrain)
             motor.setPower(power);
 
         if (color.equals("white"))
             while (!dec)
-                if (CSleft.red() > 10 && CSleft.green() > 10 && CSleft.blue() > 10)
+                if (CSright.red() > 8 && CSright.green() > 8 && CSright.blue() > 8)
                     dec = true;
 
         if (color.equals("red"))
             while (!dec)
-                if (CSleft.red() > 10)
+                if (CSright.red() > 8)
                     dec = true;
 
         if (color.equals("blue"))
             while (!dec)
-                if (CSleft.blue() > 10)
+                if (CSright.blue() > 8)
                     dec = true;
 
-        for(DcMotor motor : driveTrain)
-            motor.setPower(0);
+        for (DcMotor motor : driveTrain)
+            motor.setPower(0.0);
     }
 
     public void turnBySteps(double power, double inches) throws InterruptedException {
@@ -316,7 +335,7 @@ public class Test20166322 extends LinearOpModeCamera {
         }
     }*/
 
-    /*public int findBlueButton() {
+    /*public int determineButton() {
 
         int benum = 0;
 
