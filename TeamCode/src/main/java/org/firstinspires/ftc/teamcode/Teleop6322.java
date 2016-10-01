@@ -16,34 +16,46 @@ import com.qualcomm.robotcore.hardware.OpticalDistanceSensor;
 
 public class Teleop6322 extends OpMode {
 
+    //Drive Train Motor Declarations
     DcMotor FrontLeft;
     DcMotor FrontRight;
     DcMotor BackLeft;
     DcMotor BackRight;
 
+    //Color Sensor Declarations
     ColorSensor CSleft;
     ColorSensor CSright;
 
+    //Optical Distance Sensor Declaration
     OpticalDistanceSensor ODSleft;
     OpticalDistanceSensor ODSright;
 
-    //CRServo rightPusher;
-    //CRServo leftPusher;
+    //Continuous Rotation Servo Declarations
+    CRServo rightPusher;
+    CRServo leftPusher;
 
-    //final DcMotor[] driveTrain = {FrontRight, FrontLeft, BackRight, BackLeft};
+    int c1 = 0;
+    int c2 = 0;
     @Override
     public void init() {
 
+        //Drive Train Motors
         FrontRight = hardwareMap.dcMotor.get("FrontRight");
         FrontLeft = hardwareMap.dcMotor.get("FrontLeft");
         BackRight = hardwareMap.dcMotor.get("BackRight");
         BackLeft = hardwareMap.dcMotor.get("BackLeft");
 
+        //Color Sensors
         CSleft = hardwareMap.colorSensor.get("csleft");
         CSright = hardwareMap.colorSensor.get("csright");
 
+        //Optical Distance Sensors
         ODSleft = hardwareMap.opticalDistanceSensor.get("odsleft");
         ODSright = hardwareMap.opticalDistanceSensor.get("odsright");
+
+        //Continuous Rotation Servos
+        rightPusher = hardwareMap.crservo.get("rightPusher");
+        leftPusher = hardwareMap.crservo.get("leftPusher");
 
         BackRight.setDirection(DcMotor.Direction.REVERSE);
         FrontRight.setDirection(DcMotor.Direction.REVERSE);
@@ -54,6 +66,9 @@ public class Teleop6322 extends OpMode {
 
         float lefty1 = -gamepad1.left_stick_y;
         float righty1 = -gamepad1.right_stick_y;
+
+        CSright.enableLed(true);
+        CSleft.enableLed(true);
 
         if (lefty1 < -.2 || lefty1 > .2) {
             FrontLeft.setPower(lefty1);
@@ -75,6 +90,43 @@ public class Teleop6322 extends OpMode {
                 BackRight.setPower(righty1*i);
             }
         }
+
+        //Left Continuous Rotation Servo
+        if (gamepad1.x && c1 == 0) {
+            leftPusher.setPower(-1.0);
+            c1++;
+        }
+        else if (!gamepad1.x && c1 == 1) {
+            c1++;
+            leftPusher.setPower(0);
+        }
+        else if (gamepad1.x && c1 ==2) {
+            leftPusher.setPower(1.0);
+            c1++;
+        }
+        else if (!gamepad1.x && c1 == 3) {
+            c1 = 0;
+            leftPusher.setPower(0);
+        }
+
+        //Right Continuous Rotation Servo
+        if (gamepad1.b && c2 == 0) {
+            rightPusher.setPower(1.0);
+            c2++;
+        }
+        else if (!gamepad1.b && c2 == 1) {
+            c2++;
+            rightPusher.setPower(0);
+        }
+        else if (gamepad1.b && c2 ==2) {
+            rightPusher.setPower(-1.0);
+            c2++;
+        }
+        else if (!gamepad1.b && c2 == 3) {
+            c2 = 0;
+            rightPusher.setPower(0);
+        }
+
 
         /*if (gamepad1.y)
             rightPusher.setDirection(DcMotorSimple.Direction.FORWARD);
