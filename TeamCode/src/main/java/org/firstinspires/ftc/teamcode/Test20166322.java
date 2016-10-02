@@ -53,6 +53,8 @@ public class Test20166322 extends LinearOpModeCamera {
     int bnum = 0;
     int ds2 = 2;  // additional downsampling of the image
 
+    float hsvValues[] = {0F,0F,0F};
+
     //IMU setup
     //AHRS navx_device;
     //navXPIDController yawPIDController;
@@ -104,7 +106,7 @@ public class Test20166322 extends LinearOpModeCamera {
 
         CSright.enableLed(false);
         CSleft.enableLed(false);
-        waitOneFullHardwareCycle();
+
         CSright.enableLed(true);
         CSleft.enableLed(true);
 
@@ -128,7 +130,36 @@ public class Test20166322 extends LinearOpModeCamera {
         yawPIDController.setTolerance(navXPIDController.ToleranceType.ABSOLUTE, TOLERANCE_DEGREES);
         yawPIDController.setPID(YAW_PID_P, YAW_PID_I, YAW_PID_D);*/
 
-        if (isCameraAvailable()) {
+        waitForStart();
+        int c = 0;
+        while (opModeIsActive()) {
+            //sleep(1000);
+            //Color.RGBToHSV(CSright.red() * 8, CSright.green() * 8, CSright.blue() * 8, hsvValues);
+            telemetry.addData("Counter " + ++c, null);
+            telemetry.addData("LED", true ? "On" : "Off");
+            telemetry.addData("Clear", CSright.alpha());
+            telemetry.addData("Red ", CSright.red());
+            telemetry.addData("Green", CSright.green());
+            telemetry.addData("Blue ", CSright.blue());
+            telemetry.addData("Hue", hsvValues[0]);
+            //telemetry.addData("color: ", Color.HSVToColor(0xff, hsvValues));
+            telemetry.update();
+
+            if (CSright.red() < 8) {
+                for (DcMotor motor : driveTrain) {
+                    motor.setPower(0);
+                }
+            }
+            else if (CSright.red() > 8) {
+                for (DcMotor motor : driveTrain) {
+                    motor.setPower(0.2);
+                }
+            }
+            idle();
+
+        }
+
+        /*if (isCameraAvailable()) {
 
             setCameraDownsampling(8);
             // parameter determines how downsampled you want your images
@@ -143,7 +174,7 @@ public class Test20166322 extends LinearOpModeCamera {
 
             waitForStart();
 
-            stopCameraInSecs(15);   // set independent thread to kill the camera
+            stopCameraInSecs(30);   // set independent thread to kill the camera
                                     // when the mode is done
                                     // use 30 for auto, 120 for teleop
 
@@ -157,11 +188,12 @@ public class Test20166322 extends LinearOpModeCamera {
                 FrontRight.setPower(0.5);
                 BackLeft.setPower(0.5);
                 BackRight.setPower(0.5);
-            }*/
-            moveUntil(0.1, "red");
+            }
+            int c = 0;
 
             stopCamera();
-        }
+        }*/
+
     }
 
     public void runMotorsAt(double power){
@@ -213,39 +245,42 @@ public class Test20166322 extends LinearOpModeCamera {
 
         boolean dec = false;
 
-        float hsvValues[] = {0F,0F,0F};
+        float hsvValues[] = {0F, 0F, 0F};
 
-        Color.RGBToHSV(CSright.red() * 8, CSright.green() * 8, CSright.blue() * 8, hsvValues);
+        while (opModeIsActive()) {
 
-        telemetry.addData("LED", true ? "On" : "Off");
-        telemetry.addData("Clear", CSright.alpha());
-        telemetry.addData("Red  ", CSright.red());
-        telemetry.addData("Green", CSright.green());
-        telemetry.addData("Blue ", CSright.blue());
-        telemetry.addData("Hue", hsvValues[0]);
+            Color.RGBToHSV(CSright.red() * 8, CSright.green() * 8, CSright.blue() * 8, hsvValues);
 
-        telemetry.update();
+            telemetry.addData("LED", true ? "On" : "Off");
+            telemetry.addData("Clear", CSright.alpha());
+            telemetry.addData("Red  ", CSright.red());
+            telemetry.addData("Green", CSright.green());
+            telemetry.addData("Blue ", CSright.blue());
+            telemetry.addData("Hue", hsvValues[0]);
 
-        for(DcMotor motor : driveTrain)
-            motor.setPower(power);
+            telemetry.update();
 
-        if (color.equals("white"))
-            while (!dec)
-                if (CSright.red() > 8 && CSright.green() > 8 && CSright.blue() > 8)
-                    dec = true;
+            for (DcMotor motor : driveTrain)
+                motor.setPower(power);
 
-        if (color.equals("red"))
-            while (!dec)
-                if (CSright.red() > 8)
-                    dec = true;
+            if (color.equals("white"))
+                while (!dec)
+                    if (CSright.red() > 8 && CSright.green() > 8 && CSright.blue() > 8)
+                        dec = true;
 
-        if (color.equals("blue"))
-            while (!dec)
-                if (CSright.blue() > 8)
-                    dec = true;
+            if (color.equals("red"))
+                while (!dec)
+                    if (CSright.red() > 8)
+                        dec = true;
 
-        for (DcMotor motor : driveTrain)
-            motor.setPower(0.0);
+            if (color.equals("blue"))
+                while (!dec)
+                    if (CSright.blue() > 8)
+                        dec = true;
+
+            for (DcMotor motor : driveTrain)
+                motor.setPower(0);
+        }
     }
 
     public void turnBySteps(double power, double inches) throws InterruptedException {
