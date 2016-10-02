@@ -102,6 +102,9 @@ public class Test20166322 extends LinearOpModeCamera {
         CSleft = hardwareMap.colorSensor.get("csleft");
         CSright = hardwareMap.colorSensor.get("csright");
 
+        CSright.enableLed(false);
+        CSleft.enableLed(false);
+        waitOneFullHardwareCycle();
         CSright.enableLed(true);
         CSleft.enableLed(true);
 
