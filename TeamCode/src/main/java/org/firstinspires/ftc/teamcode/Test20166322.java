@@ -138,19 +138,19 @@ public class Test20166322 extends LinearOpModeCamera {
             telemetry.addData("Counter " + ++c, null);
             telemetry.addData("LED", true ? "On" : "Off");
             telemetry.addData("Clear", CSright.alpha());
-            telemetry.addData("Red ", CSright.red());
-            telemetry.addData("Green", CSright.green());
-            telemetry.addData("Blue ", CSright.blue());
+            telemetry.addData("Red ", CSright.red()*8);
+            telemetry.addData("Green", CSright.green()*8);
+            telemetry.addData("Blue ", CSright.blue()*8);
             telemetry.addData("Hue", hsvValues[0]);
             //telemetry.addData("color: ", Color.HSVToColor(0xff, hsvValues));
             telemetry.update();
 
-            if (CSright.red() < 8) {
+            if ((CSright.red()*8) < 8) {
                 for (DcMotor motor : driveTrain) {
                     motor.setPower(0);
                 }
             }
-            else if (CSright.red() > 8) {
+            else if ((CSright.red()*8) > 8) {
                 for (DcMotor motor : driveTrain) {
                     motor.setPower(0.2);
                 }
