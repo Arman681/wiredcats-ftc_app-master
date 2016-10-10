@@ -22,6 +22,10 @@ public class Teleop6322 extends OpMode {
     DcMotor BackLeft;
     DcMotor BackRight;
 
+    //Shooting Mechanism Motor Declarations
+    DcMotor right;
+    DcMotor left;
+
     //Color Sensor Declarations
     ColorSensor CSleft;
     ColorSensor CSright;
@@ -36,6 +40,7 @@ public class Teleop6322 extends OpMode {
 
     int c1 = 0;
     int c2 = 0;
+    int c3 = 0;
     @Override
     public void init() {
 
@@ -44,6 +49,11 @@ public class Teleop6322 extends OpMode {
         FrontLeft = hardwareMap.dcMotor.get("FrontLeft");
         BackRight = hardwareMap.dcMotor.get("BackRight");
         BackLeft = hardwareMap.dcMotor.get("BackLeft");
+
+        //Shooting Mechanism Motors
+        right = hardwareMap.dcMotor.get("right");
+        left = hardwareMap.dcMotor.get("left");
+        right.setDirection(DcMotorSimple.Direction.REVERSE);
 
         //Color Sensors
         CSleft = hardwareMap.colorSensor.get("csleft");
@@ -125,6 +135,16 @@ public class Teleop6322 extends OpMode {
         else if (!gamepad1.b && c2 == 3) {
             c2 = 0;
             rightPusher.setPower(0);
+        }
+
+        //Shooting Mechanism Motors Function
+        if (gamepad1.a){
+            right.setPower(0.85);
+            left.setPower(0.85);
+        }
+        else if (!gamepad1.a){
+            right.setPower(0);
+            left.setPower(0);
         }
 
 
