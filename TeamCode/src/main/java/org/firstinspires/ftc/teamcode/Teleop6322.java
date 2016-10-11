@@ -8,6 +8,8 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.OpticalDistanceSensor;
 
+import static android.os.SystemClock.sleep;
+
 /**
  * Created by Arman on 9/13/2016.
  */
@@ -40,7 +42,7 @@ public class Teleop6322 extends OpMode {
 
     int c1 = 0;
     int c2 = 0;
-    int c3 = 0;
+    int c3 = -1;
     @Override
     public void init() {
 
@@ -80,12 +82,12 @@ public class Teleop6322 extends OpMode {
         CSright.enableLed(true);
         CSleft.enableLed(true);
 
-        if (lefty1 < -.2 || lefty1 > .2) {
+        if (lefty1 < -.2 || lefty1 > .2){
             FrontLeft.setPower(lefty1);
             BackLeft.setPower(lefty1);
         }
         else {
-         for (int i = 1; i > .0001; i *= .1) {
+         for (int i = 1; i > .0001; i *= .1){
              FrontLeft.setPower(lefty1*i);
              BackLeft.setPower(lefty1*i);
          }
@@ -95,54 +97,50 @@ public class Teleop6322 extends OpMode {
             BackRight.setPower(righty1);
         }
         else {
-            for (int i = 1; i > .0001; i *= .1) {
+            for (int i = 1; i > .0001; i *= .1){
                 FrontRight.setPower(righty1*i);
                 BackRight.setPower(righty1*i);
             }
         }
 
         //Left Continuous Rotation Servo
-        if (gamepad1.x && c1 == 0) {
+        if (gamepad1.x && c1 == 0){
             leftPusher.setPower(-1.0);
-            c1++;
-        }
-        else if (!gamepad1.x && c1 == 1) {
-            c1++;
+            sleep(2000);
             leftPusher.setPower(0);
+            c1 = 1;
         }
-        else if (gamepad1.x && c1 ==2) {
+        else if (gamepad1.x && c1 == 1){
             leftPusher.setPower(1.0);
-            c1++;
-        }
-        else if (!gamepad1.x && c1 == 3) {
-            c1 = 0;
+            sleep(2000);
             leftPusher.setPower(0);
+            c1 = 0;
         }
 
         //Right Continuous Rotation Servo
-        if (gamepad1.b && c2 == 0) {
+        if (gamepad1.b && c2 == 0){
             rightPusher.setPower(1.0);
-            c2++;
-        }
-        else if (!gamepad1.b && c2 == 1) {
-            c2++;
+            sleep(2000);
             rightPusher.setPower(0);
+            c2 = 1;
         }
-        else if (gamepad1.b && c2 ==2) {
+        else if (gamepad1.b && c2 == 1){
             rightPusher.setPower(-1.0);
-            c2++;
-        }
-        else if (!gamepad1.b && c2 == 3) {
-            c2 = 0;
+            sleep(2000);
             rightPusher.setPower(0);
+            c2 = 0;
         }
 
         //Shooting Mechanism Motors Function
-        if (gamepad1.a){
+        if (gamepad1.a) {
+            c3 *= -1;
+            sleep(250);
+        }
+        if (c3 == 1){
             right.setPower(0.85);
             left.setPower(0.85);
         }
-        else if (!gamepad1.a){
+        else if (c3 == -1){
             right.setPower(0);
             left.setPower(0);
         }
