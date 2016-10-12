@@ -133,32 +133,34 @@ public class Test20166322 extends LinearOpModeCamera {
         waitForStart();
         int c = 0;
         while (opModeIsActive()) {
-            //sleep(1000);
-            //Color.RGBToHSV(CSright.red() * 8, CSright.green() * 8, CSright.blue() * 8, hsvValues);
-            telemetry.addData("Counter " + ++c, null);
+            telemetry.addData("Iterations " + ++c, null);
             telemetry.addData("LED", true ? "On" : "Off");
-            telemetry.addData("Clear", CSright.alpha());
-            telemetry.addData("Red ", CSright.red()*8);
-            telemetry.addData("Green", CSright.green()*8);
-            telemetry.addData("Blue ", CSright.blue()*8);
+            telemetry.addData("Red ", (CSright.red()*8));
+            telemetry.addData("Green", (CSright.green()*8));
+            telemetry.addData("Blue ", (CSright.blue()*8));
             telemetry.addData("Hue", hsvValues[0]);
-            //telemetry.addData("color: ", Color.HSVToColor(0xff, hsvValues));
             telemetry.update();
 
-            if ((CSright.red()*8) < 8) {
+            if ((CSright.red()*8) > (CSright.blue()*8)) {
                 for (DcMotor motor : driveTrain) {
-                    motor.setPower(0);
+                    motor.setPower(-0.5);
                 }
             }
-            else if ((CSright.red()*8) > 8) {
+            else if ((CSright.blue()*8) > (CSright.red()*8)) {
                 for (DcMotor motor : driveTrain) {
-                    motor.setPower(0.2);
+                    motor.setPower(0.5);
+                }
+            }
+            else {
+                for (DcMotor motor : driveTrain) {
+                    motor.setPower(0);
                 }
             }
             idle();
 
         }
 
+        //Starts autonomous using camera
         /*if (isCameraAvailable()) {
 
             setCameraDownsampling(8);
@@ -196,13 +198,6 @@ public class Test20166322 extends LinearOpModeCamera {
 
     }
 
-    public void runMotorsAt(double power){
-
-        for (DcMotor motor : driveTrain)
-            motor.setPower(power);
-
-    }
-
     public void moveByTime(double power, int time) throws InterruptedException {
 
 		for(DcMotor motor : driveTrain)
@@ -212,33 +207,6 @@ public class Test20166322 extends LinearOpModeCamera {
 
 		for(DcMotor motor : driveTrain)
     		motor.setPower(0);
-    }
-
-    public void moveBySteps(double power, double inches) throws InterruptedException {
-
-        int[] startPosition = new int[4];
-
-     	for (DcMotor motor : driveTrain)
-     	    motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
-        for (int i = 0; i < driveTrain.length; i++)
-            startPosition[i] = driveTrain[i].getCurrentPosition();
-
-        for (int i = 0; i < driveTrain.length; i++)
-            driveTrain[i].setTargetPosition((int)(startPosition[i] + inches * COUNTS_PER_INCH));
-
-        for (DcMotor motor : driveTrain)
-            motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-        for (DcMotor motor : driveTrain)
-            motor.setPower(Math.abs(power));
-
-        while(driveTrain[0].isBusy() && driveTrain[1].isBusy() && driveTrain[2].isBusy() && driveTrain[3].isBusy() && opModeIsActive())
-            sleep(10);
-
-        for (DcMotor motor : driveTrain)
-            motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
     }
 
     public void moveUntil(double power, String color) throws InterruptedException {
@@ -283,6 +251,33 @@ public class Test20166322 extends LinearOpModeCamera {
         }
     }
 
+    public void moveBySteps(double power, double inches) throws InterruptedException {
+
+        int[] startPosition = new int[4];
+
+        for (DcMotor motor : driveTrain)
+            motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        for (int i = 0; i < driveTrain.length; i++)
+            startPosition[i] = driveTrain[i].getCurrentPosition();
+
+        for (int i = 0; i < driveTrain.length; i++)
+            driveTrain[i].setTargetPosition((int)(startPosition[i] + inches * COUNTS_PER_INCH));
+
+        for (DcMotor motor : driveTrain)
+            motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        for (DcMotor motor : driveTrain)
+            motor.setPower(Math.abs(power));
+
+        while(driveTrain[0].isBusy() && driveTrain[1].isBusy() && driveTrain[2].isBusy() && driveTrain[3].isBusy() && opModeIsActive())
+            sleep(10);
+
+        for (DcMotor motor : driveTrain)
+            motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+    }
+
     public void turnBySteps(double power, double inches) throws InterruptedException {
 
         int[] startPosition = new int[4];
@@ -311,6 +306,7 @@ public class Test20166322 extends LinearOpModeCamera {
             motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
+    //Uses gyroscopic features in the NAVX Micro Sensor
     /*public void turnByAngle(double power, double angle) throws InterruptedException {
 
         ElapsedTime runtime = new ElapsedTime();
@@ -373,6 +369,7 @@ public class Test20166322 extends LinearOpModeCamera {
         }
     }*/
 
+    //Determines the color of the button using the ZTE Camera
     /*public int determineButton() {
 
         int benum = 0;
