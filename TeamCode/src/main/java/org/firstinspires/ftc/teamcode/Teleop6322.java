@@ -74,7 +74,7 @@ public class Teleop6322 extends OpMode {
     }
 
     @Override
-    public void loop(){
+    public void loop() {
 
         float lefty1 = -gamepad1.left_stick_y;
         float righty1 = -gamepad1.right_stick_y;
@@ -82,35 +82,35 @@ public class Teleop6322 extends OpMode {
         CSright.enableLed(true);
         CSleft.enableLed(true);
 
-        if (lefty1 < -.2 || lefty1 > .2){
+        if (lefty1 < -.2 || lefty1 > .2) {
             FrontLeft.setPower(lefty1);
             BackLeft.setPower(lefty1);
         }
         else {
-         for (int i = 1; i > .0001; i *= .1){
+         for (int i = 1; i > .0001; i *= .1) {
              FrontLeft.setPower(lefty1*i);
              BackLeft.setPower(lefty1*i);
          }
         }
-        if (righty1 < -.2 || righty1 > .2){
+        if (righty1 < -.2 || righty1 > .2) {
             FrontRight.setPower(righty1);
             BackRight.setPower(righty1);
         }
         else {
-            for (int i = 1; i > .0001; i *= .1){
+            for (int i = 1; i > .0001; i *= .1) {
                 FrontRight.setPower(righty1*i);
                 BackRight.setPower(righty1*i);
             }
         }
 
         //Left Continuous Rotation Servo
-        if (gamepad1.x && c1 == 0){
+        if (gamepad1.x && c1 == 0) {
             leftPusher.setPower(-1.0);
             sleep(2000);
             leftPusher.setPower(0);
             c1 = 1;
         }
-        else if (gamepad1.x && c1 == 1){
+        else if (gamepad1.x && c1 == 1) {
             leftPusher.setPower(1.0);
             sleep(2000);
             leftPusher.setPower(0);
@@ -118,13 +118,13 @@ public class Teleop6322 extends OpMode {
         }
 
         //Right Continuous Rotation Servo
-        if (gamepad1.b && c2 == 0){
+        if (gamepad1.b && c2 == 0) {
             rightPusher.setPower(1.0);
             sleep(2000);
             rightPusher.setPower(0);
             c2 = 1;
         }
-        else if (gamepad1.b && c2 == 1){
+        else if (gamepad1.b && c2 == 1) {
             rightPusher.setPower(-1.0);
             sleep(2000);
             rightPusher.setPower(0);
@@ -136,11 +136,11 @@ public class Teleop6322 extends OpMode {
             c3 *= -1;
             sleep(250);
         }
-        if (c3 == 1){
+        if (c3 == 1) {
             right.setPower(0.85);
             left.setPower(0.85);
         }
-        else if (c3 == -1){
+        else if (c3 == -1) {
             right.setPower(0);
             left.setPower(0);
         }
