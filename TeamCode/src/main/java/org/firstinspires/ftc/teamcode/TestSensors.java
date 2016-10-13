@@ -36,8 +36,8 @@ public class TestSensors extends LinearOpModeCamera {
 
         //Color Sensors
         CS = hardwareMap.colorSensor.get("cs");
-        CS.enableLed(false);
         CS.enableLed(true);
+        CS.enableLed(false);
 
 
         waitForStart();
