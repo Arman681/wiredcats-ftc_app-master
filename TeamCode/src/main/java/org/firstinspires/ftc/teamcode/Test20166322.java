@@ -104,13 +104,13 @@ public class Test20166322 extends LinearOpModeCamera {
         CSleft = hardwareMap.colorSensor.get("csleft");
         CSright = hardwareMap.colorSensor.get("csright");
 
-        CSright.enableLed(false);
-        CSleft.enableLed(false);
-
         CSright.enableLed(true);
         CSleft.enableLed(true);
 
-        //Optical Distance Srnsors
+        CSright.enableLed(false);
+        CSleft.enableLed(false);
+
+        //Optical Distance Sensors
         ODSleft = hardwareMap.opticalDistanceSensor.get("odsleft");
         ODSright = hardwareMap.opticalDistanceSensor.get("odsright");
 
@@ -217,8 +217,6 @@ public class Test20166322 extends LinearOpModeCamera {
 
         while (opModeIsActive()) {
 
-            Color.RGBToHSV(CSright.red() * 8, CSright.green() * 8, CSright.blue() * 8, hsvValues);
-
             telemetry.addData("LED", true ? "On" : "Off");
             telemetry.addData("Clear", CSright.alpha());
             telemetry.addData("Red  ", CSright.red());
@@ -238,12 +236,12 @@ public class Test20166322 extends LinearOpModeCamera {
 
             if (color.equals("red"))
                 while (!dec)
-                    if (CSright.red() > 8)
+                    if ((CSright.red()*8) > (CSright.blue()*8))
                         dec = true;
 
             if (color.equals("blue"))
                 while (!dec)
-                    if (CSright.blue() > 8)
+                    if ((CSright.blue()*8) > (CSright.red()*8))
                         dec = true;
 
             for (DcMotor motor : driveTrain)
