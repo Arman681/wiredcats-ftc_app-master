@@ -79,8 +79,8 @@ public class Teleop6322 extends OpMode {
         float lefty1 = -gamepad1.left_stick_y;
         float righty1 = -gamepad1.right_stick_y;
 
-        CSright.enableLed(true);
-        CSleft.enableLed(true);
+        //CSright.enableLed(true);
+        //CSleft.enableLed(true);
 
         if (lefty1 < -.2 || lefty1 > .2) {
             FrontLeft.setPower(lefty1);
