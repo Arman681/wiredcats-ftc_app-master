@@ -97,8 +97,8 @@ public class Test20166322 extends LinearOpModeCamera {
         for (DcMotor motor : driveTrain)
             motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        FrontRight.setDirection(DcMotorSimple.Direction.REVERSE);
-        BackRight.setDirection(DcMotorSimple.Direction.REVERSE);
+        BackRight.setDirection(DcMotor.Direction.REVERSE);
+        FrontRight.setDirection(DcMotor.Direction.REVERSE);
 
         //Color Sensors
         CSleft = hardwareMap.colorSensor.get("csleft");
@@ -106,9 +106,8 @@ public class Test20166322 extends LinearOpModeCamera {
 
         CSright.enableLed(true);
         CSleft.enableLed(true);
-
-        CSright.enableLed(false);
         CSleft.enableLed(false);
+        CSright.enableLed(false);
 
         //Optical Distance Sensors
         ODSleft = hardwareMap.opticalDistanceSensor.get("odsleft");
@@ -131,34 +130,11 @@ public class Test20166322 extends LinearOpModeCamera {
         yawPIDController.setPID(YAW_PID_P, YAW_PID_I, YAW_PID_D);*/
 
         waitForStart();
-        int c = 0;
-        while (opModeIsActive()) {
-            telemetry.addData("Iterations " + ++c, null);
-            telemetry.addData("LED", true ? "On" : "Off");
-            telemetry.addData("Red ", (CSright.red()*8));
-            telemetry.addData("Green", (CSright.green()*8));
-            telemetry.addData("Blue ", (CSright.blue()*8));
-            telemetry.addData("Hue", hsvValues[0]);
-            telemetry.update();
-
-            if ((CSright.red()*8) > (CSright.blue()*8)) {
-                for (DcMotor motor : driveTrain) {
-                    motor.setPower(-0.5);
-                }
-            }
-            else if ((CSright.blue()*8) > (CSright.red()*8)) {
-                for (DcMotor motor : driveTrain) {
-                    motor.setPower(0.5);
-                }
-            }
-            else {
-                for (DcMotor motor : driveTrain) {
-                    motor.setPower(0);
-                }
-            }
-            idle();
-
-        }
+        moveBySteps(0.8, 22);
+        turnBySteps(0.6, -22);
+        moveBySteps(0.8, 44);
+        turnBySteps(0.6, 22);
+        moveUntil(0.7, "red");
 
         //Starts autonomous using camera
         /*if (isCameraAvailable()) {
@@ -212,18 +188,16 @@ public class Test20166322 extends LinearOpModeCamera {
     public void moveUntil(double power, String color) throws InterruptedException {
 
         boolean dec = false;
+        int c = 0;
 
         float hsvValues[] = {0F, 0F, 0F};
 
         while (opModeIsActive()) {
 
+            telemetry.addData("Iterations " + ++c, null);
             telemetry.addData("LED", true ? "On" : "Off");
-            telemetry.addData("Clear", CSright.alpha());
-            telemetry.addData("Red  ", CSright.red());
-            telemetry.addData("Green", CSright.green());
-            telemetry.addData("Blue ", CSright.blue());
-            telemetry.addData("Hue", hsvValues[0]);
-
+            telemetry.addData("Red  ", CSleft.red()*8);
+            telemetry.addData("Blue ", CSleft.blue()*8);
             telemetry.update();
 
             for (DcMotor motor : driveTrain)
@@ -231,21 +205,23 @@ public class Test20166322 extends LinearOpModeCamera {
 
             if (color.equals("white"))
                 while (!dec)
-                    if (CSright.red() > 8 && CSright.green() > 8 && CSright.blue() > 8)
+                    if (CSleft.red() > 8 && CSleft.green() > 8 && CSleft.blue() > 8)
                         dec = true;
 
             if (color.equals("red"))
                 while (!dec)
-                    if ((CSright.red()*8) > (CSright.blue()*8))
+                    if ((CSleft.red()*8) > (CSleft.blue()*8))
                         dec = true;
 
             if (color.equals("blue"))
                 while (!dec)
-                    if ((CSright.blue()*8) > (CSright.red()*8))
+                    if ((CSleft.blue()*8) > (CSleft.red()*8))
                         dec = true;
 
             for (DcMotor motor : driveTrain)
                 motor.setPower(0);
+            idle();
+            sleep(100);
         }
     }
 
@@ -269,7 +245,7 @@ public class Test20166322 extends LinearOpModeCamera {
             motor.setPower(Math.abs(power));
 
         while(driveTrain[0].isBusy() && driveTrain[1].isBusy() && driveTrain[2].isBusy() && driveTrain[3].isBusy() && opModeIsActive())
-            sleep(10);
+            sleep(1);
 
         for (DcMotor motor : driveTrain)
             motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -298,7 +274,7 @@ public class Test20166322 extends LinearOpModeCamera {
             motor.setPower(Math.abs(power));
 
         while(driveTrain[0].isBusy() && driveTrain[1].isBusy() && driveTrain[2].isBusy() && driveTrain[3].isBusy() && opModeIsActive())
-            sleep(10);
+            sleep(1);
 
         for (DcMotor motor : driveTrain)
             motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
