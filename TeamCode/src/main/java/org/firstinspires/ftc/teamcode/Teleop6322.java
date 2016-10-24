@@ -28,6 +28,9 @@ public class Teleop6322 extends OpMode {
     DcMotor right;
     DcMotor left;
 
+    //Intake Motor Declaration(s)
+    DcMotor intake;
+
     //Color Sensor Declarations
     ColorSensor CSleft;
     ColorSensor CSright;
@@ -43,31 +46,35 @@ public class Teleop6322 extends OpMode {
     int c1 = 0;
     int c2 = 0;
     int c3 = -1;
+    int c4 = -1;
     @Override
     public void init() {
 
         //Drive Train Motors
-        FrontRight = hardwareMap.dcMotor.get("FrontRight");
-        FrontLeft = hardwareMap.dcMotor.get("FrontLeft");
-        BackRight = hardwareMap.dcMotor.get("BackRight");
-        BackLeft = hardwareMap.dcMotor.get("BackLeft");
+        FrontRight = hardwareMap.dcMotor.get("fr");
+        FrontLeft = hardwareMap.dcMotor.get("fl");
+        BackRight = hardwareMap.dcMotor.get("br");
+        BackLeft = hardwareMap.dcMotor.get("bl");
 
         //Shooting Mechanism Motors
-        right = hardwareMap.dcMotor.get("right");
-        left = hardwareMap.dcMotor.get("left");
+        right = hardwareMap.dcMotor.get("r");
+        left = hardwareMap.dcMotor.get("l");
         right.setDirection(DcMotorSimple.Direction.REVERSE);
 
         //Color Sensors
-        CSleft = hardwareMap.colorSensor.get("csleft");
-        CSright = hardwareMap.colorSensor.get("csright");
+        CSleft = hardwareMap.colorSensor.get("csl");
+        CSright = hardwareMap.colorSensor.get("csr");
 
         //Optical Distance Sensors
         ODSleft = hardwareMap.opticalDistanceSensor.get("odsleft");
         ODSright = hardwareMap.opticalDistanceSensor.get("odsright");
 
         //Continuous Rotation Servos
-        rightPusher = hardwareMap.crservo.get("rightPusher");
-        leftPusher = hardwareMap.crservo.get("leftPusher");
+        rightPusher = hardwareMap.crservo.get("rp");
+        leftPusher = hardwareMap.crservo.get("lp");
+
+        //Intake Motor(s)
+        intake = hardwareMap.dcMotor.get("in");
 
         BackRight.setDirection(DcMotor.Direction.REVERSE);
         FrontRight.setDirection(DcMotor.Direction.REVERSE);
@@ -79,9 +86,7 @@ public class Teleop6322 extends OpMode {
         float lefty1 = -gamepad1.left_stick_y;
         float righty1 = -gamepad1.right_stick_y;
 
-        //CSright.enableLed(true);
-        //CSleft.enableLed(true);
-
+        //Drive Train
         if (lefty1 < -.2 || lefty1 > .2) {
             FrontLeft.setPower(lefty1);
             BackLeft.setPower(lefty1);
@@ -144,7 +149,15 @@ public class Teleop6322 extends OpMode {
             right.setPower(0);
             left.setPower(0);
         }
-
+        //Intake
+        if (gamepad1.y) {
+            c4 *= -1;
+            sleep(250);
+        }
+        if (c4 == 1)
+            intake.setPower(1.0);
+        else if (c4 == -1)
+            intake.setPower(0);
 
         /*if (gamepad1.y)
             rightPusher.setDirection(DcMotorSimple.Direction.FORWARD);
