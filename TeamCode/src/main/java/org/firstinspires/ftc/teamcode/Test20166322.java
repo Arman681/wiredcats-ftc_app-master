@@ -81,10 +81,10 @@ public class Test20166322 extends LinearOpModeCamera {
     public void runOpMode() throws InterruptedException {
 
         //Drive Train Motors
-        FrontRight = hardwareMap.dcMotor.get("FrontRight");
-        FrontLeft = hardwareMap.dcMotor.get("FrontLeft");
-        BackRight = hardwareMap.dcMotor.get("BackRight");
-        BackLeft = hardwareMap.dcMotor.get("BackLeft");
+        FrontRight = hardwareMap.dcMotor.get("fr");
+        FrontLeft = hardwareMap.dcMotor.get("fl");
+        BackRight = hardwareMap.dcMotor.get("br");
+        BackLeft = hardwareMap.dcMotor.get("bl");
 
         driveTrain[0] = FrontRight;
         driveTrain[1] = FrontLeft;
@@ -101,8 +101,8 @@ public class Test20166322 extends LinearOpModeCamera {
         FrontRight.setDirection(DcMotor.Direction.REVERSE);
 
         //Color Sensors
-        CSleft = hardwareMap.colorSensor.get("csleft");
-        CSright = hardwareMap.colorSensor.get("csright");
+        CSleft = hardwareMap.colorSensor.get("csl");
+        CSright = hardwareMap.colorSensor.get("csr");
 
         CSright.enableLed(true);
         CSleft.enableLed(true);
@@ -114,8 +114,8 @@ public class Test20166322 extends LinearOpModeCamera {
         ODSright = hardwareMap.opticalDistanceSensor.get("odsright");
 
         //Continuous Rotation Sensors
-        rightPusher = hardwareMap.crservo.get("rightPusher");
-        leftPusher = hardwareMap.crservo.get("leftPusher");
+        rightPusher = hardwareMap.crservo.get("rp");
+        leftPusher = hardwareMap.crservo.get("lp");
 
         /*navx_device = AHRS.getInstance(hardwareMap.deviceInterfaceModule.get("dim"),
                       NAVX_DIM_I2C_PORT,
