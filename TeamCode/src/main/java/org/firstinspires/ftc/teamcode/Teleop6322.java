@@ -142,14 +142,15 @@ public class Teleop6322 extends OpMode {
             sleep(250);
         }
         if (c3 == 1) {
-            right.setPower(0.85);
-            left.setPower(0.85);
+            right.setPower(1.0);
+            left.setPower(1.0);
         }
         else if (c3 == -1) {
             right.setPower(0);
             left.setPower(0);
         }
-        //Intake
+
+        //Intake Motor Function
         if (gamepad1.y) {
             c4 *= -1;
             sleep(250);
