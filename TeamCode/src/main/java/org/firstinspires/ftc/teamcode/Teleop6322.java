@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.OpticalDistanceSensor;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import static android.os.SystemClock.sleep;
 
@@ -18,6 +19,8 @@ import static android.os.SystemClock.sleep;
 
 public class Teleop6322 extends OpMode {
 
+    ElapsedTime runtime = new ElapsedTime();
+
     //Drive Train Motor Declarations
     DcMotor FrontLeft;
     DcMotor FrontRight;
@@ -28,7 +31,7 @@ public class Teleop6322 extends OpMode {
     DcMotor right;
     DcMotor left;
 
-    //Intake Motor Declaration(s)
+    //Intake Motor Declaration
     DcMotor intake;
 
     //Color Sensor Declarations
@@ -43,10 +46,11 @@ public class Teleop6322 extends OpMode {
     CRServo rightPusher;
     CRServo leftPusher;
 
-    int c1 = 0;
-    int c2 = 0;
-    int c3 = -1;
-    int c4 = -1;
+    int c1 = 0;     //Left CRS Counter
+    int c2 = 0;     //Right CRS Counter
+    int c3 = -1;    //Shooter Counter
+    int c4 = -1;    //Intake Motor Out Counter
+    int c5 = -1;    //Intake Motor In Counter
     @Override
     public void init() {
 
@@ -110,34 +114,34 @@ public class Teleop6322 extends OpMode {
 
         //Left Continuous Rotation Servo
         if (gamepad1.x && c1 == 0) {
-            leftPusher.setPower(-1.0);
-            sleep(2000);
+            while (runtime.time() < 2)
+                leftPusher.setPower(-1.0);
             leftPusher.setPower(0);
             c1 = 1;
         }
         else if (gamepad1.x && c1 == 1) {
-            leftPusher.setPower(1.0);
-            sleep(2000);
+            while (runtime.time() < 2)
+                leftPusher.setPower(1.0);
             leftPusher.setPower(0);
             c1 = 0;
         }
 
         //Right Continuous Rotation Servo
         if (gamepad1.b && c2 == 0) {
-            rightPusher.setPower(1.0);
-            sleep(2000);
+            while (runtime.time() < 2)
+                rightPusher.setPower(1.0);
             rightPusher.setPower(0);
             c2 = 1;
         }
         else if (gamepad1.b && c2 == 1) {
-            rightPusher.setPower(-1.0);
-            sleep(2000);
+            while (runtime.time() < 2)
+                rightPusher.setPower(-1.0);
             rightPusher.setPower(0);
             c2 = 0;
         }
 
         //Shooting Mechanism Motors Function
-        if (gamepad1.a) {
+        if (gamepad1.dpad_up) {
             c3 *= -1;
             sleep(250);
         }
@@ -150,14 +154,24 @@ public class Teleop6322 extends OpMode {
             left.setPower(0);
         }
 
-        //Intake Motor Function
-        if (gamepad1.y) {
+        //Intake Motor Function Out
+        if (gamepad1.dpad_right && c5 != 1) {
             c4 *= -1;
-            sleep(250);
+            sleep(300);
         }
         if (c4 == 1)
-            intake.setPower(1.0);
+            intake.setPower(-1.0);
         else if (c4 == -1)
+            intake.setPower(0);
+
+        //Intake Motor Function In
+        if (gamepad1.dpad_left && c4 != 1) {
+            c5 *= -1;
+            sleep(300);
+        }
+        if (c5 == 1)
+            intake.setPower(1.0);
+        else if (c5 == -1)
             intake.setPower(0);
 
         /*if (gamepad1.y)
