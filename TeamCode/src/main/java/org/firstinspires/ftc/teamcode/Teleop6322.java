@@ -115,7 +115,7 @@ public class Teleop6322 extends OpMode {
 
         //Left Continuous Rotation Servo
         if (gamepad1.x && c1 == 0) {
-            runtime1.startTime();
+            runtime1.reset();
             leftPusher.setPower(-1.0);
             c1 = 1;
         }
@@ -130,12 +130,11 @@ public class Teleop6322 extends OpMode {
             c1 = 0;
         if (runtime1.time() > 2) {
             leftPusher.setPower(0);
-            runtime1.reset();
         }
 
         //Right Continuous Rotation Servo
         if (gamepad1.b && c2 == 0) {
-            runtime2.startTime();
+            runtime2.reset();
             rightPusher.setPower(1.0);
             c2 = 1;
         }
@@ -150,7 +149,6 @@ public class Teleop6322 extends OpMode {
             c2 = 0;
         if (runtime2.time() > 2) {
             rightPusher.setPower(0);
-            runtime2.reset();
         }
 
         //Shooting Mechanism Motors Function
