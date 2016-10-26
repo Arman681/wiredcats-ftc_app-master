@@ -19,7 +19,8 @@ import static android.os.SystemClock.sleep;
 
 public class Teleop6322 extends OpMode {
 
-    ElapsedTime runtime = new ElapsedTime();
+    ElapsedTime runtime1 = new ElapsedTime();
+    ElapsedTime runtime2 = new ElapsedTime();
 
     //Drive Train Motor Declarations
     DcMotor FrontLeft;
@@ -114,38 +115,34 @@ public class Teleop6322 extends OpMode {
 
         //Left Continuous Rotation Servo
         if (gamepad1.x && c1 == 0) {
-            runtime.startTime();
+            runtime1.startTime();
             leftPusher.setPower(-1.0);
-            if (runtime.time() > 2)
-                leftPusher.setPower(0);
-            runtime.reset();
             c1 = 1;
         }
         else if (gamepad1.x && c1 == 1) {
-            runtime.startTime();
+            runtime1.startTime();
             leftPusher.setPower(1.0);
-            if (runtime.time() > 2)
-                leftPusher.setPower(0);
-            runtime.reset();
             c1 = 0;
+        }
+        if (runtime1.time() > 2) {
+            leftPusher.setPower(0);
+            runtime1.reset();
         }
 
         //Right Continuous Rotation Servo
         if (gamepad1.b && c2 == 0) {
-            runtime.startTime();
+            runtime2.startTime();
             rightPusher.setPower(1.0);
-            if (runtime.time() > 2)
-                rightPusher.setPower(0);
-            runtime.reset();
             c2 = 1;
         }
         else if (gamepad1.b && c2 == 1) {
-            runtime.startTime();
+            runtime2.startTime();
             rightPusher.setPower(-1.0);
-            if (runtime.time() > 2)
-                rightPusher.setPower(0);
-            runtime.reset();
             c2 = 0;
+        }
+        if (runtime2.time() > 2) {
+            rightPusher.setPower(0);
+            runtime2.reset();
         }
 
         //Shooting Mechanism Motors Function
