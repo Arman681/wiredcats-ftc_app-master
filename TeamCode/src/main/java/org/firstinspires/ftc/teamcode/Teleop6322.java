@@ -117,14 +117,14 @@ public class Teleop6322 extends OpMode {
         if (gamepad1.x && c1 == 0) {
             runtime1.startTime();
             leftPusher.setPower(-1.0);
-        }
-        else if (!gamepad1.x && c1 == 0)
             c1 = 1;
+        }
         else if (gamepad1.x && c1 == 1) {
             runtime1.startTime();
             leftPusher.setPower(1.0);
+            c1 = 2;
         }
-        else if (!gamepad1.x && c1 == 1)
+        else if (!gamepad1.x && c1 == 2)
             c1 = 0;
         if (runtime1.time() > 2) {
             leftPusher.setPower(0);
@@ -135,14 +135,14 @@ public class Teleop6322 extends OpMode {
         if (gamepad1.b && c2 == 0) {
             runtime2.startTime();
             rightPusher.setPower(1.0);
-        }
-        else if (!gamepad1.b && c2 == 0)
             c2 = 1;
+        }
         else if (gamepad1.b && c2 == 1) {
             runtime2.startTime();
             rightPusher.setPower(-1.0);
+            c2 = 2;
         }
-        else if (!gamepad1.b && c2 == 1)
+        else if (!gamepad1.b && c2 == 2)
             c2 = 0;
         if (runtime2.time() > 2) {
             rightPusher.setPower(0);
