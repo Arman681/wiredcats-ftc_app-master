@@ -22,7 +22,7 @@ public class Teleop6322 extends OpMode {
     ElapsedTime runtime1 = new ElapsedTime();
     ElapsedTime runtime2 = new ElapsedTime();
     ElapsedTime runtime3 = new ElapsedTime();
-    ElaspedTime runtime4 = new ElapsedTime();
+    ElapsedTime runtime4 = new ElapsedTime();
 
     //Drive Train Motor Declarations
     DcMotor FrontLeft;
@@ -197,8 +197,8 @@ public class Teleop6322 extends OpMode {
         if(c6 == 100)
         {
             double period = runtime4.time() / 100.0; 
-            telemetry.addData("cycle period: ", (period);
-            telemetry.addData("cycle frequency: ", (1/period);
+            telemetry.addData("cycle period: ", (period));
+            telemetry.addData("cycle frequency: ", (1/period));
                               
             c6 = 0;
         }
