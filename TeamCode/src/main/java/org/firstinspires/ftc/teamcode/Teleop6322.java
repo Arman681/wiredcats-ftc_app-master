@@ -21,6 +21,7 @@ public class Teleop6322 extends OpMode {
 
     ElapsedTime runtime1 = new ElapsedTime();
     ElapsedTime runtime2 = new ElapsedTime();
+    ElapsedTime runtime3 = new ElapsedTime();
 
     //Drive Train Motor Declarations
     DcMotor FrontLeft;
@@ -161,8 +162,11 @@ public class Teleop6322 extends OpMode {
             left.setPower(1.0);
         }
         else if (c3 == -1) {
-            right.setPower(0);
-            left.setPower(0);
+            int s = 1;
+            while (right.getPower() > 0 && left.getPower() > 0){
+                s *= 0.9;
+                right.setPower(s);
+            }
         }
 
         //Intake Motor Function Out
