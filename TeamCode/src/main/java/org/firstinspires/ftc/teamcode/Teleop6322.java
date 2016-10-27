@@ -51,7 +51,7 @@ public class Teleop6322 extends OpMode {
 
     int c1 = 0;     //Left CRS Counter
     int c2 = 0;     //Right CRS Counter
-    int c3 = -1;    //Shooter Counter
+    int c3 = 0;    //Shooter Counter
     int c4 = -1;    //Intake Motor Out Counter
     int c5 = -1;    //Intake Motor In Counter
     int c6 = 0;
@@ -158,18 +158,19 @@ public class Teleop6322 extends OpMode {
 
         //Shooting Mechanism Motors Function
         if (gamepad1.dpad_up) {
-            c3 *= -1;
-            sleep(250);
-        }
-        if (c3 == 1) {
             right.setPower(1.0);
             left.setPower(1.0);
+            c3 = 1;
+            sleep(250);
         }
-        else if (c3 == -1) {
-            int s = 1;
-            while (right.getPower() > 0 && left.getPower() > 0){
-                s *= 0.9;
-                right.setPower(s);
+        else if (!gamepad1.dpad_up && c3 == 1) {
+            c3 = 2;
+        }
+        else if (gamepad1.dpad_up && c3 == 2) {
+            for (int x = 1; x > 0; x *= 0.5){
+                right.setPower(x);
+                left.setPower(x);
+                sleep(250);
             }
         }
 
