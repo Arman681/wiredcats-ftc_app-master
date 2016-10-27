@@ -196,7 +196,10 @@ public class Teleop6322 extends OpMode {
         c6++;
         if(c6 == 100)
         {
-            telemetry.addData("cycle frequency: ", (runtime4.time() / 100);
+            double period = runtime4.time() / 100.0; 
+            telemetry.addData("cycle period: ", (period);
+            telemetry.addData("cycle frequency: ", (1/period);
+                              
             c6 = 0;
         }
         /*if (gamepad1.y)
