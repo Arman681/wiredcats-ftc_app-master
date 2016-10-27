@@ -90,7 +90,7 @@ public class Teleop6322 extends OpMode {
 
     @Override
     public void loop() {
-        if (c6 = 0)
+        if (c6 == 0)
             runtime4.reset();
         
         float lefty1 = -gamepad1.left_stick_y;
@@ -194,7 +194,7 @@ public class Teleop6322 extends OpMode {
             intake.setPower(0);
         
         c6++;
-        if(c6 = 100)
+        if(c6 == 100)
         {
             telemetry.addData("cycle frequency: ", (runtime4.time() / 100);
             c6 = 0;
