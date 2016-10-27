@@ -22,6 +22,7 @@ public class Teleop6322 extends OpMode {
     ElapsedTime runtime1 = new ElapsedTime();
     ElapsedTime runtime2 = new ElapsedTime();
     ElapsedTime runtime3 = new ElapsedTime();
+    ElaspedTime runtime4 = new ElapsedTime();
 
     //Drive Train Motor Declarations
     DcMotor FrontLeft;
@@ -53,6 +54,7 @@ public class Teleop6322 extends OpMode {
     int c3 = -1;    //Shooter Counter
     int c4 = -1;    //Intake Motor Out Counter
     int c5 = -1;    //Intake Motor In Counter
+    int c6 = 0;
     @Override
     public void init() {
 
@@ -88,7 +90,9 @@ public class Teleop6322 extends OpMode {
 
     @Override
     public void loop() {
-
+        if (c6 = 0)
+            runtime4.reset();
+        
         float lefty1 = -gamepad1.left_stick_y;
         float righty1 = -gamepad1.right_stick_y;
 
@@ -188,7 +192,13 @@ public class Teleop6322 extends OpMode {
             intake.setPower(1.0);
         else if (c5 == -1)
             intake.setPower(0);
-
+        
+        c6++;
+        if(c6 = 100)
+        {
+            telemetry.addData("cycle frequency: ", (runtime4.time() / 100);
+            c6 = 0;
+        }
         /*if (gamepad1.y)
             rightPusher.setDirection(DcMotorSimple.Direction.FORWARD);
         else if (gamepad1.b)
