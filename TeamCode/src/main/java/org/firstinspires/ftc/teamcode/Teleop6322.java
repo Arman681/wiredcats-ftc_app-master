@@ -167,7 +167,7 @@ public class Teleop6322 extends OpMode {
             c3 = 2;
         }
         else if (gamepad1.dpad_up && c3 == 2) {
-            for (int x = 1; x > 0; x *= 0.5){
+            for (double x = 1.0; x > 0; x *= 0.5){
                 right.setPower(x);
                 left.setPower(x);
                 sleep(250);
