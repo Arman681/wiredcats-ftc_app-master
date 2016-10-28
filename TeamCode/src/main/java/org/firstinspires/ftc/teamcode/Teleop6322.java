@@ -176,8 +176,6 @@ public class Teleop6322 extends OpMode {
                 c3 = 1;
             else
                 c3 = 2;
-            telemetry.addData("Power of Right Motor for Shooter: " + right.getPower(), null);
-            telemetry.addData("Power of Left Motor for Shooter: " + left.getPower(), null);
         }
         else if (gamepad1.dpad_up && c3 == 2) {
             c3 = 3;
@@ -229,6 +227,10 @@ public class Teleop6322 extends OpMode {
                               
             c6 = 0;
         }
+        telemetry.addData("Power of Right Motor for Shooter: " + right.getPower(), null);
+        telemetry.addData("Power of Left Motor for Shooter: " + left.getPower(), null);
+        telemetry.addData("Power of Intake Motor: " + intake.getPower(), null);
+        telemetry.addData("Counter for Shooting Mechanism Motors: " + c3, null);
         /*if (gamepad1.y)
             rightPusher.setDirection(DcMotorSimple.Direction.FORWARD);
         else if (gamepad1.b)
