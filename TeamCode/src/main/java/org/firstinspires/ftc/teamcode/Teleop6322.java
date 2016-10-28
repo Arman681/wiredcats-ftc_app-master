@@ -54,7 +54,8 @@ public class Teleop6322 extends OpMode {
     int c4 = -1;    //Intake Motor Out Counter
     int c5 = -1;    //Intake Motor In Counter
     int c6 = 0;     //Period and Frequency Counter
-    double z = 0.05; //Right and Left Motors deceleration Counter
+    double z1 = 0.05; //Right and Left Motors deceleration Counter
+    double z2 = 0.05; //Right and Left Motors acceleration Counter
     @Override
     public void init() {
 
@@ -158,27 +159,39 @@ public class Teleop6322 extends OpMode {
 
         //Shooting Mechanism Motors Function
         if (gamepad1.dpad_up && c3 == 0) {
-            right.setPower(1.0);
-            left.setPower(1.0);
             c3 = 1;
-            sleep(250);
         }
         else if (!gamepad1.dpad_up && c3 == 1) {
-            c3 = 2;
+            z2 *= 0.05;
+            if (z2 > 0) {
+                right.setPower(z2);
+                left.setPower(z2);
+            }
+            else {
+                right.setPower(1.0);
+                left.setPower(1.0);
+                z2 = 0.05;
+            }
+            if (right.getPower() < 1 && left.getPower() < 1)
+                c3 = 1;
+            else
+                c3 = 2;
+            telemetry.addData("Power of Right Motor for Shooter: " + right.getPower(), null);
+            telemetry.addData("Power of Left Motor for Shooter: " + left.getPower(), null);
         }
         else if (gamepad1.dpad_up && c3 == 2) {
             c3 = 3;
         }
         else if (!gamepad1.dpad_up && c3 == 3) {
-            z *= 1.2;
-            if ((1 - z) > 0) {
-                right.setPower(1 - z);
-                left.setPower(1 - z);
+            z1 *= 1.2;
+            if ((1 - z1) > 0) {
+                right.setPower(1 - z1);
+                left.setPower(1 - z1);
             }
             else {
                 right.setPower(0);
                 left.setPower(0);
-                z = 0.05;
+                z1 = 0.05;
             }
             if (right.getPower() > 0 && left.getPower() > 0)
                 c3 = 3;
@@ -187,7 +200,7 @@ public class Teleop6322 extends OpMode {
             sleep(500);
         }
 
-        //Intake Motor Function Out
+        /*Intake Motor Function Out
         if (gamepad1.dpad_right && c5 != 1) {
             c4 *= -1;
             sleep(300);
@@ -196,7 +209,7 @@ public class Teleop6322 extends OpMode {
             intake.setPower(-1.0);
         else if (c4 == -1)
             intake.setPower(0);
-
+        */
         //Intake Motor Function In
         if (gamepad1.dpad_left && c4 != 1) {
             c5 *= -1;
