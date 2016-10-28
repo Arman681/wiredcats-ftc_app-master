@@ -157,7 +157,7 @@ public class Teleop6322 extends OpMode {
         }
 
         //Shooting Mechanism Motors Function
-        if (gamepad1.dpad_up) {
+        if (gamepad1.dpad_up && c3 == 0) {
             right.setPower(1.0);
             left.setPower(1.0);
             c3 = 1;
