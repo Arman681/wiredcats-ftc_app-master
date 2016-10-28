@@ -158,8 +158,8 @@ public class Teleop6322 extends OpMode {
 
         //Shooting Mechanism Motors Function
         if (gamepad1.dpad_up && c3 == 0) {
-            right.setPower(0.5);
-            left.setPower(0.5);
+            right.setPower(1.0);
+            left.setPower(1.0);
             c3 = 1;
             sleep(250);
         }
@@ -170,24 +170,21 @@ public class Teleop6322 extends OpMode {
             c3 = 3;
         }
         else if (!gamepad1.dpad_up && c3 == 3) {
-            for(double x = 0.5; x <= -0.1; x-=0.1) {
-                right.setPower(x);
-                left.setPower(x);
-                sleep(1000);
+            z *= 1.2;
+            if ((1 - z) > 0) {
+                right.setPower(1 - z);
+                left.setPower(1 - z);
+            }
+            else {
+                right.setPower(0);
+                left.setPower(0);
+                z = 0.05;
             }
             if (right.getPower() > 0 && left.getPower() > 0)
                 c3 = 3;
             else
                 c3 = 0;
-
-            /*z *= 1.3;
-            right.setPower(1 - z);
-            left.setPower(1 - z);
             sleep(500);
-            if (right.getPower() > 0 && left.getPower() > 0)
-                c3 = 3;
-            else
-                c3 = 0; */
         }
 
         //Intake Motor Function Out
