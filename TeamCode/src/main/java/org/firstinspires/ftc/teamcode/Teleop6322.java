@@ -22,7 +22,6 @@ public class Teleop6322 extends OpMode {
     ElapsedTime runtime1 = new ElapsedTime();
     ElapsedTime runtime2 = new ElapsedTime();
     ElapsedTime runtime3 = new ElapsedTime();
-    ElapsedTime runtime4 = new ElapsedTime();
 
     //Drive Train Motor Declarations
     DcMotor FrontLeft;
@@ -51,10 +50,11 @@ public class Teleop6322 extends OpMode {
 
     int c1 = 0;     //Left CRS Counter
     int c2 = 0;     //Right CRS Counter
-    int c3 = 0;    //Shooter Counter
+    int c3 = 0;     //Shooter Counter
     int c4 = -1;    //Intake Motor Out Counter
     int c5 = -1;    //Intake Motor In Counter
-    int c6 = 0;
+    int c6 = 0;     //Period and Frequency Counter
+    double z = 0.05; //Right and Left Motors deceleration Counter
     @Override
     public void init() {
 
@@ -91,7 +91,7 @@ public class Teleop6322 extends OpMode {
     @Override
     public void loop() {
         if (c6 == 0)
-            runtime4.reset();
+            runtime3.reset();
         
         float lefty1 = -gamepad1.left_stick_y;
         float righty1 = -gamepad1.right_stick_y;
@@ -167,11 +167,16 @@ public class Teleop6322 extends OpMode {
             c3 = 2;
         }
         else if (gamepad1.dpad_up && c3 == 2) {
-            for (double x = 1.0; x > 0; x *= 0.5){
-                right.setPower(x);
-                left.setPower(x);
-                sleep(250);
-            }
+            c3 = 3;
+        }
+        else if (!gamepad1.dpad_up && c3 == 3) {
+            z *= 1.3;
+            right.setPower(1 - z);
+            left.setPower(1 - z);
+            if (right.getPower() > 0 && left.getPower() > 0)
+                c3 = 3;
+            else
+                c3 = 0;
         }
 
         //Intake Motor Function Out
@@ -197,7 +202,7 @@ public class Teleop6322 extends OpMode {
         c6++;
         if(c6 == 100)
         {
-            double period = runtime4.time() / 100.0; 
+            double period = runtime3.time() / 100.0;
             telemetry.addData("cycle period: ", (period));
             telemetry.addData("cycle frequency: ", (1/period));
                               
