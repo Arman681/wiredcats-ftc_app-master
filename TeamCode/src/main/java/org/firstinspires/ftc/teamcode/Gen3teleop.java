@@ -102,9 +102,15 @@ public class Gen3teleop extends OpMode {
             sleep(300);
         }
         if (c4 == 1)
-            intake.setPower(-1.0);
+            intake.setPower(1.0);
         else if (c4 == -1)
             intake.setPower(0);
+
+        //Conveyor Belt Function
+        if (gamepad2.dpad_right)
+            conveyor.setPower(-1.0);
+        else
+            conveyor.setPower(0.0);
 
         /*Intake Motor Function Out
         if (gamepad2.dpad_right) {
