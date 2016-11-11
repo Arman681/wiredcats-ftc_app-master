@@ -25,10 +25,12 @@ import org.firstinspires.ftc.robotcontroller.internal.LinearOpModeCamera;
  * <p/>
  * Enables control of the robot via the gamepad
  */
-@Autonomous(name="6322AutoTest", group="Autonomous")
+@Autonomous(name="TestAutoCS", group="Autonomous")
 //@Disabled
 
-public class Test20166322 extends LinearOpModeCamera {
+public class TestAutoCS extends LinearOpModeCamera {
+
+    ElapsedTime runtime1 = new ElapsedTime();
 
     //Drive Train Motor Declarations
     DcMotor FrontRight;
@@ -130,11 +132,16 @@ public class Test20166322 extends LinearOpModeCamera {
         yawPIDController.setPID(YAW_PID_P, YAW_PID_I, YAW_PID_D);*/
 
         waitForStart();
-        moveBySteps(0.8, 24);
-        turnBySteps(0.6, -22);
-        moveBySteps(0.8, 44);
-        turnBySteps(0.6, 22);
-        moveUntil(0.3, "red");
+        moveUntil(0.1, "red");
+        moveByTime(0.0, 1500);
+        moveBySteps(0.2, 3.5);
+        runtime1.reset();
+        if(runtime1.time() > 0)
+            leftPusher.setPower(1.0);
+        else if (runtime1.time() > 3)
+            leftPusher.setPower(0);
+
+
 
         //Starts autonomous using camera
         /*if (isCameraAvailable()) {
@@ -174,15 +181,22 @@ public class Test20166322 extends LinearOpModeCamera {
 
     }
 
+    public void moveLeftPusher() {
+        runtime1.reset();
+        leftPusher.setPower(1.0);
+        if (runtime1.time() > 2)
+            leftPusher.setPower(0);
+    }
+
     public void moveByTime(double power, int time) throws InterruptedException {
 
-		for(DcMotor motor : driveTrain)
-    		motor.setPower(power);
+        for(DcMotor motor : driveTrain)
+            motor.setPower(power);
 
-    	sleep(time);
+        sleep(time);
 
-		for(DcMotor motor : driveTrain)
-    		motor.setPower(0);
+        for(DcMotor motor : driveTrain)
+            motor.setPower(0);
     }
 
     public void moveUntil(double power, String color) throws InterruptedException {
@@ -208,10 +222,17 @@ public class Test20166322 extends LinearOpModeCamera {
                     if (CSleft.red() > 8 && CSleft.green() > 8 && CSleft.blue() > 8)
                         dec = true;
 
-            if (color.equals("red"))
-                while (!dec)
-                    if ((CSleft.red()*8) > (CSleft.blue()*8))
+            if (color.equals("red")) {
+                while (!dec) {
+                    if (((CSleft.red() * 8) > (CSleft.blue() * 8)) || ((CSleft.red() * 8) > 4)) {
                         dec = true;
+                    }
+                    sleep(300);
+                }
+                for (DcMotor motor : driveTrain)
+                    motor.setPower(0);
+                break;
+            }
 
             if (color.equals("blue"))
                 while (!dec)
@@ -220,8 +241,8 @@ public class Test20166322 extends LinearOpModeCamera {
 
             for (DcMotor motor : driveTrain)
                 motor.setPower(0);
+
             idle();
-            sleep(750);
         }
     }
 
