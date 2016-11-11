@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.OpticalDistanceSensor;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import static android.os.SystemClock.sleep;
@@ -48,6 +49,8 @@ public class Teleop6322 extends OpMode {
     CRServo rightPusher;
     CRServo leftPusher;
 
+    Servo winch;
+
     int c1 = 0;     //Left CRS Counter
     int c2 = 0;     //Right CRS Counter
     int c3 = 0;     //Shooter Counter
@@ -74,6 +77,11 @@ public class Teleop6322 extends OpMode {
         CSleft = hardwareMap.colorSensor.get("csl");
         CSright = hardwareMap.colorSensor.get("csr");
 
+        CSleft.enableLed(true);
+        CSright.enableLed(true);
+        CSleft.enableLed(false);
+        CSright.enableLed(false);
+
         //Optical Distance Sensors
         ODSleft = hardwareMap.opticalDistanceSensor.get("odsleft");
         ODSright = hardwareMap.opticalDistanceSensor.get("odsright");
@@ -85,8 +93,13 @@ public class Teleop6322 extends OpMode {
         //Intake Motor(s)
         intake = hardwareMap.dcMotor.get("in");
 
+        //Winch
+        winch = hardwareMap.servo.get("w");
+
         BackRight.setDirection(DcMotor.Direction.REVERSE);
         FrontRight.setDirection(DcMotor.Direction.REVERSE);
+
+        winch.setPosition(0.5);
     }
 
     @Override
@@ -162,18 +175,18 @@ public class Teleop6322 extends OpMode {
             c3 = 1;
         }
         else if (!gamepad2.dpad_up && c3 == 1) {
-            z2 *= 1.2;
-            if (z2 > 0) {
+            z2 *= 1.4;
+            if (z2 < 0.4) {
                 right.setPower(z2);
                 left.setPower(z2);
                 sleep(500);
             }
             else {
-                right.setPower(1.0);
-                left.setPower(1.0);
+                right.setPower(0.4);
+                left.setPower(0.4);
                 z2 = 0.05;
             }
-            if (right.getPower() < 1 && left.getPower() < 1)
+            if (right.getPower() < 0.4 && left.getPower() < 0.4)
                 c3 = 1;
             else
                 c3 = 2;
@@ -182,10 +195,10 @@ public class Teleop6322 extends OpMode {
             c3 = 3;
         }
         else if (!gamepad2.dpad_up && c3 == 3) {
-            z1 *= 1.2;
-            if ((1 - z1) > 0) {
-                right.setPower(1 - z1);
-                left.setPower(1 - z1);
+            z1 *= 1.4;
+            if ((0.4 - z1) > 0) {
+                right.setPower(0.4 - z1);
+                left.setPower(0.4 - z1);
             }
             else {
                 right.setPower(0);
@@ -207,6 +220,12 @@ public class Teleop6322 extends OpMode {
             intake.setPower(1.0);
         else
             intake.setPower(0);
+
+        //Conveyor Belt Function
+        if (gamepad2.a)
+            winch.setPosition(1.0);
+        else if (gamepad2.b)
+            winch.setPosition(0.0);
         
         c6++;
         if(c6 == 100)
@@ -221,6 +240,7 @@ public class Teleop6322 extends OpMode {
         telemetry.addData("Power of Left Motor for Shooter: " + left.getPower(), null);
         telemetry.addData("Power of Intake Motor: " + intake.getPower(), null);
         telemetry.addData("Counter for Shooting Mechanism Motors: " + c3, null);
+        telemetry.addData("Red Value: " + (CSleft.red()*64), null);
         /*if (gamepad1.y)
             rightPusher.setDirection(DcMotorSimple.Direction.FORWARD);
         else if (gamepad1.b)
