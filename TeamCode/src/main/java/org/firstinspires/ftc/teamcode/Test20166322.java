@@ -130,11 +130,11 @@ public class Test20166322 extends LinearOpModeCamera {
         yawPIDController.setPID(YAW_PID_P, YAW_PID_I, YAW_PID_D);*/
 
         waitForStart();
-        moveBySteps(0.8, 22);
+        moveBySteps(0.8, 24);
         turnBySteps(0.6, -22);
         moveBySteps(0.8, 44);
         turnBySteps(0.6, 22);
-        moveUntil(0.7, "red");
+        moveUntil(0.3, "red");
 
         //Starts autonomous using camera
         /*if (isCameraAvailable()) {
@@ -221,7 +221,7 @@ public class Test20166322 extends LinearOpModeCamera {
             for (DcMotor motor : driveTrain)
                 motor.setPower(0);
             idle();
-            sleep(100);
+            sleep(750);
         }
     }
 
