@@ -179,7 +179,7 @@ public class Teleop6322 extends OpMode {
             if (z2 < 0.4) {
                 right.setPower(z2);
                 left.setPower(z2);
-                sleep(500);
+                //sleep(500);
             }
             else {
                 right.setPower(0.4);
@@ -209,7 +209,7 @@ public class Teleop6322 extends OpMode {
                 c3 = 3;
             else
                 c3 = 0;
-            sleep(500);
+            //sleep(500);
         }
 
         //Intake Motor Function Out
