@@ -57,6 +57,7 @@ public class Teleop6322 extends OpMode {
     int c4 = -1;    //Intake Motor Out Counter
     int c5 = -1;    //Intake Motor In Counter
     int c6 = 0;     //Period and Frequency Counter
+    int c7 = 0;     //Winch Servo Position Counter
     double z1 = 0.05; //Right and Left Motors deceleration Counter
     double z2 = 0.05; //Right and Left Motors acceleration Counter
     @Override
@@ -98,8 +99,6 @@ public class Teleop6322 extends OpMode {
 
         BackRight.setDirection(DcMotor.Direction.REVERSE);
         FrontRight.setDirection(DcMotor.Direction.REVERSE);
-
-        winch.setPosition(0.5);
     }
 
     @Override
@@ -222,11 +221,11 @@ public class Teleop6322 extends OpMode {
             intake.setPower(0);
 
         //Conveyor Belt Function
-        if (gamepad2.a)
+        if (gamepad2.right_trigger == 1)
             winch.setPosition(1.0);
-        else if (gamepad2.b)
+        else if (gamepad2.left_trigger == 1)
             winch.setPosition(0.0);
-        
+
         c6++;
         if(c6 == 100)
         {
