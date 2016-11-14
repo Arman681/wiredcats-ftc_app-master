@@ -115,10 +115,10 @@ public class Teleop6322 extends OpMode {
             BackLeft.setPower(lefty1);
         }
         else {
-         for (int i = 1; i > .0001; i *= .1) {
-             FrontLeft.setPower(lefty1*i);
-             BackLeft.setPower(lefty1*i);
-         }
+            for (int i = 1; i > .0001; i *= .1) {
+                FrontLeft.setPower(lefty1*i);
+                BackLeft.setPower(lefty1*i);
+            }
         }
         if (righty1 < -.2 || righty1 > .2) {
             FrontRight.setPower(righty1);
@@ -165,14 +165,12 @@ public class Teleop6322 extends OpMode {
         }
         else if (!gamepad1.b && c2 == 3)
             c2 = 0;
-        if (runtime2.time() > 2) {
+        if (runtime2.time() > 2)
             rightPusher.setPower(0);
-        }
 
         //Shooting Mechanism Motors Function
-        if (gamepad2.dpad_up && c3 == 0) {
+        if (gamepad2.dpad_up && c3 == 0)
             c3 = 1;
-        }
         else if (!gamepad2.dpad_up && c3 == 1) {
             z2 *= 1.4;
             if (z2 < 0.4) {
@@ -190,9 +188,8 @@ public class Teleop6322 extends OpMode {
             else
                 c3 = 2;
         }
-        else if (gamepad2.dpad_up && c3 == 2) {
+        else if (gamepad2.dpad_up && c3 == 2)
             c3 = 3;
-        }
         else if (!gamepad2.dpad_up && c3 == 3) {
             z1 *= 1.4;
             if ((0.4 - z1) > 0) {
