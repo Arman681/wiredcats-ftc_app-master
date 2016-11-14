@@ -139,9 +139,7 @@ public class TestAutoCS extends LinearOpModeCamera {
         moveBySteps(0.2, 3.5);
         leftPusher.setPower(-1.0);
         runtime1.reset();
-        while (runtime1.time() < 2){
-
-        }
+        while (runtime1.time() < 2)
         leftPusher.setPower(0);
 
 
