@@ -209,44 +209,49 @@ public class TestAutoCS extends LinearOpModeCamera {
 
         float hsvValues[] = {0F, 0F, 0F};
 
-        while (opModeIsActive()) {
-
-            telemetry.addData("Iterations " + ++c, null);
-            telemetry.addData("LED", true ? "On" : "Off");
-            telemetry.addData("Red  ", CSleft.red()*8);
-            telemetry.addData("Blue ", CSleft.blue()*8);
-            telemetry.update();
+            //telemetry.addData("Iterations " + ++c, null);
 
             for (DcMotor motor : driveTrain)
                 motor.setPower(power);
 
-            if (color.equals("white"))
-                while (!dec)
-                    if (CSleft.red() > 8 && CSleft.green() > 8 && CSleft.blue() > 8)
+            if (color.equals("white")) {
+                while (!dec) {
+                    if (CSleft.red() > 8 && CSleft.green() > 8 && CSleft.blue() > 8) {
                         dec = true;
+                    }
+                    telemetry.addData("LED", true ? "On" : "Off");
+                    telemetry.addData("Red  ", CSleft.red() * 8);
+                    telemetry.addData("Blue ", CSleft.blue() * 8);
+                    telemetry.update();
+                }
+            }
 
             if (color.equals("red")) {
                 while (!dec) {
                     if (((CSleft.red() * 8) > (CSleft.blue() * 8)) || ((CSleft.red() * 8) > 4)) {
                         dec = true;
                     }
-                    sleep(300);
+                    telemetry.addData("LED", true ? "On" : "Off");
+                    telemetry.addData("Red  ", CSleft.red()*8);
+                    telemetry.addData("Blue ", CSleft.blue()*8);
+                    telemetry.update();
                 }
-                for (DcMotor motor : driveTrain)
-                    motor.setPower(0);
-                break;
             }
 
-            if (color.equals("blue"))
-                while (!dec)
-                    if ((CSleft.blue()*8) > (CSleft.red()*8))
+            if (color.equals("blue")) {
+                while (!dec) {
+                    if (((CSleft.blue() * 8) > (CSleft.red() * 8)) || ((CSleft.blue() * 8) > 4)) {
                         dec = true;
+                    }
+                    telemetry.addData("LED", true ? "On" : "Off");
+                    telemetry.addData("Red  ", CSleft.red()*8);
+                    telemetry.addData("Blue ", CSleft.blue()*8);
+                    telemetry.update();
+                }
+            }
 
             for (DcMotor motor : driveTrain)
                 motor.setPower(0);
-
-            idle();
-        }
     }
 
     public void moveBySteps(double power, double inches) throws InterruptedException {
