@@ -134,9 +134,10 @@ public class TestAutoCS extends LinearOpModeCamera {
         yawPIDController.setPID(YAW_PID_P, YAW_PID_I, YAW_PID_D);*/
 
         waitForStart();
-        moveUntil(0.1, "red");
-        moveByTime(0.0, 1500);
-        moveBySteps(0.2, 3.5);
+        moveUntil(0.05, "red");
+        moveByTime(0.0, 500);
+        moveBySteps(0.2, 5.5);
+        moveByTime(0.0, 500);
         leftPusher.setPower(-1.0);
         runtime1.reset();
         while (runtime1.time() < 1.5);
@@ -178,13 +179,6 @@ public class TestAutoCS extends LinearOpModeCamera {
             stopCamera();
         }*/
 
-    }
-
-    public void moveLeftPusher() {
-        runtime1.reset();
-        leftPusher.setPower(1.0);
-        if (runtime1.time() > 2)
-            leftPusher.setPower(0);
     }
 
     public void moveByTime(double power, int time) throws InterruptedException {
