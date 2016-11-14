@@ -139,12 +139,8 @@ public class TestAutoCS extends LinearOpModeCamera {
         moveBySteps(0.2, 3.5);
         leftPusher.setPower(-1.0);
         runtime1.reset();
-        while (runtime1.time() < 2);
+        while (runtime1.time() < 1.5);
         leftPusher.setPower(0);
-
-
-
-
 
         //Starts autonomous using camera
         /*if (isCameraAvailable()) {
@@ -216,9 +212,8 @@ public class TestAutoCS extends LinearOpModeCamera {
 
             if (color.equals("white")) {
                 while (!dec) {
-                    if (CSleft.red() > 8 && CSleft.green() > 8 && CSleft.blue() > 8) {
+                    if (CSleft.red() > 8 && CSleft.green() > 8 && CSleft.blue() > 8)
                         dec = true;
-                    }
                     telemetry.addData("LED", true ? "On" : "Off");
                     telemetry.addData("Red  ", CSleft.red() * 8);
                     telemetry.addData("Blue ", CSleft.blue() * 8);
@@ -228,9 +223,8 @@ public class TestAutoCS extends LinearOpModeCamera {
 
             if (color.equals("red")) {
                 while (!dec) {
-                    if (((CSleft.red() * 8) > (CSleft.blue() * 8)) || ((CSleft.red() * 8) > 4)) {
+                    if (((CSleft.red() * 8) > (CSleft.blue() * 8)) || ((CSleft.red() * 8) > 4))
                         dec = true;
-                    }
                     telemetry.addData("LED", true ? "On" : "Off");
                     telemetry.addData("Red  ", CSleft.red()*8);
                     telemetry.addData("Blue ", CSleft.blue()*8);
@@ -240,9 +234,8 @@ public class TestAutoCS extends LinearOpModeCamera {
 
             if (color.equals("blue")) {
                 while (!dec) {
-                    if (((CSleft.blue() * 8) > (CSleft.red() * 8)) || ((CSleft.blue() * 8) > 4)) {
+                    if (((CSleft.blue() * 8) > (CSleft.red() * 8)) || ((CSleft.blue() * 8) > 4))
                         dec = true;
-                    }
                     telemetry.addData("LED", true ? "On" : "Off");
                     telemetry.addData("Red  ", CSleft.red()*8);
                     telemetry.addData("Blue ", CSleft.blue()*8);
