@@ -20,9 +20,8 @@ import static android.os.SystemClock.sleep;
 
 public class Teleop6322 extends OpMode {
 
-    ElapsedTime runtime1 = new ElapsedTime();
-    ElapsedTime runtime2 = new ElapsedTime();
-    ElapsedTime runtime3 = new ElapsedTime();
+    ElapsedTime runtime1 = new ElapsedTime(); //Left Continuous Rotation Servo Timer
+    ElapsedTime runtime2 = new ElapsedTime(); //Right Continuous Rotation Servo Timer
 
     //Drive Train Motor Declarations
     DcMotor FrontLeft;
@@ -37,6 +36,9 @@ public class Teleop6322 extends OpMode {
     //Intake Motor Declaration
     DcMotor intake;
 
+    //Linear Slide Motor Declaration
+    //DcMotor slide;
+
     //Color Sensor Declarations
     ColorSensor CSleft;
     ColorSensor CSright;
@@ -49,14 +51,14 @@ public class Teleop6322 extends OpMode {
     CRServo rightPusher;
     CRServo leftPusher;
 
-    Servo winch;
+    CRServo winch;
+    Servo lock;
 
     int c1 = 0;     //Left CRS Counter
     int c2 = 0;     //Right CRS Counter
     int c3 = 0;     //Shooter Counter
-    int c4 = -1;    //Intake Motor Out Counter
-    int c5 = -1;    //Intake Motor In Counter
-    int c6 = 0;     //Period and Frequency Counter
+    int c4 = 0;    //Intake Motor In Counter
+    int c5 = 0;    //Intake Motor Out Counter
     int c7 = 0;     //Winch Servo Position Counter
     double z1 = 0.05; //Right and Left Motors deceleration Counter
     double z2 = 0.05; //Right and Left Motors acceleration Counter
@@ -73,6 +75,9 @@ public class Teleop6322 extends OpMode {
         right = hardwareMap.dcMotor.get("r");
         left = hardwareMap.dcMotor.get("l");
         right.setDirection(DcMotorSimple.Direction.REVERSE);
+
+        //Linear Slide Motor
+        //slide = hardwareMap.dcMotor.get("s");
 
         //Color Sensors
         CSleft = hardwareMap.colorSensor.get("csl");
@@ -95,7 +100,10 @@ public class Teleop6322 extends OpMode {
         intake = hardwareMap.dcMotor.get("in");
 
         //Winch
-        winch = hardwareMap.servo.get("w");
+        winch = hardwareMap.crservo.get("w");
+
+        //Lock
+        lock = hardwareMap.servo.get("k");
 
         BackRight.setDirection(DcMotor.Direction.REVERSE);
         FrontRight.setDirection(DcMotor.Direction.REVERSE);
@@ -103,11 +111,19 @@ public class Teleop6322 extends OpMode {
 
     @Override
     public void loop() {
-        if (c6 == 0)
-            runtime3.reset();
-        
+
+        //Lock Mechanism Function
+        lock.setPosition(1.0);
+        if (gamepad2.a)
+            lock.setPosition(1.0);
+        else if (gamepad2.b)
+            lock.setPosition(0.0);
+
         float lefty1 = -gamepad1.left_stick_y;
         float righty1 = -gamepad1.right_stick_y;
+
+        float lefty2 = -gamepad2.left_stick_y;
+        float righty2 = -gamepad2.right_stick_y;
 
         //Drive Train
         if (lefty1 < -.2 || lefty1 > .2) {
@@ -208,36 +224,48 @@ public class Teleop6322 extends OpMode {
             //sleep(500);
         }
 
-        //Intake Motor Function Out
-        if (gamepad2.dpad_right)
-            intake.setPower(-1.0);
         //Intake Motor Function In
-        else if (gamepad2.dpad_left)
+        if (gamepad2.dpad_left && c4 == 0) {
             intake.setPower(1.0);
-        else
+            c4 = 1;
+        }
+        else if (!gamepad2.dpad_left && c4 == 1)
+            c4 = 2;
+        else if (gamepad2.dpad_left && c4 == 2) {
             intake.setPower(0);
+            c4 = 3;
+        }
+        else if (!gamepad2.dpad_left && c4 == 3)
+            c4 = 0;
+        //Intake Motor Function Out
+        if (gamepad2.dpad_right && c5 == 0) {
+            intake.setPower(-1.0);
+            c5 = 1;
+        }
+        else if (!gamepad2.dpad_right && c5 == 1)
+            c5 = 2;
+        else if (gamepad2.dpad_right && c5 == 2) {
+            intake.setPower(0);
+            c5 = 3;
+        }
+        else if (!gamepad2.dpad_right && c5 == 3)
+            c5 = 0;
+
+        //Linear Slide Function
+        /*slide.setPower(righty2);*/
 
         //Conveyor Belt Function
         if (gamepad2.right_trigger == 1)
-            winch.setPosition(1.0);
+            winch.setPower(1.0);
         else if (gamepad2.left_trigger == 1)
-            winch.setPosition(0.0);
+            winch.setPower(-1.0);
 
-        c6++;
-        if(c6 == 100)
-        {
-            double period = runtime3.time() / 100.0;
-            telemetry.addData("cycle period: ", (period));
-            telemetry.addData("cycle frequency: ", (1/period));
-                              
-            c6 = 0;
-        }
-
+        //Telemetry Data
+        telemetry.addData("lock position: " + lock.getPosition(), null);
+        telemetry.addData("Conveyor Servo Power: " + winch.getPower(), null);
         telemetry.addData("Power of Right Motor for Shooter: " + right.getPower(), null);
         telemetry.addData("Power of Left Motor for Shooter: " + left.getPower(), null);
         telemetry.addData("Power of Intake Motor: " + intake.getPower(), null);
-        telemetry.addData("Counter for Shooting Mechanism Motors: " + c3, null);
-        telemetry.addData("Red Value: " + (CSleft.red()*64), null);
 
     }
 }
