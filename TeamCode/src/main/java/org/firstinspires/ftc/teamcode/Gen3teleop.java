@@ -91,8 +91,8 @@ public class Gen3teleop extends OpMode {
             left.setPower(0);
         }
         else if (c3 == 1) {
-            right.setPower(1.0);
-            left.setPower(1.0);
+            right.setPower(0.4);
+            left.setPower(0.4);
         }
 
         //Intake Motor Function In
@@ -122,7 +122,10 @@ public class Gen3teleop extends OpMode {
         else if (c5 == -1)
             intake.setPower(0);
         */
-        telemetry.addData("c3 count: " + c3, null);
-        telemetry.addData("c4 count: " + c4, null);
+
+        telemetry.addData("FrontLeft Power: " + frontleft.getPower(), null);
+        telemetry.addData("FrontRight Power: " + frontright.getPower(), null);
+        telemetry.addData("BackLeft Power: " + backleft.getPower(), null);
+        telemetry.addData("BackRight Power: " + backright.getPower(), null);
     }
 }
