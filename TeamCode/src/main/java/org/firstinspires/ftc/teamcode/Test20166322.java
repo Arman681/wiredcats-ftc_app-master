@@ -30,6 +30,8 @@ import org.firstinspires.ftc.robotcontroller.internal.LinearOpModeCamera;
 
 public class Test20166322 extends LinearOpModeCamera {
 
+    ElapsedTime runtime1 = new ElapsedTime();
+
     //Drive Train Motor Declarations
     DcMotor FrontRight;
     DcMotor FrontLeft;
@@ -37,6 +39,13 @@ public class Test20166322 extends LinearOpModeCamera {
     DcMotor BackLeft;
 
     final DcMotor[] driveTrain = new DcMotor[4];
+
+    //Shooting Mechanism Motor Declarations
+    DcMotor right;
+    DcMotor left;
+
+    //Intake Motor Declaration
+    DcMotor intake;
 
     //Color Sensor Declarations
     ColorSensor CSleft;
@@ -49,6 +58,9 @@ public class Test20166322 extends LinearOpModeCamera {
     //Continuous Rotation Servo Declarations
     CRServo rightPusher;
     CRServo leftPusher;
+
+    //Conveyor Servo Declaration
+    CRServo winch;
 
     int bnum = 0;
     int ds2 = 2;  // additional downsampling of the image
@@ -100,6 +112,14 @@ public class Test20166322 extends LinearOpModeCamera {
         BackRight.setDirection(DcMotor.Direction.REVERSE);
         FrontRight.setDirection(DcMotor.Direction.REVERSE);
 
+        //Shooting Mechanism Motors
+        right = hardwareMap.dcMotor.get("r");
+        left = hardwareMap.dcMotor.get("l");
+        right.setDirection(DcMotorSimple.Direction.REVERSE);
+
+        //Intake Motor(s)
+        intake = hardwareMap.dcMotor.get("in");
+
         //Color Sensors
         CSleft = hardwareMap.colorSensor.get("csl");
         CSright = hardwareMap.colorSensor.get("csr");
@@ -117,6 +137,9 @@ public class Test20166322 extends LinearOpModeCamera {
         rightPusher = hardwareMap.crservo.get("rp");
         leftPusher = hardwareMap.crservo.get("lp");
 
+        //Winch
+        winch = hardwareMap.crservo.get("w");
+
         /*navx_device = AHRS.getInstance(hardwareMap.deviceInterfaceModule.get("dim"),
                       NAVX_DIM_I2C_PORT,
                       AHRS.DeviceDataType.kProcessedData,
@@ -130,11 +153,53 @@ public class Test20166322 extends LinearOpModeCamera {
         yawPIDController.setPID(YAW_PID_P, YAW_PID_I, YAW_PID_D);*/
 
         waitForStart();
-        moveBySteps(0.8, 24);
+        moveByTime(0.2, 1300);
+        right.setPower(0.4);
+        left.setPower(0.4);
+        sleep(2000);
+        intake.setPower(1.0); //Intake
+        winch.setPower(1.0); //Activate Winch
+        sleep(1000);
+        winch.setPower(-1.0);
+        sleep(1500);
+        winch.setPower(1.0); //Activate Winch
+        sleep(1000);
+        winch.setPower(-1.0);
+        sleep(1500);
+        winch.setPower(1.0); //Activate Winch
+        sleep(1000);
+        winch.setPower(-1.0);
+        sleep(1500);
+        right.setPower(0);
+        left.setPower(0);
+        intake.setPower(0);
+
+        moveBySteps(0.5, 14);
         turnBySteps(0.6, -22);
-        moveBySteps(0.8, 44);
-        turnBySteps(0.6, 22);
-        moveUntil(0.3, "red");
+        moveBySteps(0.8, 47);
+        turnBySteps(0.6, 18);
+
+        moveByTime(0, 1000);
+
+        moveUntil(0.05, "red");
+        moveByTime(0.0, 500);
+        moveBySteps(0.2, 4.5);
+        moveByTime(0.0, 50);
+        leftPusher.setPower(-1.0);
+        runtime1.reset();
+        while (runtime1.time() < 1.5); //run while timer is less than 1.5 seconds
+        leftPusher.setPower(0);
+        sleep(1000);
+        leftPusher.setPower(1.0);
+        runtime1.reset();
+        while (runtime1.time() < 1.5);
+        leftPusher.setPower(0);
+        sleep(1000);
+        turnBySteps(0.6, 26);
+        moveBySteps(0.6, 28);
+        sleep(1500);
+        turnBySteps(0.5, 18);
+        moveBySteps(0.6, 24);
 
         //Starts autonomous using camera
         /*if (isCameraAvailable()) {
@@ -192,37 +257,46 @@ public class Test20166322 extends LinearOpModeCamera {
 
         float hsvValues[] = {0F, 0F, 0F};
 
-        while (opModeIsActive()) {
+        //telemetry.addData("Iterations " + ++c, null);
 
-            telemetry.addData("Iterations " + ++c, null);
-            telemetry.addData("LED", true ? "On" : "Off");
-            telemetry.addData("Red  ", CSleft.red()*8);
-            telemetry.addData("Blue ", CSleft.blue()*8);
-            telemetry.update();
+        for (DcMotor motor : driveTrain)
+            motor.setPower(power);
 
-            for (DcMotor motor : driveTrain)
-                motor.setPower(power);
-
-            if (color.equals("white"))
-                while (!dec)
-                    if (CSleft.red() > 8 && CSleft.green() > 8 && CSleft.blue() > 8)
-                        dec = true;
-
-            if (color.equals("red"))
-                while (!dec)
-                    if ((CSleft.red()*8) > (CSleft.blue()*8))
-                        dec = true;
-
-            if (color.equals("blue"))
-                while (!dec)
-                    if ((CSleft.blue()*8) > (CSleft.red()*8))
-                        dec = true;
-
-            for (DcMotor motor : driveTrain)
-                motor.setPower(0);
-            idle();
-            sleep(750);
+        if (color.equals("white")) {
+            while (!dec) {
+                if (CSleft.red() > 8 && CSleft.green() > 8 && CSleft.blue() > 8)
+                    dec = true;
+                telemetry.addData("LED", true ? "On" : "Off");
+                telemetry.addData("Red  ", CSleft.red() * 8);
+                telemetry.addData("Blue ", CSleft.blue() * 8);
+                telemetry.update();
+            }
         }
+
+        if (color.equals("red")) {
+            while (!dec) {
+                if (((CSleft.red() * 8) > (CSleft.blue() * 8)) || ((CSleft.red() * 8) > 4))
+                    dec = true;
+                telemetry.addData("LED", true ? "On" : "Off");
+                telemetry.addData("Red  ", CSleft.red()*8);
+                telemetry.addData("Blue ", CSleft.blue()*8);
+                telemetry.update();
+            }
+        }
+
+        if (color.equals("blue")) {
+            while (!dec) {
+                if (((CSleft.blue() * 8) > (CSleft.red() * 8)) || ((CSleft.blue() * 8) > 4))
+                    dec = true;
+                telemetry.addData("LED", true ? "On" : "Off");
+                telemetry.addData("Red  ", CSleft.red()*8);
+                telemetry.addData("Blue ", CSleft.blue()*8);
+                telemetry.update();
+            }
+        }
+
+        for (DcMotor motor : driveTrain)
+            motor.setPower(0);
     }
 
     public void moveBySteps(double power, double inches) throws InterruptedException {
