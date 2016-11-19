@@ -37,6 +37,9 @@ public class Teleop6322 extends OpMode {
     DcMotor intake;
 
     //Linear Slide Motor Declaration
+    DcMotor linear;
+
+    //Linear Slide Motor Declaration
     //DcMotor slide;
 
     //Color Sensor Declarations
@@ -104,6 +107,9 @@ public class Teleop6322 extends OpMode {
 
         //Lock
         lock = hardwareMap.servo.get("k");
+
+        //Linear
+        linear = hardwareMap.dcMotor.get("linear");
 
         BackRight.setDirection(DcMotor.Direction.REVERSE);
         FrontRight.setDirection(DcMotor.Direction.REVERSE);
@@ -189,17 +195,17 @@ public class Teleop6322 extends OpMode {
             c3 = 1;
         else if (!gamepad2.dpad_up && c3 == 1) {
             z2 *= 1.4;
-            if (z2 < 0.3) {
+            if (z2 < 0.2) {
                 right.setPower(z2);
                 left.setPower(z2);
                 //sleep(500);
             }
             else {
-                right.setPower(0.3);
-                left.setPower(0.3);
+                right.setPower(0.2);
+                left.setPower(0.2);
                 z2 = 0.05;
             }
-            if (right.getPower() < 0.3 && left.getPower() < 0.3)
+            if (right.getPower() < 0.2 && left.getPower() < 0.2)
                 c3 = 1;
             else
                 c3 = 2;
@@ -208,9 +214,9 @@ public class Teleop6322 extends OpMode {
             c3 = 3;
         else if (!gamepad2.dpad_up && c3 == 3) {
             z1 *= 1.4;
-            if ((0.3 - z1) > 0) {
-                right.setPower(0.3 - z1);
-                left.setPower(0.3 - z1);
+            if ((0.2 - z1) > 0) {
+                right.setPower(0.2 - z1);
+                left.setPower(0.2 - z1);
             }
             else {
                 right.setPower(0);
@@ -259,6 +265,14 @@ public class Teleop6322 extends OpMode {
             winch.setPower(1.0);
         else if (gamepad2.left_trigger == 1)
             winch.setPower(-1.0);
+
+        //Linear Slide Function
+        if (gamepad2.b)
+            linear.setPower(1.0);
+        else if (gamepad2.x)
+            linear.setPower(-1.0);
+        else
+        linear.setPower(0);
 
         //Telemetry Data
         telemetry.addData("lock position: " + lock.getPosition(), null);
