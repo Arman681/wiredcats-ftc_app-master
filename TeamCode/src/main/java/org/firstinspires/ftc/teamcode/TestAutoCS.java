@@ -134,14 +134,14 @@ public class TestAutoCS extends LinearOpModeCamera {
         yawPIDController.setPID(YAW_PID_P, YAW_PID_I, YAW_PID_D);*/
 
         waitForStart();
-        moveUntil(0.05, "red");
+        moveUntil(0.05, "blue");
         moveByTime(0.0, 500);
         moveBySteps(0.2, 5.5);
         moveByTime(0.0, 500);
-        leftPusher.setPower(-1.0);
+        rightPusher.setPower(-1.0);
         runtime1.reset();
         while (runtime1.time() < 1.5);
-        leftPusher.setPower(0);
+        rightPusher.setPower(0);
 
         //Starts autonomous using camera
         /*if (isCameraAvailable()) {
