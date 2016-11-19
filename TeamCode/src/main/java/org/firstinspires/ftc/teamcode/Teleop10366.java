@@ -31,26 +31,13 @@ public class Teleop10366 extends OpMode {
     //Intake Motor Declaration
     DcMotor intake;
 
-    //Color Sensor Buttons Declarations
-    ColorSensor CSleft;
-    ColorSensor CSright;
+    //Lift Motor Declaration
+    DcMotor lift;
 
-    //Color Sensor White Line Declaration
-    ColorSensor CSbottom;
+    int c3 = 0; //Intake Motor Counter In
+    int c4 = 0; //Shooter Motors Counter
+    int c5 = 0; //Intake Motor Counter Out
 
-    //Button Pusher Servo Declarations
-    CRServo rightPusher;
-    CRServo leftPusher;
-
-    //Conveyor Belt Servo Declaration
-    CRServo Conveyor;
-
-    int c1 = 0;     //Left CRS Counter
-    int c2 = 0;     //Right CRS Counter
-    int c3 = 0;     //Shooter Counter
-    int c4 = 0;    //Intake Motor Counter
-    double z1 = 0.05; //Right and Left Motors deceleration Counter
-    double z2 = 0.05; //Right and Left Motors acceleration Counter
     @Override
     public void init() {
 
@@ -67,16 +54,12 @@ public class Teleop10366 extends OpMode {
         left = hardwareMap.dcMotor.get("l");
         right.setDirection(DcMotorSimple.Direction.REVERSE);
 
-        //Color Sensors
-        CSleft = hardwareMap.colorSensor.get("csl");
-        CSright = hardwareMap.colorSensor.get("csr");
-
-        //Continuous Rotation Servos
-        rightPusher = hardwareMap.crservo.get("rp");
-        leftPusher = hardwareMap.crservo.get("lp");
-
         //Intake Motor
         intake = hardwareMap.dcMotor.get("in");
+        intake.setDirection(DcMotorSimple.Direction.REVERSE);
+
+        //Lift Motor
+        lift = hardwareMap.dcMotor.get("lift");
     }
 
     @Override
@@ -85,31 +68,66 @@ public class Teleop10366 extends OpMode {
         float righty1 = -gamepad1.right_stick_y;
 
         //Drive Train
-        if (lefty1 < -.2 || lefty1 > .2) {
+        if (gamepad1.left_stick_y == 1) {
             FrontLeft.setPower(lefty1);
             BackLeft.setPower(lefty1);
         }
-        if (righty1 < -.2 || righty1 > .2) {
+        else {
+            FrontLeft.setPower(0);
+            BackLeft.setPower(0);
+        }
+        if (gamepad1.right_stick_y == 1) {
             FrontRight.setPower(righty1);
             BackRight.setPower(righty1);
         }
-
-        //Intake
-        if (gamepad1.y) {
-            intake.setPower(1.0);
+        else {
+            FrontRight.setPower(0);
+            BackRight.setPower(0);
         }
+
+        //Intake In
+        if (gamepad1.a && c3 == 0) {
+            intake.setPower(1.0);
+            c3 = 1;
+        }
+        else if (!gamepad1.a && c3 == 1)
+            c3 = 2;
+        else if (gamepad1.a && c3 == 2) {
+            intake.setPower(0);
+            c3 = 3;
+        }
+        else if (!gamepad1.a && c3 == 3)
+            c3 = 0;
+
+        //Intake Out
+        if (gamepad1.y && c5 == 0) {
+            intake.setPower(-1.0);
+            c5 = 1;
+        }
+        else if (!gamepad1.y && c5 == 1)
+            c5 = 2;
+        else if (gamepad1.y && c5 == 2) {
+            intake.setPower(0);
+            c5 = 3;
+        }
+        else if (!gamepad1.y && c5 == 3)
+            c5 = 0;
 
         //Shooting Mechanism Motors Function
         if (gamepad2.y && c4 == 0) {
-            right.setPower(1.0);
-            left.setPower(1.0);
+            right.setPower(-1.0);
+            left.setPower(-1.0);
             c4 = 1;
         }
-        if (gamepad2.y && c4 == 1) {
-            right.setPower(0.0);
-            left.setPower(0.0);
-            c4 = 0;
+        else if (!gamepad2.y && c4 == 1)
+            c4 = 2;
+        else if (gamepad2.y && c4 == 2) {
+            right.setPower(0);
+            left.setPower(0);
+            c4 = 3;
         }
+        else if (!gamepad2.y && c4 == 3)
+            c4 = 0;
 
     }
 }
