@@ -64,6 +64,9 @@ public class Test20166322blue  extends LinearOpModeCamera{ ElapsedTime runtime1 
     //Conveyor Servo Declaration
     CRServo winch;
 
+    //Lock Servo Declaration
+    Servo lock;
+
     int bnum = 0;
     int ds2 = 2;  // additional downsampling of the image
 
@@ -141,6 +144,12 @@ public class Test20166322blue  extends LinearOpModeCamera{ ElapsedTime runtime1 
 
         //Winch
         winch = hardwareMap.crservo.get("w");
+
+        //Lock
+        lock = hardwareMap.servo.get("k");
+
+        //Lock Mechanism Function
+        lock.setPosition(1.0);
 
         /*navx_device = AHRS.getInstance(hardwareMap.deviceInterfaceModule.get("dim"),
                       NAVX_DIM_I2C_PORT,
