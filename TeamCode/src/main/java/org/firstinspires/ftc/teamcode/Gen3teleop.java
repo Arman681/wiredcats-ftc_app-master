@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import static android.os.SystemClock.sleep;
 
@@ -14,6 +15,11 @@ import static android.os.SystemClock.sleep;
 @TeleOp(name="Gen3Teleop", group="Opmode")
 public class Gen3teleop extends OpMode {
 
+    ElapsedTime runtime1 = new ElapsedTime(); //Left Button Pusher Timer
+    ElapsedTime runtime2 = new ElapsedTime(); //Right Button Pusher Timer
+
+    int c1 = 0;     //Left Button Pusher Counter
+    int c2 = 0;     //Right Button Pusher Counter
     int c3 = -1;     //Shooter Counter
     int c4 = -1;    //Intake Motor Out Counter
     int c5 = -1;    //Intake Motor In Counter
@@ -32,6 +38,10 @@ public class Gen3teleop extends OpMode {
 
     //Servo Declaration
     Servo servo;
+
+    //Servo Button Pusher Declaration
+    Servo rightPusher;
+    Servo leftPusher;
 
     @Override
     public void init() {
@@ -58,6 +68,10 @@ public class Gen3teleop extends OpMode {
 
         //Servo
         servo = hardwareMap.servo.get("servo");
+
+        //Button Pusher Servos
+        rightPusher = hardwareMap.servo.get("rp");
+        leftPusher = hardwareMap.servo.get("lp");
     }
 
     @Override
@@ -111,6 +125,43 @@ public class Gen3teleop extends OpMode {
             conveyor.setPower(-1.0);
         else
             conveyor.setPower(0.0);
+
+        //Left Continuous Rotation Servo
+        if (gamepad1.x && c1 == 0) {
+            runtime1.reset();
+            leftPusher.setPosition(-1.0);
+            c1 = 1;
+        }
+        else if (!gamepad1.x && c1 == 1)
+            c1 = 2;
+        else if (gamepad1.x && c1 == 2) {
+            runtime1.reset();
+            leftPusher.setPosition(1.0);
+            c1 = 3;
+        }
+        else if (!gamepad1.x && c1 == 3)
+            c1 = 0;
+        if (runtime1.time() > 2) {
+            leftPusher.setPosition(0);
+        }
+
+        //Right Continuous Rotation Servo
+        if (gamepad1.b && c2 == 0) {
+            runtime2.reset();
+            rightPusher.setPosition(1.0);
+            c2 = 1;
+        }
+        else if (!gamepad1.b && c2 == 1)
+            c2 = 2;
+        else if (gamepad1.b && c2 == 2) {
+            runtime2.reset();
+            rightPusher.setPosition(-1.0);
+            c2 = 3;
+        }
+        else if (!gamepad1.b && c2 == 3)
+            c2 = 0;
+        if (runtime2.time() > 2)
+            rightPusher.setPosition(0);
 
         /*Intake Motor Function Out
         if (gamepad2.dpad_right) {
