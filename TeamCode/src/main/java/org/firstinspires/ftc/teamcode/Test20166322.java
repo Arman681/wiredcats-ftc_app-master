@@ -62,6 +62,8 @@ public class Test20166322 extends LinearOpModeCamera {
     //Conveyor Servo Declaration
     CRServo winch;
 
+    Servo lock;
+
     int bnum = 0;
     int ds2 = 2;  // additional downsampling of the image
 
@@ -140,6 +142,12 @@ public class Test20166322 extends LinearOpModeCamera {
         //Winch
         winch = hardwareMap.crservo.get("w");
 
+        //Lock
+        lock = hardwareMap.servo.get("k");
+
+        //Lock Mechanism Function
+        lock.setPosition(1.0);
+
         /*navx_device = AHRS.getInstance(hardwareMap.deviceInterfaceModule.get("dim"),
                       NAVX_DIM_I2C_PORT,
                       AHRS.DeviceDataType.kProcessedData,
@@ -154,8 +162,8 @@ public class Test20166322 extends LinearOpModeCamera {
 
         waitForStart();
         moveByTime(0.2, 1300);
-        right.setPower(0.4);
-        left.setPower(0.4);
+        right.setPower(0.3);
+        left.setPower(0.3);
         sleep(2000);
         intake.setPower(1.0); //Intake
         winch.setPower(1.0); //Activate Winch
