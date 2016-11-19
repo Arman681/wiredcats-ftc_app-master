@@ -25,14 +25,14 @@ import org.firstinspires.ftc.robotcontroller.internal.LinearOpModeCamera;
  * <p/>
  * Enables control of the robot via the gamepad
  */
-@Autonomous(name="6322AutoTestBlue", group="Autonomous")
+@Autonomous(name="Auto6322Blue", group="Autonomous")
 //@Disabled
 
 /**
  * Created by Arman on 11/18/2016.
  */
 
-public class Test20166322blue  extends LinearOpModeCamera{ ElapsedTime runtime1 = new ElapsedTime();
+public class Auto6322Blue  extends LinearOpModeCamera{ ElapsedTime runtime1 = new ElapsedTime();
 
     //Drive Train Motor Declarations
     DcMotor FrontRight;
@@ -149,7 +149,7 @@ public class Test20166322blue  extends LinearOpModeCamera{ ElapsedTime runtime1 
         lock = hardwareMap.servo.get("k");
 
         //Lock Mechanism Function
-        lock.setPosition(1.0);
+        lock.setPosition(0);
 
         /*navx_device = AHRS.getInstance(hardwareMap.deviceInterfaceModule.get("dim"),
                       NAVX_DIM_I2C_PORT,

@@ -25,10 +25,10 @@ import org.firstinspires.ftc.robotcontroller.internal.LinearOpModeCamera;
  * <p/>
  * Enables control of the robot via the gamepad
  */
-@Autonomous(name="6322AutoTest", group="Autonomous")
+@Autonomous(name="Auto6322Red", group="Autonomous")
 //@Disabled
 
-public class Test20166322 extends LinearOpModeCamera {
+public class Auto6322Red extends LinearOpModeCamera {
 
     ElapsedTime runtime1 = new ElapsedTime();
 
@@ -146,7 +146,7 @@ public class Test20166322 extends LinearOpModeCamera {
         lock = hardwareMap.servo.get("k");
 
         //Lock Mechanism Function
-        lock.setPosition(1.0);
+        lock.setPosition(0);
 
         /*navx_device = AHRS.getInstance(hardwareMap.deviceInterfaceModule.get("dim"),
                       NAVX_DIM_I2C_PORT,
@@ -249,13 +249,13 @@ public class Test20166322 extends LinearOpModeCamera {
 
     public void moveByTime(double power, int time) throws InterruptedException {
 
-		for(DcMotor motor : driveTrain)
-    		motor.setPower(power);
+        for(DcMotor motor : driveTrain)
+            motor.setPower(power);
 
-    	sleep(time);
+        sleep(time);
 
-		for(DcMotor motor : driveTrain)
-    		motor.setPower(0);
+        for(DcMotor motor : driveTrain)
+            motor.setPower(0);
     }
 
     public void moveUntil(double power, String color) throws InterruptedException {
