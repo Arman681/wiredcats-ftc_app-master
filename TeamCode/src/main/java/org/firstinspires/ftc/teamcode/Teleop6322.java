@@ -39,9 +39,6 @@ public class Teleop6322 extends OpMode {
     //Linear Slide Motor Declaration
     DcMotor linear;
 
-    //Linear Slide Motor Declaration
-    //DcMotor slide;
-
     //Color Sensor Declarations
     ColorSensor CSleft;
     ColorSensor CSright;
@@ -119,11 +116,11 @@ public class Teleop6322 extends OpMode {
     public void loop() {
 
         //Lock Mechanism Function
-        lock.setPosition(1.0);
+        lock.setPosition(0);
         if (gamepad2.a)
             lock.setPosition(1.0);
         else if (gamepad2.b)
-            lock.setPosition(0.0);
+            lock.setPosition(0);
 
         float lefty1 = -gamepad1.left_stick_y;
         float righty1 = -gamepad1.right_stick_y;
@@ -195,17 +192,17 @@ public class Teleop6322 extends OpMode {
             c3 = 1;
         else if (!gamepad2.dpad_up && c3 == 1) {
             z2 *= 1.4;
-            if (z2 < 0.2) {
+            if (z2 < 0.25) {
                 right.setPower(z2);
                 left.setPower(z2);
                 //sleep(500);
             }
             else {
-                right.setPower(0.2);
-                left.setPower(0.2);
+                right.setPower(0.25);
+                left.setPower(0.25);
                 z2 = 0.05;
             }
-            if (right.getPower() < 0.2 && left.getPower() < 0.2)
+            if (right.getPower() < 0.25 && left.getPower() < 0.25)
                 c3 = 1;
             else
                 c3 = 2;
@@ -214,9 +211,9 @@ public class Teleop6322 extends OpMode {
             c3 = 3;
         else if (!gamepad2.dpad_up && c3 == 3) {
             z1 *= 1.4;
-            if ((0.2 - z1) > 0) {
-                right.setPower(0.2 - z1);
-                left.setPower(0.2 - z1);
+            if ((0.25 - z1) > 0) {
+                right.setPower(0.25 - z1);
+                left.setPower(0.25 - z1);
             }
             else {
                 right.setPower(0);
