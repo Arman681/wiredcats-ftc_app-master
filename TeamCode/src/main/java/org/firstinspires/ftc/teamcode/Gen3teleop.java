@@ -21,8 +21,8 @@ public class Gen3teleop extends OpMode {
     int c1 = 0;     //Left Button Pusher Counter
     int c2 = 0;     //Right Button Pusher Counter
     int c3 = -1;     //Shooter Counter
-    int c4 = -1;    //Intake Motor Out Counter
-    int c5 = -1;    //Intake Motor In Counter
+    int c4 = 0;    //Intake Motor Out Counter
+    int c5 = 0;    //Intake Motor In Counter
     double z1 = 0.05; //Right and Left Motors deceleration Counter
     double z2 = 0.05; //Right and Left Motors acceleration Counter
 
@@ -35,9 +35,6 @@ public class Gen3teleop extends OpMode {
 
     //Particle System Motor Declarations
     DcMotor intake, conveyor;
-
-    //Servo Declaration
-    Servo servo;
 
     //Servo Button Pusher Declaration
     Servo rightPusher;
@@ -66,9 +63,6 @@ public class Gen3teleop extends OpMode {
         intake.setDirection(DcMotor.Direction.REVERSE);
         conveyor.setDirection(DcMotor.Direction.REVERSE);
 
-        //Servo
-        servo = hardwareMap.servo.get("servo");
-
         //Button Pusher Servos
         rightPusher = hardwareMap.servo.get("rp");
         leftPusher = hardwareMap.servo.get("lp");
@@ -86,47 +80,7 @@ public class Gen3teleop extends OpMode {
         backright.setPower(rightY);
         frontright.setPower(rightY);
 
-        /*if (gamepad2.dpad_up) {
-            right.setPower(1.0);
-            left.setPower(1.0);
-        }
-        else if (!gamepad2.dpad_up) {
-            right.setPower(0);
-            left.setPower(0);
-        }*/
-
-        //Shooting Mechanism Motors Function
-        if (gamepad2.dpad_up) {
-            c3 *= -1;
-            sleep(300);
-        }
-        if (c3 == -1) {
-            right.setPower(0);
-            left.setPower(0);
-        }
-        else if (c3 == 1) {
-            right.setPower(0.4);
-            left.setPower(0.4);
-        }
-
-        //Intake Motor Function In
-        //Counters c4 and c5 both initialized as -1
-        if (gamepad2.dpad_left) {
-            c4 *= -1;
-            sleep(300);
-        }
-        if (c4 == 1)
-            intake.setPower(1.0);
-        else if (c4 == -1)
-            intake.setPower(0);
-
-        //Conveyor Belt Function
-        if (gamepad2.dpad_right)
-            conveyor.setPower(-1.0);
-        else
-            conveyor.setPower(0.0);
-
-        //Left Continuous Rotation Servo
+        //Left Button Pusher Servo
         if (gamepad1.x && c1 == 0) {
             runtime1.reset();
             leftPusher.setPosition(-1.0);
@@ -145,7 +99,7 @@ public class Gen3teleop extends OpMode {
             leftPusher.setPosition(0);
         }
 
-        //Right Continuous Rotation Servo
+        //Right Button Pusher Servo
         if (gamepad1.b && c2 == 0) {
             runtime2.reset();
             rightPusher.setPosition(1.0);
@@ -155,7 +109,7 @@ public class Gen3teleop extends OpMode {
             c2 = 2;
         else if (gamepad1.b && c2 == 2) {
             runtime2.reset();
-            rightPusher.setPosition(-1.0);
+            rightPusher.setPosition(0);
             c2 = 3;
         }
         else if (!gamepad1.b && c2 == 3)
@@ -163,20 +117,55 @@ public class Gen3teleop extends OpMode {
         if (runtime2.time() > 2)
             rightPusher.setPosition(0);
 
-        /*Intake Motor Function Out
-        if (gamepad2.dpad_right) {
-            c5 *= -1;
+        //Shooting Mechanism Motors Function
+        if (gamepad2.dpad_up) {
+            c3 *= -1;
             sleep(300);
         }
-        if (c5 == 1)
-            intake.setPower(1.0);
-        else if (c5 == -1)
-            intake.setPower(0);
-        */
+        if (c3 == -1) {
+            right.setPower(0);
+            left.setPower(0);
+        }
+        else if (c3 == 1) {
+            right.setPower(0.4);
+            left.setPower(0.4);
+        }
 
-        telemetry.addData("FrontLeft Power: " + frontleft.getPower(), null);
-        telemetry.addData("FrontRight Power: " + frontright.getPower(), null);
-        telemetry.addData("BackLeft Power: " + backleft.getPower(), null);
-        telemetry.addData("BackRight Power: " + backright.getPower(), null);
+        //Intake Motor Function In
+        if (gamepad2.dpad_left && c4 == 0) {
+            intake.setPower(1.0);
+            c4 = 1;
+        }
+        else if (!gamepad2.dpad_left && c4 == 1)
+            c4 = 2;
+        else if (gamepad2.dpad_left && c4 == 2) {
+            intake.setPower(0);
+            c4 = 3;
+        }
+        else if (!gamepad2.dpad_left && c4 == 3)
+            c4 = 0;
+
+        /*Intake Motor Function Out
+        if (gamepad2.b && c5 == 1) {
+            intake.setPower(-1.0);
+            c5 = 1;
+        }
+        else if (!gamepad2.b && c5 == 1)
+            c5 = 2;
+        else if (gamepad2.b && c5 == 2) {
+            intake.setPower(0);
+            c5 = 3;
+        }
+        else if (!gamepad2.b && c5 == 3)
+            c5 = 0;*/
+
+        //Conveyor Belt Function
+        if (gamepad2.dpad_right)
+            conveyor.setPower(-1.0);
+        else
+            conveyor.setPower(0.0);
+
+        telemetry.addData("Intake Power: " + intake.getPower(), null);
+        telemetry.addData("Intake Counter: " + c4, null);
     }
 }
