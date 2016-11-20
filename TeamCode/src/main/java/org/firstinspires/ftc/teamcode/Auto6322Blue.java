@@ -164,7 +164,7 @@ public class Auto6322Blue  extends LinearOpModeCamera{ ElapsedTime runtime1 = ne
         yawPIDController.setPID(YAW_PID_P, YAW_PID_I, YAW_PID_D);*/
 
         waitForStart();
-        moveByTime(0.2, 1300);
+        moveByTime(0.2, 1700);
         right.setPower(0.3);
         left.setPower(0.3);
         sleep(2000);
@@ -186,8 +186,8 @@ public class Auto6322Blue  extends LinearOpModeCamera{ ElapsedTime runtime1 = ne
         intake.setPower(0);
 
         moveBySteps(0.5, 22);
-        turnBySteps(0.4, -8);
-        moveBySteps(0.5, 10);
+        turnBySteps(0.4, 34);
+        moveBySteps(0.5, 48);
 
 
         /*turnBySteps(0.6, 19);
