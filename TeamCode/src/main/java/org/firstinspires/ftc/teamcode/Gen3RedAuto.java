@@ -80,7 +80,12 @@ public class Gen3RedAuto extends LinearOpModeCamera {
 
         waitForStart();
         moveByTime(0.0, 10000);
-        moveByTime(0.2, 3500);
+        moveByTime(0.5, 3500);
+       // turnByTime(0.5, -500);
+        moveByTime(-0.5, 2300);
+       // turnByTime(0.5, 500);
+        moveByTime(0.5, 1300);
+
 
     }
 
@@ -93,6 +98,14 @@ public class Gen3RedAuto extends LinearOpModeCamera {
 
         for(DcMotor motor : driveTrain)
             motor.setPower(0);
+    }
+
+    public void turnByTime(double power, int time) throws InterruptedException {
+        frontleft.setPower(power);
+        frontright.setPower(-power);
+        backleft.setPower(power);
+        backright.setPower(-power);
+        sleep(time);
     }
 
     /*public void moveUntil(double power, String color) throws InterruptedException {
