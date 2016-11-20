@@ -20,9 +20,9 @@ public class Gen3teleop extends OpMode {
 
     int c1 = 0;     //Left Button Pusher Counter
     int c2 = 0;     //Right Button Pusher Counter
-    int c3 = -1;     //Shooter Counter
-    int c4 = 0;    //Intake Motor Out Counter
-    int c5 = 0;    //Intake Motor In Counter
+    int c3 = 0;     //Shooter Counter
+    int c4 = 0;    //Intake Motor In Counter
+    int c5 = 0;    //Intake Motor Out Counter
     double z1 = 0.05; //Right and Left Motors deceleration Counter
     double z2 = 0.05; //Right and Left Motors acceleration Counter
 
@@ -118,18 +118,20 @@ public class Gen3teleop extends OpMode {
             rightPusher.setPosition(0);
 
         //Shooting Mechanism Motors Function
-        if (gamepad2.dpad_up) {
-            c3 *= -1;
-            sleep(300);
+        if (gamepad2.dpad_up && c3 == 0) {
+            right.setPower(0.25);
+            left.setPower(0.25);
+            c3 = 1;
         }
-        if (c3 == -1) {
+        else if (!gamepad2.dpad_up && c3 == 1)
+            c3 = 2;
+        else if (gamepad2.dpad_up && c3 == 2) {
             right.setPower(0);
             left.setPower(0);
+            c3 = 3;
         }
-        else if (c3 == 1) {
-            right.setPower(0.4);
-            left.setPower(0.4);
-        }
+        else if (!gamepad2.dpad_up && c3 == 3)
+            c3 = 0;
 
         //Intake Motor Function In
         if (gamepad2.dpad_left && c4 == 0) {
@@ -145,8 +147,8 @@ public class Gen3teleop extends OpMode {
         else if (!gamepad2.dpad_left && c4 == 3)
             c4 = 0;
 
-        /*Intake Motor Function Out
-        if (gamepad2.b && c5 == 1) {
+        //Intake Motor Function Out
+        if (gamepad2.b && c5 == 0) {
             intake.setPower(-1.0);
             c5 = 1;
         }
@@ -157,7 +159,7 @@ public class Gen3teleop extends OpMode {
             c5 = 3;
         }
         else if (!gamepad2.b && c5 == 3)
-            c5 = 0;*/
+            c5 = 0;
 
         //Conveyor Belt Function
         if (gamepad2.dpad_right)
