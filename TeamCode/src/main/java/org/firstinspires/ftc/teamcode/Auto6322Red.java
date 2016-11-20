@@ -31,6 +31,7 @@ import org.firstinspires.ftc.robotcontroller.internal.LinearOpModeCamera;
 public class Auto6322Red extends LinearOpModeCamera {
 
     ElapsedTime runtime1 = new ElapsedTime();
+    ElapsedTime runtime2 = new ElapsedTime();
 
     //Drive Train Motor Declarations
     DcMotor FrontRight;
@@ -184,8 +185,8 @@ public class Auto6322Red extends LinearOpModeCamera {
 
         moveBySteps(0.5, 14);
         turnBySteps(0.6, -22);
-        moveBySteps(0.8, 47);
-        turnBySteps(0.6, 18);
+        moveBySteps(0.8, 52);
+        turnBySteps(0.6, 22);
 
         moveByTime(0, 1000);
 
@@ -282,8 +283,11 @@ public class Auto6322Red extends LinearOpModeCamera {
         }
 
         if (color.equals("red")) {
+            runtime2.reset();
             while (!dec) {
                 if (((CSleft.red() * 8) > (CSleft.blue() * 8)) || ((CSleft.red() * 8) > 4))
+                    dec = true;
+                else if (runtime2.time() >  7)
                     dec = true;
                 telemetry.addData("LED", true ? "On" : "Off");
                 telemetry.addData("Red  ", CSleft.red()*8);
