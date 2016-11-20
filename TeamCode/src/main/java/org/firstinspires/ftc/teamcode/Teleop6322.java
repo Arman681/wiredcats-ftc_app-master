@@ -116,7 +116,7 @@ public class Teleop6322 extends OpMode {
     public void loop() {
 
         //Lock Mechanism Function
-        lock.setPosition(0);
+        //lock.setPosition(0);
         if (gamepad2.a)
             lock.setPosition(1.0);
         else if (gamepad2.b)
@@ -272,11 +272,9 @@ public class Teleop6322 extends OpMode {
         linear.setPower(0);
 
         //Telemetry Data
-        telemetry.addData("lock position: " + lock.getPosition(), null);
-        telemetry.addData("Conveyor Servo Power: " + winch.getPower(), null);
+        telemetry.addData("Power of Intake Motor: " + intake.getPower(), null);
         telemetry.addData("Power of Right Motor for Shooter: " + right.getPower(), null);
         telemetry.addData("Power of Left Motor for Shooter: " + left.getPower(), null);
-        telemetry.addData("Power of Intake Motor: " + intake.getPower(), null);
 
     }
 }
