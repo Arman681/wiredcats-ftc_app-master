@@ -97,8 +97,10 @@ public class RedAuto10366 extends LinearOpMode {
         CSright.enableLed(false);
 
 
+
         waitForStart();
-        moveByTime(0.5, 3000);
+        moveByTime(0.5, 2000);
+
     }
 
     public void moveByTime(double power, int time) throws InterruptedException {

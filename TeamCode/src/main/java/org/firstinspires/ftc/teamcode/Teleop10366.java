@@ -68,21 +68,25 @@ public class Teleop10366 extends OpMode {
         float righty1 = -gamepad1.right_stick_y;
 
         //Drive Train
-        if (gamepad1.left_stick_y == 1) {
+        if (lefty1 < -.2 || lefty1 > .2) {
             FrontLeft.setPower(lefty1);
             BackLeft.setPower(lefty1);
         }
         else {
-            FrontLeft.setPower(0);
-            BackLeft.setPower(0);
+            for (int i = 1; i > .0001; i *= .1) {
+                FrontLeft.setPower(lefty1*i);
+                BackLeft.setPower(lefty1*i);
+            }
         }
-        if (gamepad1.right_stick_y == 1) {
+        if (righty1 < -.2 || righty1 > .2) {
             FrontRight.setPower(righty1);
             BackRight.setPower(righty1);
         }
         else {
-            FrontRight.setPower(0);
-            BackRight.setPower(0);
+            for (int i = 1; i > .0001; i *= .1) {
+                FrontRight.setPower(righty1*i);
+                BackRight.setPower(righty1*i);
+            }
         }
 
         //Intake In
