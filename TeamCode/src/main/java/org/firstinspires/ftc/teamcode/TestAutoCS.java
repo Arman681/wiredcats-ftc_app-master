@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.GyroSensor;
 import com.qualcomm.robotcore.hardware.OpticalDistanceSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -31,8 +32,12 @@ import org.firstinspires.ftc.robotcontroller.internal.LinearOpModeCamera;
 public class TestAutoCS extends LinearOpModeCamera {
 
     int c1 = 0;
+    String color;
 
     ElapsedTime runtime1 = new ElapsedTime();
+
+    ///////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////
 
     //Drive Train Motor Declarations
     DcMotor FrontRight;
@@ -42,17 +47,47 @@ public class TestAutoCS extends LinearOpModeCamera {
 
     final DcMotor[] driveTrain = new DcMotor[4];
 
-    //Color Sensor Declarations
-    ColorSensor CSleft;
-    ColorSensor CSright;
+///////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////
 
-    //Optical Distance Sensor Declarations
-    OpticalDistanceSensor ODSleft;
-    OpticalDistanceSensor ODSright;
+    //Shooting Mechanism Motor Declarations
+    DcMotor shooter;
+
+    //Intake Motor Declaration
+    DcMotor intake;
+
+    //Conveyor Belt Motor Declaration
+    DcMotor conveyor;
+
+    //Linear Slide Motor Declaration
+    DcMotor linear;
+
+///////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////
 
     //Continuous Rotation Servo Declarations
     CRServo rightPusher;
     CRServo leftPusher;
+
+    //Locking mechanism for cap ball lifter
+    Servo lock;
+
+///////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////
+
+    //Color Sensor Declarations
+    ColorSensor CSleft;
+    ColorSensor CSright;
+
+    //Optical Distance Sensor Declaration
+    OpticalDistanceSensor ODSleft;
+    OpticalDistanceSensor ODSright;
+
+    //Gyro Sensor
+    GyroSensor gyro;
+
+///////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////
 
     int bnum = 0;
     int ds2 = 2;  // additional downsampling of the image
@@ -84,6 +119,9 @@ public class TestAutoCS extends LinearOpModeCamera {
     @Override
     public void runOpMode() throws InterruptedException {
 
+///////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////
+
         //Drive Train Motors
         FrontRight = hardwareMap.dcMotor.get("fr");
         FrontLeft = hardwareMap.dcMotor.get("fl");
@@ -103,6 +141,36 @@ public class TestAutoCS extends LinearOpModeCamera {
 
         BackRight.setDirection(DcMotor.Direction.REVERSE);
         FrontRight.setDirection(DcMotor.Direction.REVERSE);
+///////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////
+
+        //Shooting Mechanism Motors
+        shooter = hardwareMap.dcMotor.get("s");
+
+        //Linear Slide Motor Assignment
+        linear = hardwareMap.dcMotor.get("linear");
+
+        //Intake Motor(s)
+        intake = hardwareMap.dcMotor.get("i");
+
+///////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////
+
+        //Continuous Rotation Sensors
+        rightPusher = hardwareMap.crservo.get("rp");
+        leftPusher = hardwareMap.crservo.get("lp");
+
+        //Lock
+        lock = hardwareMap.servo.get("k");
+
+        //Lock Mechanism Function
+        lock.setPosition(0);
+
+///////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////
+
+        //Gyro Sensor Assignment
+        gyro = hardwareMap.gyroSensor.get("g");
 
         //Color Sensors
         CSleft = hardwareMap.colorSensor.get("csl");
@@ -117,9 +185,8 @@ public class TestAutoCS extends LinearOpModeCamera {
         ODSleft = hardwareMap.opticalDistanceSensor.get("odsleft");
         ODSright = hardwareMap.opticalDistanceSensor.get("odsright");
 
-        //Continuous Rotation Sensors
-        rightPusher = hardwareMap.crservo.get("rp");
-        leftPusher = hardwareMap.crservo.get("lp");
+///////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////
 
         /*navx_device = AHRS.getInstance(hardwareMap.deviceInterfaceModule.get("dim"),
                       NAVX_DIM_I2C_PORT,
@@ -134,14 +201,28 @@ public class TestAutoCS extends LinearOpModeCamera {
         yawPIDController.setPID(YAW_PID_P, YAW_PID_I, YAW_PID_D);*/
 
         waitForStart();
-        moveUntil(0.05, "blue");
+        /*moveUntil(0.05, "blue");
         moveByTime(0.0, 500);
         moveBySteps(0.2, 5.5);
         moveByTime(0.0, 500);
         rightPusher.setPower(-1.0);
         runtime1.reset();
         while (runtime1.time() < 1.5);
+        rightPusher.setPower(0);*/
+
+        color = determineColor();
+        if (color == "blue"){
+            moveBySteps(0.5, 8);
+        }
+        else if (color == "red"){
+            moveBySteps(0.5, 3);
+        }
+        sleep(3000);
+        rightPusher.setPower(-1.0);
+        runtime1.reset();
+        while (runtime1.time() < 1.5);
         rightPusher.setPower(0);
+
 
         //Starts autonomous using camera
         /*if (isCameraAvailable()) {
@@ -239,6 +320,29 @@ public class TestAutoCS extends LinearOpModeCamera {
 
             for (DcMotor motor : driveTrain)
                 motor.setPower(0);
+    }
+
+    public String determineColor() throws InterruptedException {
+
+        boolean dec = false;
+        String color = "";
+
+        while(!dec) {
+            if (((CSleft.red() * 8) > (CSleft.blue() * 8)) || ((CSleft.red() * 8) > 4)) {
+                color = "red";
+                dec = true;
+            }
+            else if (((CSleft.blue() * 8) > (CSleft.red() * 8)) || ((CSleft.blue() * 8) > 4)) {
+                color = "blue";
+                dec = true;
+            }
+            telemetry.addData("LED", true ? "On" : "Off");
+            telemetry.addData("Red  ", CSleft.red()*8);
+            telemetry.addData("Blue ", CSleft.blue()*8);
+            telemetry.update();
+        }
+
+        return color;
     }
 
     public void moveBySteps(double power, double inches) throws InterruptedException {
