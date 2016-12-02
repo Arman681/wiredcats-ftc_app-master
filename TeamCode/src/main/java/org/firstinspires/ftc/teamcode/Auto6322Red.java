@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.GyroSensor;
 import com.qualcomm.robotcore.hardware.OpticalDistanceSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -33,6 +34,9 @@ public class Auto6322Red extends LinearOpModeCamera {
     ElapsedTime runtime1 = new ElapsedTime();
     ElapsedTime runtime2 = new ElapsedTime();
 
+///////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////
+
     //Drive Train Motor Declarations
     DcMotor FrontRight;
     DcMotor FrontLeft;
@@ -41,29 +45,47 @@ public class Auto6322Red extends LinearOpModeCamera {
 
     final DcMotor[] driveTrain = new DcMotor[4];
 
+///////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////
+
     //Shooting Mechanism Motor Declarations
-    DcMotor right;
-    DcMotor left;
+    DcMotor shooter;
 
     //Intake Motor Declaration
     DcMotor intake;
 
-    //Color Sensor Declarations
-    ColorSensor CSleft;
-    ColorSensor CSright;
+    //Conveyor Belt Motor Declaration
+    DcMotor conveyor;
 
-    //Optical Distance Sensor Declarations
-    OpticalDistanceSensor ODSleft;
-    OpticalDistanceSensor ODSright;
+    //Linear Slide Motor Declaration
+    DcMotor linear;
+
+///////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////
 
     //Continuous Rotation Servo Declarations
     CRServo rightPusher;
     CRServo leftPusher;
 
-    //Conveyor Servo Declaration
-    CRServo winch;
-
+    //Locking mechanism for cap ball lifter
     Servo lock;
+
+///////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////
+
+    //Color Sensor Declarations
+    ColorSensor CSleft;
+    ColorSensor CSright;
+
+    //Optical Distance Sensor Declaration
+    OpticalDistanceSensor ODSleft;
+    OpticalDistanceSensor ODSright;
+
+    //Gyro Sensor
+    GyroSensor gyro;
+
+///////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////
 
     int bnum = 0;
     int ds2 = 2;  // additional downsampling of the image
@@ -95,6 +117,9 @@ public class Auto6322Red extends LinearOpModeCamera {
     @Override
     public void runOpMode() throws InterruptedException {
 
+///////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////
+
         //Drive Train Motors
         FrontRight = hardwareMap.dcMotor.get("fr");
         FrontLeft = hardwareMap.dcMotor.get("fl");
@@ -114,14 +139,36 @@ public class Auto6322Red extends LinearOpModeCamera {
 
         BackRight.setDirection(DcMotor.Direction.REVERSE);
         FrontRight.setDirection(DcMotor.Direction.REVERSE);
+///////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////
 
         //Shooting Mechanism Motors
-        right = hardwareMap.dcMotor.get("r");
-        left = hardwareMap.dcMotor.get("l");
-        right.setDirection(DcMotorSimple.Direction.REVERSE);
+        shooter = hardwareMap.dcMotor.get("s");
+
+        //Linear Slide Motor Assignment
+        linear = hardwareMap.dcMotor.get("linear");
 
         //Intake Motor(s)
-        intake = hardwareMap.dcMotor.get("in");
+        intake = hardwareMap.dcMotor.get("i");
+
+///////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////
+
+        //Continuous Rotation Sensors
+        rightPusher = hardwareMap.crservo.get("rp");
+        leftPusher = hardwareMap.crservo.get("lp");
+
+        //Lock
+        lock = hardwareMap.servo.get("k");
+
+        //Lock Mechanism Function
+        lock.setPosition(0);
+
+///////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////
+
+        //Gyro Sensor Assignment
+        gyro = hardwareMap.gyroSensor.get("g");
 
         //Color Sensors
         CSleft = hardwareMap.colorSensor.get("csl");
@@ -136,18 +183,8 @@ public class Auto6322Red extends LinearOpModeCamera {
         ODSleft = hardwareMap.opticalDistanceSensor.get("odsleft");
         ODSright = hardwareMap.opticalDistanceSensor.get("odsright");
 
-        //Continuous Rotation Sensors
-        rightPusher = hardwareMap.crservo.get("rp");
-        leftPusher = hardwareMap.crservo.get("lp");
-
-        //Winch
-        winch = hardwareMap.crservo.get("w");
-
-        //Lock
-        lock = hardwareMap.servo.get("k");
-
-        //Lock Mechanism Function
-        lock.setPosition(0);
+///////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////
 
         /*navx_device = AHRS.getInstance(hardwareMap.deviceInterfaceModule.get("dim"),
                       NAVX_DIM_I2C_PORT,
@@ -163,25 +200,6 @@ public class Auto6322Red extends LinearOpModeCamera {
 
         waitForStart();
         moveByTime(0.2, 1300);
-        right.setPower(0.3);
-        left.setPower(0.3);
-        sleep(2000);
-        intake.setPower(1.0); //Intake
-        winch.setPower(1.0); //Activate Winch
-        sleep(1000);
-        winch.setPower(-1.0);
-        sleep(1500);
-        winch.setPower(1.0); //Activate Winch
-        sleep(1000);
-        winch.setPower(-1.0);
-        sleep(1500);
-        winch.setPower(1.0); //Activate Winch
-        sleep(1000);
-        winch.setPower(-1.0);
-        sleep(1500);
-        right.setPower(0);
-        left.setPower(0);
-        intake.setPower(0);
 
         moveBySteps(0.5, 14);
         turnBySteps(0.6, -22);
@@ -347,6 +365,36 @@ public class Auto6322Red extends LinearOpModeCamera {
 
         for (int i = 0; i < driveTrain.length; i++)
             startPosition[i] = driveTrain[i].getCurrentPosition();
+
+        FrontRight.setTargetPosition((int)(startPosition[0] + -inches * COUNTS_PER_INCH));
+        FrontLeft.setTargetPosition((int)(startPosition[1] + inches * COUNTS_PER_INCH));
+        BackRight.setTargetPosition((int)(startPosition[2] + -inches * COUNTS_PER_INCH));
+        BackLeft.setTargetPosition((int)(startPosition[3] + inches * COUNTS_PER_INCH));
+
+        for (DcMotor motor : driveTrain)
+            motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        for (DcMotor motor : driveTrain)
+            motor.setPower(Math.abs(power));
+
+        while(driveTrain[0].isBusy() && driveTrain[1].isBusy() && driveTrain[2].isBusy() && driveTrain[3].isBusy() && opModeIsActive())
+            sleep(1);
+
+        for (DcMotor motor : driveTrain)
+            motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+    }
+
+    public void turnSideBySteps(String side, double power, double inches) throws InterruptedException {
+
+        int[] startPosition = new int[4];
+
+        for (DcMotor motor : driveTrain)
+            motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        for (int i = 0; i < driveTrain.length; i++)
+            startPosition[i] = driveTrain[i].getCurrentPosition();
+
+        //if (side == "right")
 
         FrontRight.setTargetPosition((int)(startPosition[0] + -inches * COUNTS_PER_INCH));
         FrontLeft.setTargetPosition((int)(startPosition[1] + inches * COUNTS_PER_INCH));
