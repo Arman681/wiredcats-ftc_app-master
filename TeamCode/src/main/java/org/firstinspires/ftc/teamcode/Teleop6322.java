@@ -11,6 +11,8 @@ import com.qualcomm.robotcore.hardware.OpticalDistanceSensor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import com.qualcomm.robotcore.hardware.I2cAddr;
+
 import static android.os.SystemClock.sleep;
 
 /**
@@ -84,7 +86,9 @@ public class Teleop6322 extends OpMode {
 
         //Color Sensor Assignments
         CSleft = hardwareMap.colorSensor.get("csl");
+        CSleft.setI2cAddress(I2cAddr.create7bit(0x26)); //7-bit address for 0x4c
         CSright = hardwareMap.colorSensor.get("csr");
+        CSright.setI2cAddress(I2cAddr.create7bit(0x1e)); //7-bit address for 0x3c
 
         CSleft.enableLed(true);
         CSright.enableLed(true);
@@ -279,6 +283,8 @@ public class Teleop6322 extends OpMode {
         //Telemetry Data
         telemetry.addData("Power of Intake Motor: " + intake.getPower(), null);
         telemetry.addData("Power of Motor for Shooter: " + shooter.getPower(), null);
+        telemetry.addData("ODSleft Values: " + ODSleft.getRawLightDetected(), null);
+        telemetry.update();
 
     }
 }
