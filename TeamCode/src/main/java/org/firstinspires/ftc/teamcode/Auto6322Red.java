@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 
+import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cGyro;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.hardware.ColorSensor;
@@ -30,6 +31,8 @@ import org.firstinspires.ftc.robotcontroller.internal.LinearOpModeCamera;
 //@Disabled
 
 public class Auto6322Red extends LinearOpModeCamera {
+
+    String color = "";
 
     ElapsedTime runtime1 = new ElapsedTime();
     ElapsedTime runtime2 = new ElapsedTime();
@@ -82,15 +85,19 @@ public class Auto6322Red extends LinearOpModeCamera {
     OpticalDistanceSensor ODSright;
 
     //Gyro Sensor
-    GyroSensor gyro;
+    ModernRoboticsI2cGyro gyro;
 
 ///////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////
+
+    int xVal, yVal, zVal = 0;     // Gyro rate Values
+    int heading = 0;              // Gyro integrated heading
+    int angleZ = 0;
+    boolean lastResetState = false;
+    boolean curResetState  = false;
 
     int bnum = 0;
     int ds2 = 2;  // additional downsampling of the image
-
-    float hsvValues[] = {0F,0F,0F};
 
     //IMU setup
     //AHRS navx_device;
@@ -137,8 +144,8 @@ public class Auto6322Red extends LinearOpModeCamera {
         for (DcMotor motor : driveTrain)
             motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        BackRight.setDirection(DcMotor.Direction.REVERSE);
-        FrontRight.setDirection(DcMotor.Direction.REVERSE);
+        BackLeft.setDirection(DcMotor.Direction.REVERSE);
+        FrontLeft.setDirection(DcMotor.Direction.REVERSE);
 ///////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////
 
@@ -168,7 +175,7 @@ public class Auto6322Red extends LinearOpModeCamera {
 ///////////////////////////////////////////////////////////////////////////////////
 
         //Gyro Sensor Assignment
-        gyro = hardwareMap.gyroSensor.get("g");
+        gyro = (ModernRoboticsI2cGyro)hardwareMap.gyroSensor.get("g");
 
         //Color Sensors
         CSleft = hardwareMap.colorSensor.get("csl");
@@ -198,17 +205,64 @@ public class Auto6322Red extends LinearOpModeCamera {
         yawPIDController.setTolerance(navXPIDController.ToleranceType.ABSOLUTE, TOLERANCE_DEGREES);
         yawPIDController.setPID(YAW_PID_P, YAW_PID_I, YAW_PID_D);*/
 
-        waitForStart();
-        moveByTime(0.2, 1300);
+        // start calibrating the gyro.
+        telemetry.addData(">", "Gyro Calibrating. Do Not move!");
+        telemetry.update();
+        gyro.calibrate();
 
-        moveBySteps(0.5, 14);
-        turnBySteps(0.6, -22);
-        moveBySteps(0.8, 52);
-        turnBySteps(0.6, 22);
+        // make sure the gyro is calibrated.
+        while (gyro.isCalibrating())  {
+            Thread.sleep(50);
+            idle();
+        }
+
+        telemetry.addData(">", "Gyro Calibrated.  Press Start.");
+        telemetry.update();
+
+        // wait for the start button to be pressed.
+        waitForStart();
+
+        //turnByAngle(0.3, 180);
+
+        moveBySteps(0.2, 24);
+        turnBySteps(0.6, 24);
+        moveBySteps(0.3, 52);
+        turnBySteps(0.6, -21);
+
+        runUntilWhite(0.2);
 
         moveByTime(0, 1000);
 
-        moveUntil(0.05, "red");
+        /*moveBySteps(0.5, 38);
+        turnBySteps(0.2, -14);
+        moveByTime(0, 1000);
+        moveBySteps(0.3, 6);
+
+
+        color = this.determineColor();
+        if (color == "blue"){
+            moveBySteps(0.5, 8);
+        }
+        else if (color == "red"){
+            moveBySteps(0.5, 3);
+        }
+        else if (color == "null") {
+            intake.setPower(0.5);
+            sleep(1000);
+        }
+        leftPusher.setPower(-1.0);
+        runtime1.reset();
+        while (runtime1.time() < 1.5);
+        leftPusher.setPower(0);*/
+
+
+
+
+
+
+        //moveBySteps(0.2, 12);
+
+        /*moveUntil(0.05, "red");
         moveByTime(0.0, 500);
         moveBySteps(0.2, 4.5);
         moveByTime(0.0, 50);
@@ -226,7 +280,7 @@ public class Auto6322Red extends LinearOpModeCamera {
         moveBySteps(0.6, 28);
         sleep(1500);
         turnBySteps(0.5, 18);
-        moveBySteps(0.6, 24);
+        moveBySteps(0.6, 24);*/
 
         //Starts autonomous using camera
         /*if (isCameraAvailable()) {
@@ -264,6 +318,100 @@ public class Auto6322Red extends LinearOpModeCamera {
             stopCamera();
         }*/
 
+    }
+
+    public void runUntilWhite(double power) throws InterruptedException {
+        boolean dec = false;
+        while (!dec) {
+            if (ODSleft.getRawLightDetected() < .9 || ODSright.getRawLightDetected() < .9) {
+                for (DcMotor motor : driveTrain)
+                    motor.setPower(power);
+            }
+            else if (ODSleft.getRawLightDetected() > .9 || ODSright.getRawLightDetected() > .9) {
+                for (DcMotor motor : driveTrain)
+                    motor.setPower(0);
+                dec = true;
+            }
+            telemetry.addData("ODSleft Values: " + ODSleft.getRawLightDetected(), null);
+            telemetry.addData("ODSright Values: " + ODSright.getRawLightDetected(), null);
+            telemetry.update();
+            idle();
+        }
+    }
+
+    public void turnByAngle(double power, int degrees) throws InterruptedException {
+
+        int s = -1;
+
+        // if the A and B buttons are pressed just now, reset Z heading.
+        curResetState = true;
+        if(curResetState && !lastResetState)  {
+            gyro.resetZAxisIntegrator();
+        }
+        lastResetState = curResetState;
+
+        // get the x, y, and z values (rate of change of angle).
+        xVal = gyro.rawX();
+        yVal = gyro.rawY();
+        zVal = gyro.rawZ();
+
+        // get the heading info.
+        // the Modern Robotics' gyro sensor keeps
+        // track of the current heading for the Z axis only.
+        heading = gyro.getHeading();
+        angleZ  = gyro.getIntegratedZValue();
+
+        double target = gyro.getHeading() + degrees;
+
+        while((Math.abs((target - gyro.getHeading()))) > 0) {
+            for (DcMotor motor : driveTrain) {
+                motor.setPower(power * s);
+                s *= -1;
+            }
+            telemetry.addData(">", "Press A & B to reset Heading.");
+            telemetry.addData("0", "Heading %03d", heading);
+            telemetry.addData("1", "Int. Ang. %03d", angleZ);
+            telemetry.addData("2", "X av. %03d", xVal);
+            telemetry.addData("3", "Y av. %03d", yVal);
+            telemetry.addData("4", "Z av. %03d", zVal);
+            telemetry.update();
+            waitOneFullHardwareCycle();
+        }
+
+        for (DcMotor motor : driveTrain)
+            motor.setPower(0);
+    }
+
+
+    public String determineColor() throws InterruptedException {
+
+        boolean dec = false;
+        int c1 = 0; //Iterations counter
+        String c = "";
+
+        while(!dec) {
+            if (CSleft.red() * 8 > CSleft.blue() * 8) {
+                c = "red";
+                dec = true;
+            }
+            else if (CSleft.blue() * 8 > CSleft.red() * 8) {
+                c = "blue";
+                dec = true;
+            }
+            else if (c1 > 500000) {
+                c = "null";
+                dec = true;
+            }
+            c1++;
+            telemetry.addData("LED", true ? "On" : "Off");
+            telemetry.addData("Red  ", CSleft.red()*8);
+            telemetry.addData("Blue ", CSleft.blue()*8);
+            telemetry.addData("Iterations: " + c1, null);
+            telemetry.update();
+
+        }
+
+        return c;
     }
 
     public void moveByTime(double power, int time) throws InterruptedException {
