@@ -1,8 +1,10 @@
 package org.firstinspires.ftc.teamcode;
 
+import android.app.Activity;
 import android.graphics.Bitmap;
 import android.graphics.Color;
-
+import android.view.View;
+import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cGyro;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.hardware.ColorSensor;
@@ -31,12 +33,12 @@ import org.firstinspires.ftc.robotcontroller.internal.LinearOpModeCamera;
 
 public class TestAutoCS extends LinearOpModeCamera {
 
-    int c1 = 0;
+    int c1 = 0; //Iterations counter
     String color;
 
     ElapsedTime runtime1 = new ElapsedTime();
 
-    ///////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////
 
     //Drive Train Motor Declarations
@@ -84,10 +86,16 @@ public class TestAutoCS extends LinearOpModeCamera {
     OpticalDistanceSensor ODSright;
 
     //Gyro Sensor
-    GyroSensor gyro;
+    ModernRoboticsI2cGyro gyro;
 
 ///////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////
+
+    int xVal, yVal, zVal = 0;     // Gyro rate Values
+    int heading = 0;              // Gyro integrated heading
+    int angleZ = 0;
+    boolean lastResetState = false;
+    boolean curResetState  = false;
 
     int bnum = 0;
     int ds2 = 2;  // additional downsampling of the image
@@ -139,8 +147,8 @@ public class TestAutoCS extends LinearOpModeCamera {
         for (DcMotor motor : driveTrain)
             motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        BackRight.setDirection(DcMotor.Direction.REVERSE);
-        FrontRight.setDirection(DcMotor.Direction.REVERSE);
+        BackLeft.setDirection(DcMotor.Direction.REVERSE);
+        FrontLeft.setDirection(DcMotor.Direction.REVERSE);
 ///////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////
 
@@ -170,16 +178,11 @@ public class TestAutoCS extends LinearOpModeCamera {
 ///////////////////////////////////////////////////////////////////////////////////
 
         //Gyro Sensor Assignment
-        gyro = hardwareMap.gyroSensor.get("g");
+        gyro = (ModernRoboticsI2cGyro)hardwareMap.gyroSensor.get("g");
 
         //Color Sensors
         CSleft = hardwareMap.colorSensor.get("csl");
         CSright = hardwareMap.colorSensor.get("csr");
-
-        CSright.enableLed(true);
-        CSleft.enableLed(true);
-        CSleft.enableLed(false);
-        CSright.enableLed(false);
 
         //Optical Distance Sensors
         ODSleft = hardwareMap.opticalDistanceSensor.get("odsleft");
@@ -200,28 +203,28 @@ public class TestAutoCS extends LinearOpModeCamera {
         yawPIDController.setTolerance(navXPIDController.ToleranceType.ABSOLUTE, TOLERANCE_DEGREES);
         yawPIDController.setPID(YAW_PID_P, YAW_PID_I, YAW_PID_D);*/
 
-        waitForStart();
-        /*moveUntil(0.05, "blue");
-        moveByTime(0.0, 500);
-        moveBySteps(0.2, 5.5);
-        moveByTime(0.0, 500);
-        rightPusher.setPower(-1.0);
-        runtime1.reset();
-        while (runtime1.time() < 1.5);
-        rightPusher.setPower(0);*/
+        CSright.enableLed(true);
+        CSleft.enableLed(true);
+        CSleft.enableLed(false);
+        CSright.enableLed(false);
 
-        color = determineColor();
-        if (color == "blue"){
-            moveBySteps(0.5, 8);
+        // start calibrating the gyro.
+        telemetry.addData(">", "Gyro Calibrating. Do Not move!");
+        telemetry.update();
+        gyro.calibrate();
+
+        // make sure the gyro is calibrated.
+        while (gyro.isCalibrating())  {
+            Thread.sleep(50);
+            idle();
         }
-        else if (color == "red"){
-            moveBySteps(0.5, 3);
-        }
-        sleep(3000);
-        rightPusher.setPower(-1.0);
-        runtime1.reset();
-        while (runtime1.time() < 1.5);
-        rightPusher.setPower(0);
+
+        telemetry.addData(">", "Gyro Calibrated.  Press Start.");
+        telemetry.update();
+
+        waitForStart();
+
+        runUntilWhite(0.1);
 
 
         //Starts autonomous using camera
@@ -260,6 +263,69 @@ public class TestAutoCS extends LinearOpModeCamera {
             stopCamera();
         }*/
 
+    }
+
+    public void turnByAngle(double power, int degrees) throws InterruptedException {
+
+        int s = -1;
+
+        // if the A and B buttons are pressed just now, reset Z heading.
+        curResetState = true;
+        if(curResetState && !lastResetState)  {
+            gyro.resetZAxisIntegrator();
+        }
+        lastResetState = curResetState;
+
+        // get the x, y, and z values (rate of change of angle).
+        xVal = gyro.rawX();
+        yVal = gyro.rawY();
+        zVal = gyro.rawZ();
+
+        // get the heading info.
+        // the Modern Robotics' gyro sensor keeps
+        // track of the current heading for the Z axis only.
+        heading = gyro.getHeading();
+        angleZ  = gyro.getIntegratedZValue();
+
+        double target = gyro.getHeading() + degrees;
+
+
+        while((Math.abs((target - gyro.getHeading()))) > 0) {
+            for (DcMotor motor : driveTrain) {
+                motor.setPower(power * s);
+                s *= -1;
+            }
+            telemetry.addData(">", "Press A & B to reset Heading.");
+            telemetry.addData("0", "Heading %03d", heading);
+            telemetry.addData("1", "Int. Ang. %03d", angleZ);
+            telemetry.addData("2", "X av. %03d", xVal);
+            telemetry.addData("3", "Y av. %03d", yVal);
+            telemetry.addData("4", "Z av. %03d", zVal);
+            telemetry.update();
+            waitOneFullHardwareCycle();
+        }
+
+        for (DcMotor motor : driveTrain)
+            motor.setPower(0);
+    }
+
+    public void runUntilWhite(double power) throws InterruptedException {
+        boolean dec = false;
+        while (!dec) {
+            if (ODSleft.getRawLightDetected() < .9 || ODSright.getRawLightDetected() < .9) {
+                for (DcMotor motor : driveTrain)
+                    motor.setPower(power);
+            }
+            else if (ODSleft.getRawLightDetected() > .9 || ODSright.getRawLightDetected() > .9) {
+                for (DcMotor motor : driveTrain)
+                    motor.setPower(0);
+                dec = true;
+            }
+            telemetry.addData("ODSleft Values: " + ODSleft.getRawLightDetected(), null);
+            telemetry.addData("ODSright Values: " + ODSright.getRawLightDetected(), null);
+            telemetry.update();
+            idle();
+        }
     }
 
     public void moveByTime(double power, int time) throws InterruptedException {
@@ -325,24 +391,31 @@ public class TestAutoCS extends LinearOpModeCamera {
     public String determineColor() throws InterruptedException {
 
         boolean dec = false;
-        String color = "";
+        String c = "";
 
         while(!dec) {
-            if (((CSleft.red() * 8) > (CSleft.blue() * 8)) || ((CSleft.red() * 8) > 4)) {
-                color = "red";
+            if (CSleft.red() * 8 > CSleft.blue() * 8) {
+                c = "red";
                 dec = true;
             }
-            else if (((CSleft.blue() * 8) > (CSleft.red() * 8)) || ((CSleft.blue() * 8) > 4)) {
-                color = "blue";
+            else if (CSleft.blue() * 8 > CSleft.red() * 8) {
+                c = "blue";
                 dec = true;
             }
+            else if (c1 > 500000) {
+                c = "null";
+                dec = true;
+            }
+            c1++;
             telemetry.addData("LED", true ? "On" : "Off");
             telemetry.addData("Red  ", CSleft.red()*8);
             telemetry.addData("Blue ", CSleft.blue()*8);
+            telemetry.addData("Iterations: " + c1, null);
             telemetry.update();
+
         }
 
-        return color;
+        return c;
     }
 
     public void moveBySteps(double power, double inches) throws InterruptedException {
