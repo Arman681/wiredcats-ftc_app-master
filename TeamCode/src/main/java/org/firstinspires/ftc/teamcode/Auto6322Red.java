@@ -224,14 +224,67 @@ public class Auto6322Red extends LinearOpModeCamera {
 
         //turnByAngle(0.3, 180);
 
-        moveBySteps(0.2, 24);
-        turnBySteps(0.6, 24);
-        moveBySteps(0.3, 52);
-        turnBySteps(0.6, -21);
+        moveBySteps(0.4, 20);
+        turnBySteps(0.8, 14);
+        runUntilWhite(0.3);
+        turnBySteps(0.8, -7.5);
+        moveBySteps(0.4, 6);
+        turnBySteps(0.8, -6);
+        moveBySteps(0.4, -24);
+        turnBySteps(0.8, 5);
+        moveBySteps(0.4, 12);
+        for (DcMotor motor : driveTrain)
+            motor.setPower(0);
 
-        runUntilWhite(0.2);
+        if (determineColor() == "red") {
+            moveBySteps(0.3, -3.5);
+            rightPusher.setPower(-1.0);
+            for (DcMotor motor : driveTrain)
+                motor.setPower(0);
+            sleep(1500);
+            rightPusher.setPower(1.0);
+            for (DcMotor motor : driveTrain)
+                motor.setPower(0);
+            sleep(1500);
+        }
+        else if (determineColor() == "blue") {
+            moveBySteps(0.3, -9);
+            rightPusher.setPower(-1.0);
+            for (DcMotor motor : driveTrain)
+                motor.setPower(0);
+            sleep(1500);
+            rightPusher.setPower(1.0);
+            for (DcMotor motor : driveTrain)
+                motor.setPower(0);
+            sleep(1500);
+        }
 
-        moveByTime(0, 1000);
+        runUntilWhite(0.3);
+        moveBySteps(0.3, -5);
+        if (determineColor() == "red") {
+            moveBySteps(0.3, -3.5);
+            rightPusher.setPower(-1.0);
+            for (DcMotor motor : driveTrain)
+                motor.setPower(0);
+            sleep(1500);
+            rightPusher.setPower(1.0);
+            for (DcMotor motor : driveTrain)
+                motor.setPower(0);
+            sleep(1500);
+        }
+        else if (determineColor() == "blue") {
+            moveBySteps(0.3, -9);
+            rightPusher.setPower(-1.0);
+            for (DcMotor motor : driveTrain)
+                motor.setPower(0);
+            sleep(1500);
+            rightPusher.setPower(1.0);
+            for (DcMotor motor : driveTrain)
+                motor.setPower(0);
+            sleep(1500);
+        }
+
+
 
         /*moveBySteps(0.5, 38);
         turnBySteps(0.2, -14);
@@ -323,11 +376,11 @@ public class Auto6322Red extends LinearOpModeCamera {
     public void runUntilWhite(double power) throws InterruptedException {
         boolean dec = false;
         while (!dec) {
-            if (ODSleft.getRawLightDetected() < .9 || ODSright.getRawLightDetected() < .9) {
+            if (ODSleft.getRawLightDetected()*13 < .8 || ODSright.getRawLightDetected() < .9) {
                 for (DcMotor motor : driveTrain)
                     motor.setPower(power);
             }
-            else if (ODSleft.getRawLightDetected() > .9 || ODSright.getRawLightDetected() > .9) {
+            else if (ODSleft.getRawLightDetected()*13 > .8 || ODSright.getRawLightDetected() > .9) {
                 for (DcMotor motor : driveTrain)
                     motor.setPower(0);
                 dec = true;
