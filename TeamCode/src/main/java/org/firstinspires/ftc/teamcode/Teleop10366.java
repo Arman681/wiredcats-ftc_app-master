@@ -40,6 +40,7 @@ public class Teleop10366 extends OpMode {
 
     //Lift Motor Declaration
     DcMotor lift;
+    double c1 = Catapult.getPower();
 
     int c2 = 0; //CRS Counter
     int c3 = 0; //Intake Motor Counter In
@@ -80,6 +81,11 @@ public class Teleop10366 extends OpMode {
 
     @Override
     public void loop() {
+
+        Right.setPosition(-1.0);
+        Left.setPosition(-1.0);
+        Catapult.setPower(1.5);
+
         float lefty1 = -gamepad1.left_stick_y;
         float righty1 = -gamepad1.right_stick_y;
 
@@ -143,14 +149,16 @@ public class Teleop10366 extends OpMode {
 
         //Servo Catapult Function
         if (gamepad2.a && c2 == 0) {
-            Catapult.setPower(1);
+            Catapult.setPower(1.0);
             c2 = 1;
         } else if (!gamepad2.a && c2 == 1)
             c2 = 2;
           else if (gamepad2.a && c2 == 2) {
-            Catapult.setPower(0);
+            Catapult.setPower(1.5);
             c2 = 3;
         } else if (!gamepad2.a && c2 == 3)
             c2 = 0;
+        telemetry.addData("Catapult Power: " + Catapult.getPower(), null);
+
     }
 }
