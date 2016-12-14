@@ -6,9 +6,12 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.GyroSensor;
 import com.qualcomm.robotcore.hardware.OpticalDistanceSensor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
+
+import com.qualcomm.robotcore.hardware.I2cAddr;
 
 import static android.os.SystemClock.sleep;
 
@@ -30,11 +33,13 @@ public class Teleop6322 extends OpMode {
     DcMotor BackRight;
 
     //Shooting Mechanism Motor Declarations
-    DcMotor right;
-    DcMotor left;
+    DcMotor shooter;
 
     //Intake Motor Declaration
     DcMotor intake;
+
+    //Conveyor Belt Motor Declaration
+    DcMotor conveyor;
 
     //Linear Slide Motor Declaration
     DcMotor linear;
@@ -47,65 +52,70 @@ public class Teleop6322 extends OpMode {
     OpticalDistanceSensor ODSleft;
     OpticalDistanceSensor ODSright;
 
+    //Gyro Sensor
+    GyroSensor gyro;
+
     //Continuous Rotation Servo Declarations
     CRServo rightPusher;
     CRServo leftPusher;
 
-    CRServo winch;
+    //Locking mechanism for cap ball lifter
     Servo lock;
 
     int c1 = 0;     //Left CRS Counter
     int c2 = 0;     //Right CRS Counter
     int c3 = 0;     //Shooter Counter
-    int c4 = 0;    //Intake Motor In Counter
-    int c5 = 0;    //Intake Motor Out Counter
-    int c7 = 0;     //Winch Servo Position Counter
+    int c4 = 0;     //Intake Motor In Counter
+    int c5 = 0;     //Intake Motor Out Counter
     double z1 = 0.05; //Right and Left Motors deceleration Counter
     double z2 = 0.05; //Right and Left Motors acceleration Counter
     @Override
     public void init() {
 
-        //Drive Train Motors
+        //Drive Train Motor Assignments
         FrontRight = hardwareMap.dcMotor.get("fr");
         FrontLeft = hardwareMap.dcMotor.get("fl");
         BackRight = hardwareMap.dcMotor.get("br");
         BackLeft = hardwareMap.dcMotor.get("bl");
 
-        //Shooting Mechanism Motors
-        right = hardwareMap.dcMotor.get("r");
-        left = hardwareMap.dcMotor.get("l");
-        right.setDirection(DcMotorSimple.Direction.REVERSE);
+        //Shooting Mechanism Motor Assignments
+        shooter = hardwareMap.dcMotor.get("s");
 
         //Linear Slide Motor
         //slide = hardwareMap.dcMotor.get("s");
 
-        //Color Sensors
+        //Color Sensor Assignments
         CSleft = hardwareMap.colorSensor.get("csl");
+        CSleft.setI2cAddress(I2cAddr.create7bit(0x26)); //7-bit address for 0x4c
         CSright = hardwareMap.colorSensor.get("csr");
+        CSright.setI2cAddress(I2cAddr.create7bit(0x1e)); //7-bit address for 0x3c
 
         CSleft.enableLed(true);
         CSright.enableLed(true);
         CSleft.enableLed(false);
         CSright.enableLed(false);
 
-        //Optical Distance Sensors
+        //Optical Distance Sensor Assignments
         ODSleft = hardwareMap.opticalDistanceSensor.get("odsleft");
         ODSright = hardwareMap.opticalDistanceSensor.get("odsright");
 
-        //Continuous Rotation Servos
+        //Gyro Sensor Assignment
+        gyro = hardwareMap.gyroSensor.get("g");
+
+        //Continuous Rotation Servo Assignments
         rightPusher = hardwareMap.crservo.get("rp");
         leftPusher = hardwareMap.crservo.get("lp");
 
-        //Intake Motor(s)
-        intake = hardwareMap.dcMotor.get("in");
+        //Intake Motor Assignment
+        intake = hardwareMap.dcMotor.get("i");
 
-        //Winch
-        winch = hardwareMap.crservo.get("w");
-
-        //Lock
+        //Lock Servo Assignment
         lock = hardwareMap.servo.get("k");
 
-        //Linear
+        //Conveyor Motor Assignment
+        conveyor = hardwareMap.dcMotor.get("c");
+
+        //Linear Slide Motor Assignment
         linear = hardwareMap.dcMotor.get("linear");
 
         BackRight.setDirection(DcMotor.Direction.REVERSE);
@@ -192,17 +202,15 @@ public class Teleop6322 extends OpMode {
             c3 = 1;
         else if (!gamepad2.dpad_up && c3 == 1) {
             z2 *= 1.4;
-            if (z2 < 0.25) {
-                right.setPower(z2);
-                left.setPower(z2);
+            if (z2 < 1.0) {
+                shooter.setPower(z2);
                 //sleep(500);
             }
             else {
-                right.setPower(0.25);
-                left.setPower(0.25);
+                shooter.setPower(1.0);
                 z2 = 0.05;
             }
-            if (right.getPower() < 0.25 && left.getPower() < 0.25)
+            if (shooter.getPower() < 1.0)
                 c3 = 1;
             else
                 c3 = 2;
@@ -211,16 +219,15 @@ public class Teleop6322 extends OpMode {
             c3 = 3;
         else if (!gamepad2.dpad_up && c3 == 3) {
             z1 *= 1.4;
-            if ((0.25 - z1) > 0) {
-                right.setPower(0.25 - z1);
-                left.setPower(0.25 - z1);
+            if ((1.0 - z1) > 0) {
+                shooter.setPower(1.0 - z1);
             }
             else {
-                right.setPower(0);
-                left.setPower(0);
+                shooter.setPower(0);
+                shooter.setPower(0);
                 z1 = 0.05;
             }
-            if (right.getPower() > 0 && left.getPower() > 0)
+            if (shooter.getPower() > 0 && shooter.getPower() > 0)
                 c3 = 3;
             else
                 c3 = 0;
@@ -259,9 +266,11 @@ public class Teleop6322 extends OpMode {
 
         //Conveyor Belt Function
         if (gamepad2.right_trigger == 1)
-            winch.setPower(1.0);
+            conveyor.setPower(1.0);
         else if (gamepad2.left_trigger == 1)
-            winch.setPower(-1.0);
+            conveyor.setPower(-1.0);
+        else
+            conveyor.setPower(0);
 
         //Linear Slide Function
         if (gamepad2.b)
@@ -273,8 +282,9 @@ public class Teleop6322 extends OpMode {
 
         //Telemetry Data
         telemetry.addData("Power of Intake Motor: " + intake.getPower(), null);
-        telemetry.addData("Power of Right Motor for Shooter: " + right.getPower(), null);
-        telemetry.addData("Power of Left Motor for Shooter: " + left.getPower(), null);
+        telemetry.addData("Power of Motor for Shooter: " + shooter.getPower(), null);
+        telemetry.addData("ODSleft Values: " + ODSleft.getRawLightDetected(), null);
+        telemetry.update();
 
     }
 }
