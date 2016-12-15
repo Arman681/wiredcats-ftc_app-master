@@ -259,6 +259,11 @@ public class Auto6322Red extends LinearOpModeCamera {
             sleep(1500);
         }
 
+        moveBySteps(0.3, -6);
+        runUntilWhite(0.3);
+        adjustAtWhite();
+
+        moveBySteps(0.3, 12);
         runUntilWhite(0.3);
         moveBySteps(0.3, -5);
         if (determineColor() == "red") {
@@ -389,6 +394,22 @@ public class Auto6322Red extends LinearOpModeCamera {
             telemetry.addData("ODSright Values: " + ODSright.getRawLightDetected(), null);
             telemetry.update();
             idle();
+        }
+    }
+
+    public void adjustAtWhite() throws InterruptedException {
+        boolean dec = false;
+        while (!dec) {
+            if ((ODSright.getRawLightDetected() - ODSleft.getRawLightDetected()) > 0.02) {
+                FrontLeft.setPower(0.1);
+                BackLeft.setPower(0.1);
+            }
+            else if ((ODSleft.getRawLightDetected() - ODSright.getRawLightDetected()) > 0.02) {
+                FrontRight.setPower(0.1);
+                FrontRight.setPower(0.1);
+            }
+            else
+                dec = true;
         }
     }
 
@@ -546,8 +567,10 @@ public class Auto6322Red extends LinearOpModeCamera {
         for (DcMotor motor : driveTrain)
             motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-        for (DcMotor motor : driveTrain)
-            motor.setPower(Math.abs(power));
+        FrontLeft.setPower(Math.abs(power));
+        BackLeft.setPower(Math.abs(power));
+        FrontRight.setPower(Math.abs(power));
+        BackRight.setPower(Math.abs(power));
 
         while(driveTrain[0].isBusy() && driveTrain[1].isBusy() && driveTrain[2].isBusy() && driveTrain[3].isBusy() && opModeIsActive())
             sleep(1);
