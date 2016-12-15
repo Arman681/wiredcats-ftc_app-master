@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
+import android.graphics.Color;
+
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.CRServoImpl;
 import com.qualcomm.robotcore.hardware.ColorSensor;
@@ -7,6 +9,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.GyroSensor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -19,6 +22,8 @@ import static android.os.SystemClock.sleep;
 @TeleOp(name="Teleop10366", group ="Opmode")
 
 public class Teleop10366 extends OpMode {
+
+    ElapsedTime runtime1 = new ElapsedTime();
 
     //Drive Train Motor Declarations
     DcMotor FrontLeft;
@@ -40,7 +45,10 @@ public class Teleop10366 extends OpMode {
 
     //Lift Motor Declaration
     DcMotor lift;
-    double c1 = Catapult.getPower();
+
+    ColorSensor csl;
+    ColorSensor csr;
+    GyroSensor gyro;
 
     int c2 = 0; //CRS Counter
     int c3 = 0; //Intake Motor Counter In
@@ -77,6 +85,10 @@ public class Teleop10366 extends OpMode {
 
         //Lift Motor
         lift = hardwareMap.dcMotor.get("lift");
+
+        csl = hardwareMap.colorSensor.get("csl");
+        csr = hardwareMap.colorSensor.get("csr");
+        gyro = hardwareMap.gyroSensor.get("g");
     }
 
     @Override
@@ -84,7 +96,6 @@ public class Teleop10366 extends OpMode {
 
         Right.setPosition(-1.0);
         Left.setPosition(-1.0);
-        Catapult.setPower(1.5);
 
         float lefty1 = -gamepad1.left_stick_y;
         float righty1 = -gamepad1.right_stick_y;
@@ -134,30 +145,40 @@ public class Teleop10366 extends OpMode {
             c5 = 0;
 
         //Shooting Mechanism Motors Function
+        if (!gamepad2.y && c4 == 0)
+            Catapult.setPower(1);
         if (gamepad2.y && c4 == 0) {
             right.setPower(-1.0);
             left.setPower(-1.0);
             c4 = 1;
-        } else if (!gamepad2.y && c4 == 1)
+        }
+        else if (!gamepad2.y && c4 == 1) {
             c4 = 2;
-          else if (gamepad2.y && c4 == 2) {
+        }
+        else if (!gamepad2.y && c4 == 2) {
+            runtime1.reset();
+            if (runtime1.time() < 2) {
+                Catapult.setPower(0);
+            }
+        }
+        else if (gamepad2.y && c4 == 2) {
             right.setPower(0);
             left.setPower(0);
+            Catapult.setPower(1);
             c4 = 3;
-        } else if (!gamepad2.y && c4 == 3)
+        }
+        else if (!gamepad2.y && c4 == 3)
             c4 = 0;
 
-        //Servo Catapult Function
-        if (gamepad2.a && c2 == 0) {
-            Catapult.setPower(1.0);
-            c2 = 1;
-        } else if (!gamepad2.a && c2 == 1)
-            c2 = 2;
-          else if (gamepad2.a && c2 == 2) {
-            Catapult.setPower(1.5);
-            c2 = 3;
-        } else if (!gamepad2.a && c2 == 3)
-            c2 = 0;
+        //Lift Mechanism Function
+        if (gamepad2.x)
+            lift.setPower(1.0);
+        else if (gamepad2.b)
+            lift.setPower(-1.0);
+        else
+        lift.setPower(0);
+
+
         telemetry.addData("Catapult Power: " + Catapult.getPower(), null);
 
     }
