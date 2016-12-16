@@ -100,7 +100,7 @@ public class RedAuto10366 extends LinearOpMode {
 
         waitForStart();
         moveByTime(0.5, 2000);
-        
+        turnByTime(0.5, 1000);
     }
 
     public void moveByTime(double power, int time) throws InterruptedException {
