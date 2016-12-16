@@ -153,7 +153,7 @@ public class Auto6322Red extends LinearOpModeCamera {
         shooter = hardwareMap.dcMotor.get("s");
 
         //Linear Slide Motor Assignment
-        linear = hardwareMap.dcMotor.get("linear");
+        linear = hardwareMap.dcMotor.get("w");
 
         //Intake Motor(s)
         intake = hardwareMap.dcMotor.get("i");
@@ -224,15 +224,26 @@ public class Auto6322Red extends LinearOpModeCamera {
 
         //turnByAngle(0.3, 180);
 
-        moveBySteps(0.4, 20);
-        turnBySteps(0.8, 14);
-        runUntilWhite(0.3);
-        turnBySteps(0.8, -7.5);
-        moveBySteps(0.4, 6);
-        turnBySteps(0.8, -6);
-        moveBySteps(0.4, -24);
-        turnBySteps(0.8, 5);
-        moveBySteps(0.4, 12);
+        //moveBySteps(0.4, 20);
+        //turnBySteps(0.8, 14);
+        //runUntilWhite(0.3);
+        //turnBySteps(0.8, -7.5);
+        //moveBySteps(0.4, 6);
+        //turnBySteps(0.8, -6);
+        //moveBySteps(0.4, -24);
+        //turnBySteps(0.8, 5);
+        //moveBySteps(0.4, 12);
+        moveBySteps(1, 20);
+        turnBySteps(1, 14);
+        moveBySteps(1, 40);
+        turnBySteps(1, -14);
+        moveBySteps(1, 13);
+        turnBySteps(1, 25);
+        moveBySteps(0.2, 40);
+        moveBySteps(0.4, -2.5);
+        turnBySteps(0.8, -22);
+        runUntilWhite(-0.7);
+        moveBySteps(0.5, -0.5);
         for (DcMotor motor : driveTrain)
             motor.setPower(0);
 
