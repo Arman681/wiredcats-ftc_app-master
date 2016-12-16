@@ -108,7 +108,7 @@ public class Gen3teleop extends OpMode {
             c2 = 2;
         else if (gamepad1.b && c2 == 2) {
             runtime2.reset();
-            rightPusher.setPower(0);
+            rightPusher.setPower(-1.0);
             c2 = 3;
         }
         else if (!gamepad1.b && c2 == 3)
