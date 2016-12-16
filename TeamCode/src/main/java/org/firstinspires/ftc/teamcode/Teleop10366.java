@@ -104,7 +104,8 @@ public class Teleop10366 extends OpMode {
         if (lefty1 < -.2 || lefty1 > .2) {
             FrontLeft.setPower(lefty1);
             BackLeft.setPower(lefty1);
-        } else {
+        }
+        else {
             for (int i = 1; i > .0001; i *= .1) {
                 FrontLeft.setPower(lefty1 * i);
                 BackLeft.setPower(lefty1 * i);
@@ -113,7 +114,8 @@ public class Teleop10366 extends OpMode {
         if (righty1 < -.2 || righty1 > .2) {
             FrontRight.setPower(righty1);
             BackRight.setPower(righty1);
-        } else {
+        }
+        else {
             for (int i = 1; i > .0001; i *= .1) {
                 FrontRight.setPower(righty1 * i);
                 BackRight.setPower(righty1 * i);
@@ -124,24 +126,28 @@ public class Teleop10366 extends OpMode {
         if (gamepad1.a && c3 == 0) {
             intake.setPower(1.0);
             c3 = 1;
-        } else if (!gamepad1.a && c3 == 1)
+        }
+        else if (!gamepad1.a && c3 == 1)
             c3 = 2;
         else if (gamepad1.a && c3 == 2) {
             intake.setPower(0);
             c3 = 3;
-        } else if (!gamepad1.a && c3 == 3)
+        }
+        else if (!gamepad1.a && c3 == 3)
             c3 = 0;
 
         //Intake Out
         if (gamepad1.y && c5 == 0) {
             intake.setPower(-1.0);
             c5 = 1;
-        } else if (!gamepad1.y && c5 == 1)
+        }
+        else if (!gamepad1.y && c5 == 1)
             c5 = 2;
         else if (gamepad1.y && c5 == 2) {
             intake.setPower(0);
             c5 = 3;
-        } else if (!gamepad1.y && c5 == 3)
+        }
+        else if (!gamepad1.y && c5 == 3)
             c5 = 0;
 
         //Shooting Mechanism Motors Function
