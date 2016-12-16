@@ -41,8 +41,8 @@ public class Teleop6322 extends OpMode {
     //Conveyor Belt Motor Declaration
     DcMotor conveyor;
 
-    //Linear Slide Motor Declaration
-    DcMotor linear;
+    //Winch Motor Declaration
+    DcMotor winch;
 
     //Color Sensor Declarations
     ColorSensor CSleft;
@@ -81,9 +81,6 @@ public class Teleop6322 extends OpMode {
         //Shooting Mechanism Motor Assignments
         shooter = hardwareMap.dcMotor.get("s");
 
-        //Linear Slide Motor
-        //slide = hardwareMap.dcMotor.get("s");
-
         //Color Sensor Assignments
         CSleft = hardwareMap.colorSensor.get("csl");
         CSleft.setI2cAddress(I2cAddr.create7bit(0x26)); //7-bit address for 0x4c
@@ -116,7 +113,7 @@ public class Teleop6322 extends OpMode {
         conveyor = hardwareMap.dcMotor.get("c");
 
         //Linear Slide Motor Assignment
-        linear = hardwareMap.dcMotor.get("linear");
+        winch = hardwareMap.dcMotor.get("w");
 
         BackRight.setDirection(DcMotor.Direction.REVERSE);
         FrontRight.setDirection(DcMotor.Direction.REVERSE);
@@ -247,6 +244,7 @@ public class Teleop6322 extends OpMode {
         }
         else if (!gamepad2.dpad_left && c4 == 3)
             c4 = 0;
+
         //Intake Motor Function Out
         if (gamepad2.dpad_right && c5 == 0) {
             intake.setPower(-1.0);
@@ -261,9 +259,6 @@ public class Teleop6322 extends OpMode {
         else if (!gamepad2.dpad_right && c5 == 3)
             c5 = 0;
 
-        //Linear Slide Function
-        /*slide.setPower(righty2);*/
-
         //Conveyor Belt Function
         if (gamepad2.right_trigger == 1)
             conveyor.setPower(1.0);
@@ -272,13 +267,13 @@ public class Teleop6322 extends OpMode {
         else
             conveyor.setPower(0);
 
-        //Linear Slide Function
+        //Winch Function
         if (gamepad2.b)
-            linear.setPower(1.0);
+            winch.setPower(1.0);
         else if (gamepad2.x)
-            linear.setPower(-1.0);
+            winch.setPower(-1.0);
         else
-        linear.setPower(0);
+            winch.setPower(0);
 
         //Telemetry Data
         telemetry.addData("Power of Intake Motor: " + intake.getPower(), null);
