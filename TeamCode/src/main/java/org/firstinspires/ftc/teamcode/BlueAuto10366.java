@@ -1,4 +1,5 @@
 package org.firstinspires.ftc.teamcode;
+
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -10,11 +11,11 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 /**
- * Created by SethHorwitz on 11/18/16.
+ * Created by SethHorwitz on 12/17/16.
  */
-@Autonomous(name="RedAuto10366", group="Autonomous")
+@Autonomous(name="BlueAuto10366", group="Autonomous")
 
-public class RedAuto10366 extends LinearOpMode {
+public class BlueAuto10366 extends LinearOpMode{
 
     ElapsedTime runtime1 = new ElapsedTime();
 
@@ -100,13 +101,14 @@ public class RedAuto10366 extends LinearOpMode {
 
         waitForStart();
         moveByTime(0.5, 3000);
-        turnByTime(-0.5, 1000);
+        turnByTime(0.5, 1000);
         moveByTime(0, 500);
-        moveByTime(0.5, 1000);
+        moveByTime(0.5, 2000);
         intake.setPower(-1.0);
         runtime1.reset();
         if (runtime1.time() > 4)
             intake.setPower(0);
+
 
 
     }
@@ -132,5 +134,6 @@ public class RedAuto10366 extends LinearOpMode {
         BackRight.setPower(-power);
         sleep(time);
     }
+
 
 }
