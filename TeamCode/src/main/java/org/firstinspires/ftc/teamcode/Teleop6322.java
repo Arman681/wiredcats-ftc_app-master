@@ -124,9 +124,9 @@ public class Teleop6322 extends OpMode {
 
         //Lock Mechanism Function
         //lock.setPosition(0);
-        if (gamepad2.a == true && gamepad2.y == false)
+        if (gamepad2.a)
             lock.setPosition(1.0);
-        else if (gamepad2.y && !gamepad2.a)
+        else if (gamepad2.y)
             lock.setPosition(0);
 
         float lefty1 = -gamepad1.left_stick_y;

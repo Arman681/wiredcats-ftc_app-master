@@ -235,14 +235,14 @@ public class Auto6322Blue extends LinearOpModeCamera {
         //moveBySteps(0.4, 12);
         moveBySteps(1, 20);
 
-        shooter.setPower(0.8);
-        sleep(4000);
+        /*shooter.setPower(1.0);
         conveyor.setPower(1.0);
-        sleep(2000);
-        shooter.setPower(0);
-        conveyor.setPower(0);
-        sleep(500);
-
+        runtime1.reset();
+        if(runtime1.time() > 3) {
+            conveyor.setPower(0);
+            shooter.setPower(0);
+        }
+        */
 
 
 
@@ -265,22 +265,22 @@ public class Auto6322Blue extends LinearOpModeCamera {
 
         if (determineColor() == "blue") {
             moveBySteps(0.5, -3.5);
-            rightPusher.setPower(-1.0);
+            leftPusher.setPower(-1.0);
             for (DcMotor motor : driveTrain)
                 motor.setPower(0);
             sleep(1500);
-            rightPusher.setPower(1.0);
+            leftPusher.setPower(1.0);
             for (DcMotor motor : driveTrain)
                 motor.setPower(0);
             sleep(1500);
         }
         else if (determineColor() == "red") {
             moveBySteps(0.5, -7);
-            rightPusher.setPower(-1.0);
+            leftPusher.setPower(-1.0);
             for (DcMotor motor : driveTrain)
                 motor.setPower(0);
             sleep(1500);
-            rightPusher.setPower(1.0);
+            leftPusher.setPower(1.0);
             for (DcMotor motor : driveTrain)
                 motor.setPower(0);
             sleep(1500);
@@ -295,22 +295,22 @@ public class Auto6322Blue extends LinearOpModeCamera {
         moveBySteps(0.5, -5);
         if (determineColor() == "blue") {
             moveBySteps(0.3, -3.5);
-            rightPusher.setPower(-1.0);
+            leftPusher.setPower(-1.0);
             for (DcMotor motor : driveTrain)
                 motor.setPower(0);
             sleep(1500);
-            rightPusher.setPower(1.0);
+            leftPusher.setPower(1.0);
             for (DcMotor motor : driveTrain)
                 motor.setPower(0);
             sleep(1500);
         }
         else if (determineColor() == "red") {
             moveBySteps(0.3, -9);
-            rightPusher.setPower(-1.0);
+            leftPusher.setPower(-1.0);
             for (DcMotor motor : driveTrain)
                 motor.setPower(0);
             sleep(1500);
-            rightPusher.setPower(1.0);
+            leftPusher.setPower(1.0);
             for (DcMotor motor : driveTrain)
                 motor.setPower(0);
             sleep(1500);
@@ -499,11 +499,11 @@ public class Auto6322Blue extends LinearOpModeCamera {
         String c = "";
 
         while(!dec) {
-            if (CSleft.red() * 8 > CSleft.blue() * 8) {
+            if (CSright.red() * 8 > CSright.blue() * 8) {
                 c = "red";
                 dec = true;
             }
-            else if (CSleft.blue() * 8 > CSleft.red() * 8) {
+            else if (CSright.blue() * 8 > CSright.red() * 8) {
                 c = "blue";
                 dec = true;
             }
@@ -513,8 +513,8 @@ public class Auto6322Blue extends LinearOpModeCamera {
             }
             c1++;
             telemetry.addData("LED", true ? "On" : "Off");
-            telemetry.addData("Red  ", CSleft.red()*8);
-            telemetry.addData("Blue ", CSleft.blue()*8);
+            telemetry.addData("Red  ", CSright.red()*8);
+            telemetry.addData("Blue ", CSright.blue()*8);
             telemetry.addData("Iterations: " + c1, null);
             telemetry.update();
 
@@ -548,11 +548,11 @@ public class Auto6322Blue extends LinearOpModeCamera {
 
         if (color.equals("white")) {
             while (!dec) {
-                if (CSleft.red() > 8 && CSleft.green() > 8 && CSleft.blue() > 8)
+                if (CSright.red() > 8 && CSright.green() > 8 && CSright.blue() > 8)
                     dec = true;
                 telemetry.addData("LED", true ? "On" : "Off");
-                telemetry.addData("Red  ", CSleft.red() * 8);
-                telemetry.addData("Blue ", CSleft.blue() * 8);
+                telemetry.addData("Red  ", CSright.red() * 8);
+                telemetry.addData("Blue ", CSright.blue() * 8);
                 telemetry.update();
             }
         }
@@ -560,24 +560,24 @@ public class Auto6322Blue extends LinearOpModeCamera {
         if (color.equals("red")) {
             runtime2.reset();
             while (!dec) {
-                if (((CSleft.red() * 8) > (CSleft.blue() * 8)) || ((CSleft.red() * 8) > 4))
+                if (((CSright.red() * 8) > (CSright.blue() * 8)) || ((CSright.red() * 8) > 4))
                     dec = true;
                 else if (runtime2.time() >  7)
                     dec = true;
                 telemetry.addData("LED", true ? "On" : "Off");
-                telemetry.addData("Red  ", CSleft.red()*8);
-                telemetry.addData("Blue ", CSleft.blue()*8);
+                telemetry.addData("Red  ", CSright.red()*8);
+                telemetry.addData("Blue ", CSright.blue()*8);
                 telemetry.update();
             }
         }
 
         if (color.equals("blue")) {
             while (!dec) {
-                if (((CSleft.blue() * 8) > (CSleft.red() * 8)) || ((CSleft.blue() * 8) > 4))
+                if (((CSright.blue() * 8) > (CSright.red() * 8)) || ((CSright.blue() * 8) > 4))
                     dec = true;
                 telemetry.addData("LED", true ? "On" : "Off");
-                telemetry.addData("Red  ", CSleft.red()*8);
-                telemetry.addData("Blue ", CSleft.blue()*8);
+                telemetry.addData("Red  ", CSright.red()*8);
+                telemetry.addData("Blue ", CSright.blue()*8);
                 telemetry.update();
             }
         }
