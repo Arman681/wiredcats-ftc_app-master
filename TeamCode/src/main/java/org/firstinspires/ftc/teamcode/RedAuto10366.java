@@ -103,6 +103,10 @@ public class RedAuto10366 extends LinearOpMode {
         turnByTime(-0.5, 1000);
         moveByTime(0, 500);
         moveByTime(0.5, 1000);
+        intake.setPower(-1.0);
+        runtime1.reset();
+        if (runtime1.time() > 4)
+            intake.setPower(0);
 
 
     }

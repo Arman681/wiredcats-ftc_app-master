@@ -103,7 +103,12 @@ public class BlueAuto10366 extends LinearOpMode{
         moveByTime(0.5, 3000);
         turnByTime(0.5, 1000);
         moveByTime(0, 500);
-        moveByTime(0.5, 1000);
+        moveByTime(0.5, 2000);
+        intake.setPower(-1.0);
+        runtime1.reset();
+        if (runtime1.time() > 4)
+            intake.setPower(0);
+
 
 
     }
