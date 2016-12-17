@@ -235,16 +235,16 @@ public class Auto6322Red extends LinearOpModeCamera {
         //moveBySteps(0.4, 12);
         moveBySteps(1, 20);
 
-        /*shooter.setPower(0.8);
+        shooter.setPower(0.8);
         sleep(4000);
         conveyor.setPower(1.0);
         sleep(2000);
         shooter.setPower(0);
         conveyor.setPower(0);
-        sleep(1000);
+        sleep(500);
 
 
-    */
+
 
 
 

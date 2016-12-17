@@ -3,10 +3,12 @@ package org.firstinspires.ftc.teamcode;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 
+import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cGyro;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.GyroSensor;
 import com.qualcomm.robotcore.hardware.OpticalDistanceSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -28,11 +30,15 @@ import org.firstinspires.ftc.robotcontroller.internal.LinearOpModeCamera;
 @Autonomous(name="Auto6322Blue", group="Autonomous")
 //@Disabled
 
-/**
- * Created by Arman on 11/18/2016.
- */
+public class Auto6322Blue extends LinearOpModeCamera {
 
-public class Auto6322Blue  extends LinearOpModeCamera{ ElapsedTime runtime1 = new ElapsedTime();
+    String color = "";
+
+    ElapsedTime runtime1 = new ElapsedTime();
+    ElapsedTime runtime2 = new ElapsedTime();
+
+///////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////
 
     //Drive Train Motor Declarations
     DcMotor FrontRight;
@@ -42,35 +48,56 @@ public class Auto6322Blue  extends LinearOpModeCamera{ ElapsedTime runtime1 = ne
 
     final DcMotor[] driveTrain = new DcMotor[4];
 
+///////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////
+
     //Shooting Mechanism Motor Declarations
-    DcMotor right;
-    DcMotor left;
+    DcMotor shooter;
 
     //Intake Motor Declaration
     DcMotor intake;
 
-    //Color Sensor Declarations
-    ColorSensor CSleft;
-    ColorSensor CSright;
+    //Conveyor Belt Motor Declaration
+    DcMotor conveyor;
 
-    //Optical Distance Sensor Declarations
-    OpticalDistanceSensor ODSleft;
-    OpticalDistanceSensor ODSright;
+    //Linear Slide Motor Declaration
+    DcMotor linear;
+
+///////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////
 
     //Continuous Rotation Servo Declarations
     CRServo rightPusher;
     CRServo leftPusher;
 
-    //Conveyor Servo Declaration
-    CRServo winch;
-
-    //Lock Servo Declaration
+    //Locking mechanism for cap ball lifter
     Servo lock;
+
+///////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////
+
+    //Color Sensor Declarations
+    ColorSensor CSleft;
+    ColorSensor CSright;
+
+    //Optical Distance Sensor Declaration
+    OpticalDistanceSensor ODSleft;
+    OpticalDistanceSensor ODSright;
+
+    //Gyro Sensor
+    ModernRoboticsI2cGyro gyro;
+
+///////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////
+
+    int xVal, yVal, zVal = 0;     // Gyro rate Values
+    int heading = 0;              // Gyro integrated heading
+    int angleZ = 0;
+    boolean lastResetState = false;
+    boolean curResetState  = false;
 
     int bnum = 0;
     int ds2 = 2;  // additional downsampling of the image
-
-    float hsvValues[] = {0F,0F,0F};
 
     //IMU setup
     //AHRS navx_device;
@@ -97,6 +124,9 @@ public class Auto6322Blue  extends LinearOpModeCamera{ ElapsedTime runtime1 = ne
     @Override
     public void runOpMode() throws InterruptedException {
 
+///////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////
+
         //Drive Train Motors
         FrontRight = hardwareMap.dcMotor.get("fr");
         FrontLeft = hardwareMap.dcMotor.get("fl");
@@ -114,16 +144,38 @@ public class Auto6322Blue  extends LinearOpModeCamera{ ElapsedTime runtime1 = ne
         for (DcMotor motor : driveTrain)
             motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        BackRight.setDirection(DcMotor.Direction.REVERSE);
-        FrontRight.setDirection(DcMotor.Direction.REVERSE);
+        BackLeft.setDirection(DcMotor.Direction.REVERSE);
+        FrontLeft.setDirection(DcMotor.Direction.REVERSE);
+///////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////
 
         //Shooting Mechanism Motors
-        right = hardwareMap.dcMotor.get("r");
-        left = hardwareMap.dcMotor.get("l");
-        right.setDirection(DcMotorSimple.Direction.REVERSE);
+        shooter = hardwareMap.dcMotor.get("s");
+
+        //Linear Slide Motor Assignment
+        linear = hardwareMap.dcMotor.get("w");
 
         //Intake Motor(s)
-        intake = hardwareMap.dcMotor.get("in");
+        intake = hardwareMap.dcMotor.get("i");
+
+///////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////
+
+        //Continuous Rotation Sensors
+        rightPusher = hardwareMap.crservo.get("rp");
+        leftPusher = hardwareMap.crservo.get("lp");
+
+        //Lock
+        lock = hardwareMap.servo.get("k");
+
+        //Lock Mechanism Function
+        lock.setPosition(0);
+
+///////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////
+
+        //Gyro Sensor Assignment
+        gyro = (ModernRoboticsI2cGyro)hardwareMap.gyroSensor.get("g");
 
         //Color Sensors
         CSleft = hardwareMap.colorSensor.get("csl");
@@ -138,18 +190,8 @@ public class Auto6322Blue  extends LinearOpModeCamera{ ElapsedTime runtime1 = ne
         ODSleft = hardwareMap.opticalDistanceSensor.get("odsleft");
         ODSright = hardwareMap.opticalDistanceSensor.get("odsright");
 
-        //Continuous Rotation Sensors
-        rightPusher = hardwareMap.crservo.get("rp");
-        leftPusher = hardwareMap.crservo.get("lp");
-
-        //Winch
-        winch = hardwareMap.crservo.get("w");
-
-        //Lock
-        lock = hardwareMap.servo.get("k");
-
-        //Lock Mechanism Function
-        lock.setPosition(0);
+///////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////
 
         /*navx_device = AHRS.getInstance(hardwareMap.deviceInterfaceModule.get("dim"),
                       NAVX_DIM_I2C_PORT,
@@ -163,52 +205,169 @@ public class Auto6322Blue  extends LinearOpModeCamera{ ElapsedTime runtime1 = ne
         yawPIDController.setTolerance(navXPIDController.ToleranceType.ABSOLUTE, TOLERANCE_DEGREES);
         yawPIDController.setPID(YAW_PID_P, YAW_PID_I, YAW_PID_D);*/
 
+        // start calibrating the gyro.
+        telemetry.addData(">", "Gyro Calibrating. Do Not move!");
+        telemetry.update();
+        gyro.calibrate();
+
+        // make sure the gyro is calibrated.
+        while (gyro.isCalibrating())  {
+            Thread.sleep(50);
+            idle();
+        }
+
+        telemetry.addData(">", "Gyro Calibrated.  Press Start.");
+        telemetry.update();
+
+        // wait for the start button to be pressed.
         waitForStart();
-        moveByTime(0.2, 1700);
-        right.setPower(0.3);
-        left.setPower(0.3);
+
+        //turnByAngle(0.3, 180);
+
+        //moveBySteps(0.4, 20);
+        //turnBySteps(0.8, 14);
+        //runUntilWhite(0.3);
+        //turnBySteps(0.8, -7.5);
+        //moveBySteps(0.4, 6);
+        //turnBySteps(0.8, -6);
+        //moveBySteps(0.4, -24);
+        //turnBySteps(0.8, 5);
+        //moveBySteps(0.4, 12);
+        moveBySteps(1, 20);
+
+        shooter.setPower(0.8);
+        sleep(4000);
+        conveyor.setPower(1.0);
         sleep(2000);
-        intake.setPower(1.0); //Intake
-        winch.setPower(1.0); //Activate Winch
-        sleep(1000);
-        winch.setPower(-1.0);
-        sleep(1500);
-        winch.setPower(1.0); //Activate Winch
-        sleep(1000);
-        winch.setPower(-1.0);
-        sleep(1500);
-        winch.setPower(1.0); //Activate Winch
-        sleep(1000);
-        winch.setPower(-1.0);
-        sleep(1500);
-        right.setPower(0);
-        left.setPower(0);
-        intake.setPower(0);
-
-        moveBySteps(0.5, 22);
-        turnBySteps(0.4, 34);
-        moveBySteps(0.5, 48);
+        shooter.setPower(0);
+        conveyor.setPower(0);
+        sleep(500);
 
 
-        /*turnBySteps(0.6, 19);
-        moveBySteps(0.8, 47);
-        turnBySteps(0.6, -23);
 
+
+
+
+
+
+
+        turnBySteps(-1, 14);
+        moveBySteps(1, 40);
+        turnBySteps(-1, -14);
+        moveBySteps(1, 13);
+        turnBySteps(-1, 25);
+        moveBySteps(0.2, 40);
+        moveBySteps(0.4, -2.5);
+        turnBySteps(-0.8, -22);
+        runUntilWhite(-0.7);
+        for (DcMotor motor : driveTrain)
+            motor.setPower(0);
+
+        if (determineColor() == "blue") {
+            moveBySteps(0.5, -3.5);
+            rightPusher.setPower(-1.0);
+            for (DcMotor motor : driveTrain)
+                motor.setPower(0);
+            sleep(1500);
+            rightPusher.setPower(1.0);
+            for (DcMotor motor : driveTrain)
+                motor.setPower(0);
+            sleep(1500);
+        }
+        else if (determineColor() == "red") {
+            moveBySteps(0.5, -7);
+            rightPusher.setPower(-1.0);
+            for (DcMotor motor : driveTrain)
+                motor.setPower(0);
+            sleep(1500);
+            rightPusher.setPower(1.0);
+            for (DcMotor motor : driveTrain)
+                motor.setPower(0);
+            sleep(1500);
+        }
+
+        moveBySteps(0.3, -6);
+        runUntilWhite(0.3);
+        adjustAtWhite();
+
+        moveBySteps(0.8, 12);
+        runUntilWhite(0.3);
+        moveBySteps(0.5, -5);
+        if (determineColor() == "blue") {
+            moveBySteps(0.3, -3.5);
+            rightPusher.setPower(-1.0);
+            for (DcMotor motor : driveTrain)
+                motor.setPower(0);
+            sleep(1500);
+            rightPusher.setPower(1.0);
+            for (DcMotor motor : driveTrain)
+                motor.setPower(0);
+            sleep(1500);
+        }
+        else if (determineColor() == "red") {
+            moveBySteps(0.3, -9);
+            rightPusher.setPower(-1.0);
+            for (DcMotor motor : driveTrain)
+                motor.setPower(0);
+            sleep(1500);
+            rightPusher.setPower(1.0);
+            for (DcMotor motor : driveTrain)
+                motor.setPower(0);
+            sleep(1500);
+        }
+        /*runUntilWhite(0.3);
+        turnBySteps(0.8, 12);
+        moveBySteps(0.3, 6);
+        turnBySteps(0.1, 25);
+        conveyor.setPower(1.0);
+        shooter.setPower(1.0);
+        for (DcMotor motor: driveTrain)
+            motor.setPower(0);
+        sleep(2500);
+        */
+
+        /*moveBySteps(0.5, 38);
+        turnBySteps(0.2, -14);
         moveByTime(0, 1000);
+        moveBySteps(0.3, 6);
 
-        moveUntil(0.05, "blue");
+
+        color = this.determineColor();
+        if (color == "blue"){
+            moveBySteps(0.5, 8);
+        }
+        else if (color == "red"){
+            moveBySteps(0.5, 3);
+        }
+        else if (color == "null") {
+            intake.setPower(0.5);
+            sleep(1000);
+        }
+        leftPusher.setPower(-1.0);
+        runtime1.reset();
+        while (runtime1.time() < 1.5);
+        leftPusher.setPower(0);*/
+
+
+
+
+
+
+        //moveBySteps(0.2, 12);
+
+        /*moveUntil(0.05, "red");
         moveByTime(0.0, 500);
         moveBySteps(0.2, 4.5);
         moveByTime(0.0, 50);
-        rightPusher.setPower(-1.0);
+        leftPusher.setPower(-1.0);
         runtime1.reset();
         while (runtime1.time() < 1.5); //run while timer is less than 1.5 seconds
-        rightPusher.setPower(0);
+        leftPusher.setPower(0);
         sleep(1000);
-        rightPusher.setPower(1.0);
+        leftPusher.setPower(1.0);
         runtime1.reset();
         while (runtime1.time() < 1.5);
-        rightPusher.setPower(0);
+        leftPusher.setPower(0);
         sleep(1000);
         turnBySteps(0.6, 26);
         moveBySteps(0.6, 28);
@@ -254,6 +413,116 @@ public class Auto6322Blue  extends LinearOpModeCamera{ ElapsedTime runtime1 = ne
 
     }
 
+    public void runUntilWhite(double power) throws InterruptedException {
+        boolean dec = false;
+        while (!dec) {
+            if (ODSleft.getRawLightDetected()*13 < .8 || ODSright.getRawLightDetected() < .9) {
+                for (DcMotor motor : driveTrain)
+                    motor.setPower(power);
+            }
+            else if (ODSleft.getRawLightDetected()*13 > .8 || ODSright.getRawLightDetected() > .9) {
+                for (DcMotor motor : driveTrain)
+                    motor.setPower(0);
+                dec = true;
+            }
+            telemetry.addData("ODSleft Values: " + ODSleft.getRawLightDetected(), null);
+            telemetry.addData("ODSright Values: " + ODSright.getRawLightDetected(), null);
+            telemetry.update();
+            idle();
+        }
+    }
+
+    public void adjustAtWhite() throws InterruptedException {
+        boolean dec = false;
+        while (!dec) {
+            if ((ODSright.getRawLightDetected() - ODSleft.getRawLightDetected()) > 0.02) {
+                FrontLeft.setPower(0.1);
+                BackLeft.setPower(0.1);
+            }
+            else if ((ODSleft.getRawLightDetected() - ODSright.getRawLightDetected()) > 0.02) {
+                FrontRight.setPower(0.1);
+                FrontRight.setPower(0.1);
+            }
+            else
+                dec = true;
+        }
+    }
+
+    public void turnByAngle(double power, int degrees) throws InterruptedException {
+
+        int s = -1;
+
+        // if the A and B buttons are pressed just now, reset Z heading.
+        curResetState = true;
+        if(curResetState && !lastResetState)  {
+            gyro.resetZAxisIntegrator();
+        }
+        lastResetState = curResetState;
+
+        // get the x, y, and z values (rate of change of angle).
+        xVal = gyro.rawX();
+        yVal = gyro.rawY();
+        zVal = gyro.rawZ();
+
+        // get the heading info.
+        // the Modern Robotics' gyro sensor keeps
+        // track of the current heading for the Z axis only.
+        heading = gyro.getHeading();
+        angleZ  = gyro.getIntegratedZValue();
+
+        double target = gyro.getHeading() + degrees;
+
+        while((Math.abs((target - gyro.getHeading()))) > 0) {
+            for (DcMotor motor : driveTrain) {
+                motor.setPower(power * s);
+                s *= -1;
+            }
+            telemetry.addData(">", "Press A & B to reset Heading.");
+            telemetry.addData("0", "Heading %03d", heading);
+            telemetry.addData("1", "Int. Ang. %03d", angleZ);
+            telemetry.addData("2", "X av. %03d", xVal);
+            telemetry.addData("3", "Y av. %03d", yVal);
+            telemetry.addData("4", "Z av. %03d", zVal);
+            telemetry.update();
+            waitOneFullHardwareCycle();
+        }
+
+        for (DcMotor motor : driveTrain)
+            motor.setPower(0);
+    }
+
+
+    public String determineColor() throws InterruptedException {
+
+        boolean dec = false;
+        int c1 = 0; //Iterations counter
+        String c = "";
+
+        while(!dec) {
+            if (CSleft.red() * 8 > CSleft.blue() * 8) {
+                c = "red";
+                dec = true;
+            }
+            else if (CSleft.blue() * 8 > CSleft.red() * 8) {
+                c = "blue";
+                dec = true;
+            }
+            else if (c1 > 500000) {
+                c = "null";
+                dec = true;
+            }
+            c1++;
+            telemetry.addData("LED", true ? "On" : "Off");
+            telemetry.addData("Red  ", CSleft.red()*8);
+            telemetry.addData("Blue ", CSleft.blue()*8);
+            telemetry.addData("Iterations: " + c1, null);
+            telemetry.update();
+
+        }
+
+        return c;
+    }
+
     public void moveByTime(double power, int time) throws InterruptedException {
 
         for(DcMotor motor : driveTrain)
@@ -279,33 +548,36 @@ public class Auto6322Blue  extends LinearOpModeCamera{ ElapsedTime runtime1 = ne
 
         if (color.equals("white")) {
             while (!dec) {
-                if (CSright.red() > 8 && CSright.green() > 8 && CSright.blue() > 8)
+                if (CSleft.red() > 8 && CSleft.green() > 8 && CSleft.blue() > 8)
                     dec = true;
                 telemetry.addData("LED", true ? "On" : "Off");
-                telemetry.addData("Red  ", CSright.red() * 8);
-                telemetry.addData("Blue ", CSright.blue() * 8);
+                telemetry.addData("Red  ", CSleft.red() * 8);
+                telemetry.addData("Blue ", CSleft.blue() * 8);
                 telemetry.update();
             }
         }
 
         if (color.equals("red")) {
+            runtime2.reset();
             while (!dec) {
-                if (((CSright.red() * 8) > (CSright.blue() * 8)) || ((CSright.red() * 8) > 4))
+                if (((CSleft.red() * 8) > (CSleft.blue() * 8)) || ((CSleft.red() * 8) > 4))
+                    dec = true;
+                else if (runtime2.time() >  7)
                     dec = true;
                 telemetry.addData("LED", true ? "On" : "Off");
-                telemetry.addData("Red  ", CSright.red()*8);
-                telemetry.addData("Blue ", CSright.blue()*8);
+                telemetry.addData("Red  ", CSleft.red()*8);
+                telemetry.addData("Blue ", CSleft.blue()*8);
                 telemetry.update();
             }
         }
 
         if (color.equals("blue")) {
             while (!dec) {
-                if (((CSright.blue() * 8) > (CSright.red() * 8)) || ((CSright.blue() * 8) > 4))
+                if (((CSleft.blue() * 8) > (CSleft.red() * 8)) || ((CSleft.blue() * 8) > 4))
                     dec = true;
                 telemetry.addData("LED", true ? "On" : "Off");
-                telemetry.addData("Red  ", CSright.red()*8);
-                telemetry.addData("Blue ", CSright.blue()*8);
+                telemetry.addData("Red  ", CSleft.red()*8);
+                telemetry.addData("Blue ", CSleft.blue()*8);
                 telemetry.update();
             }
         }
@@ -330,8 +602,10 @@ public class Auto6322Blue  extends LinearOpModeCamera{ ElapsedTime runtime1 = ne
         for (DcMotor motor : driveTrain)
             motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-        for (DcMotor motor : driveTrain)
-            motor.setPower(Math.abs(power));
+        FrontLeft.setPower(Math.abs(power));
+        BackLeft.setPower(Math.abs(power));
+        FrontRight.setPower(Math.abs(power));
+        BackRight.setPower(Math.abs(power));
 
         while(driveTrain[0].isBusy() && driveTrain[1].isBusy() && driveTrain[2].isBusy() && driveTrain[3].isBusy() && opModeIsActive())
             sleep(1);
@@ -350,6 +624,36 @@ public class Auto6322Blue  extends LinearOpModeCamera{ ElapsedTime runtime1 = ne
 
         for (int i = 0; i < driveTrain.length; i++)
             startPosition[i] = driveTrain[i].getCurrentPosition();
+
+        FrontRight.setTargetPosition((int)(startPosition[0] + -inches * COUNTS_PER_INCH));
+        FrontLeft.setTargetPosition((int)(startPosition[1] + inches * COUNTS_PER_INCH));
+        BackRight.setTargetPosition((int)(startPosition[2] + -inches * COUNTS_PER_INCH));
+        BackLeft.setTargetPosition((int)(startPosition[3] + inches * COUNTS_PER_INCH));
+
+        for (DcMotor motor : driveTrain)
+            motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        for (DcMotor motor : driveTrain)
+            motor.setPower(Math.abs(power));
+
+        while(driveTrain[0].isBusy() && driveTrain[1].isBusy() && driveTrain[2].isBusy() && driveTrain[3].isBusy() && opModeIsActive())
+            sleep(1);
+
+        for (DcMotor motor : driveTrain)
+            motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+    }
+
+    public void turnSideBySteps(String side, double power, double inches) throws InterruptedException {
+
+        int[] startPosition = new int[4];
+
+        for (DcMotor motor : driveTrain)
+            motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        for (int i = 0; i < driveTrain.length; i++)
+            startPosition[i] = driveTrain[i].getCurrentPosition();
+
+        //if (side == "right")
 
         FrontRight.setTargetPosition((int)(startPosition[0] + -inches * COUNTS_PER_INCH));
         FrontLeft.setTargetPosition((int)(startPosition[1] + inches * COUNTS_PER_INCH));
@@ -484,6 +788,5 @@ public class Auto6322Blue  extends LinearOpModeCamera{ ElapsedTime runtime1 = ne
 
         return benum;
     }*/
-
 
 }

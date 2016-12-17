@@ -199,15 +199,15 @@ public class Teleop6322 extends OpMode {
             c3 = 1;
         else if (!gamepad2.dpad_up && c3 == 1) {
             z2 *= 1.4;
-            if (z2 < 1.0) {
+            if (z2 < 0.8) {
                 shooter.setPower(z2);
                 //sleep(500);
             }
             else {
-                shooter.setPower(1.0);
+                shooter.setPower(0.8);
                 z2 = 0.05;
             }
-            if (shooter.getPower() < 1.0)
+            if (shooter.getPower() < 0.8)
                 c3 = 1;
             else
                 c3 = 2;
@@ -216,8 +216,8 @@ public class Teleop6322 extends OpMode {
             c3 = 3;
         else if (!gamepad2.dpad_up && c3 == 3) {
             z1 *= 1.4;
-            if ((1.0 - z1) > 0) {
-                shooter.setPower(1.0 - z1);
+            if ((0.8 - z1) > 0) {
+                shooter.setPower(0.8 - z1);
             }
             else {
                 shooter.setPower(0);
