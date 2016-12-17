@@ -234,6 +234,23 @@ public class Auto6322Red extends LinearOpModeCamera {
         //turnBySteps(0.8, 5);
         //moveBySteps(0.4, 12);
         moveBySteps(1, 20);
+
+        /*shooter.setPower(0.8);
+        sleep(4000);
+        conveyor.setPower(1.0);
+        sleep(2000);
+        shooter.setPower(0);
+        conveyor.setPower(0);
+        sleep(1000);
+
+
+    */
+
+
+
+
+
+
         turnBySteps(1, 14);
         moveBySteps(1, 40);
         turnBySteps(1, -14);
@@ -243,12 +260,12 @@ public class Auto6322Red extends LinearOpModeCamera {
         moveBySteps(0.4, -2.5);
         turnBySteps(0.8, -22);
         runUntilWhite(-0.7);
-        moveBySteps(0.5, -0.5);
+        moveBySteps(0.7, 1);
         for (DcMotor motor : driveTrain)
             motor.setPower(0);
 
         if (determineColor() == "red") {
-            moveBySteps(0.3, -3.5);
+            moveBySteps(0.5, -3.5);
             rightPusher.setPower(-1.0);
             for (DcMotor motor : driveTrain)
                 motor.setPower(0);
@@ -259,7 +276,7 @@ public class Auto6322Red extends LinearOpModeCamera {
             sleep(1500);
         }
         else if (determineColor() == "blue") {
-            moveBySteps(0.3, -9);
+            moveBySteps(0.5, -9);
             rightPusher.setPower(-1.0);
             for (DcMotor motor : driveTrain)
                 motor.setPower(0);
@@ -274,9 +291,9 @@ public class Auto6322Red extends LinearOpModeCamera {
         runUntilWhite(0.3);
         adjustAtWhite();
 
-        moveBySteps(0.3, 12);
+        moveBySteps(0.8, 12);
         runUntilWhite(0.3);
-        moveBySteps(0.3, -5);
+        moveBySteps(0.5, -5);
         if (determineColor() == "red") {
             moveBySteps(0.3, -3.5);
             rightPusher.setPower(-1.0);
@@ -299,7 +316,7 @@ public class Auto6322Red extends LinearOpModeCamera {
                 motor.setPower(0);
             sleep(1500);
         }
-        runUntilWhite(0.3);
+        /*runUntilWhite(0.3);
         turnBySteps(0.8, 12);
         moveBySteps(0.3, 6);
         turnBySteps(0.1, 25);
@@ -308,7 +325,7 @@ public class Auto6322Red extends LinearOpModeCamera {
         for (DcMotor motor: driveTrain)
             motor.setPower(0);
         sleep(2500);
-
+        */
 
         /*moveBySteps(0.5, 38);
         turnBySteps(0.2, -14);
