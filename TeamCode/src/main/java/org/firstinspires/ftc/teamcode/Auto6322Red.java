@@ -260,7 +260,7 @@ public class Auto6322Red extends LinearOpModeCamera {
         moveBySteps(0.4, -2.5);
         turnBySteps(0.8, -22);
         runUntilWhite(-0.7);
-        moveBySteps(0.7, 1);
+        moveBySteps(0.7, -1);
         for (DcMotor motor : driveTrain)
             motor.setPower(0);
 
