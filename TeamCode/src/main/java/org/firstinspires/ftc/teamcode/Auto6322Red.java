@@ -260,7 +260,6 @@ public class Auto6322Red extends LinearOpModeCamera {
         moveBySteps(0.4, -2.5);
         turnBySteps(0.8, -22);
         runUntilWhite(-0.7);
-        moveBySteps(0.7, -1);
         for (DcMotor motor : driveTrain)
             motor.setPower(0);
 
@@ -276,7 +275,7 @@ public class Auto6322Red extends LinearOpModeCamera {
             sleep(1500);
         }
         else if (determineColor() == "blue") {
-            moveBySteps(0.5, -9);
+            moveBySteps(0.5, -7);
             rightPusher.setPower(-1.0);
             for (DcMotor motor : driveTrain)
                 motor.setPower(0);
