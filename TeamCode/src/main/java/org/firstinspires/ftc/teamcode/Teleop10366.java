@@ -177,7 +177,7 @@ public class Teleop10366 extends OpMode {
 
         //Lift Mechanism Function
         if (gamepad2.x)
-            lift.setPower(1.0);
+            lift.setPower(0.25);
         else if (gamepad2.b)
             lift.setPower(-1.0);
         else
