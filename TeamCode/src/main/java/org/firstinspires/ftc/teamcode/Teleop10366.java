@@ -32,8 +32,8 @@ public class Teleop10366 extends OpMode {
     DcMotor BackRight;
 
     //Shooting Mechanism Motor Declarations
-    DcMotor right;
-    DcMotor left;
+    DcMotor r;
+    DcMotor l;
 
     //Continuous Rotation Servo + Reg. Servo Declarations
     CRServo Catapult;
@@ -75,9 +75,9 @@ public class Teleop10366 extends OpMode {
         Right.setDirection(Servo.Direction.REVERSE);
 
         //Shooting Mechanism Motors
-        right = hardwareMap.dcMotor.get("r");
-        left = hardwareMap.dcMotor.get("l");
-        right.setDirection(DcMotorSimple.Direction.REVERSE);
+        r = hardwareMap.dcMotor.get("r");
+        l = hardwareMap.dcMotor.get("l");
+        r.setDirection(DcMotorSimple.Direction.REVERSE);
 
         //Intake Motor
         intake = hardwareMap.dcMotor.get("in");
@@ -150,27 +150,26 @@ public class Teleop10366 extends OpMode {
         else if (!gamepad1.y && c5 == 3)
             c5 = 0;
 
-        //Shooting Mechanism Motors Function
-        if (!gamepad2.y && c4 == 0)
+        //Winch Servo Function
+        if (gamepad1.x)
             Catapult.setPower(1);
+        else if (gamepad1.b)
+            Catapult.setPower(0);
+        else
+            Catapult.setPower(0.5);
+
+        //Shooting Mechanism Motors Function
         if (gamepad2.y && c4 == 0) {
-            right.setPower(-1.0);
-            left.setPower(-1.0);
+            r.setPower(-1.0);
+            l.setPower(-1.0);
             c4 = 1;
         }
         else if (!gamepad2.y && c4 == 1) {
             c4 = 2;
         }
-        else if (!gamepad2.y && c4 == 2) {
-            runtime1.reset();
-            if (runtime1.time() < 2) {
-                Catapult.setPower(0);
-            }
-        }
         else if (gamepad2.y && c4 == 2) {
-            right.setPower(0);
-            left.setPower(0);
-            Catapult.setPower(1);
+            r.setPower(0);
+            l.setPower(0);
             c4 = 3;
         }
         else if (!gamepad2.y && c4 == 3)
