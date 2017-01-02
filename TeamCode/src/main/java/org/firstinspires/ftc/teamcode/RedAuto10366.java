@@ -141,7 +141,7 @@ public class RedAuto10366 extends LinearOpMode {
         turnByTime(0.5, 750); //Turns clock-wise at half speed for three-quarters of a second to make 45-degree turn
         moveByTime(0.75, 1500); //Move forwards at full speed for 1 second
 
-        //Part at Red Corner Vortex
+        //Park at Red Corner Vortex
         turnByTime(0.5, 750); //Turns clock-wise at half speed for three-quarters of a second to make 45-degree turn
         moveByTime(1.0, 1000); //Move forwards at full speed for 1 second
         moveByTime(0.25, 2000); //Move forwards at one-quarter speed for 2 seconds
