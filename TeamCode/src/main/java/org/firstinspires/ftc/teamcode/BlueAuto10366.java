@@ -117,13 +117,13 @@ public class BlueAuto10366 extends LinearOpMode{
 
         //Shooting 2 Balls
         Catapult.setPower(1); //Sets catapult winch servo backwards to recharge forward rotation
-        moveByTime(-1.0, 3000); //Move backwards at full speed for 3 seconds
+        moveByTime(-0.5, 3000); //Move backwards at full speed for 3 seconds
         shoot(1.0, 3000, 1000); //Shoots particles at full power for 3 seconds and starts catapult after 1 second
 
         //Claim Blue Beacon 1
-        moveByTime(1.0, 1000); //Move forwards at full speed for 1 second
+        moveByTime(0.5, 1000); //Move forwards at full speed for 1 second
         turnByTime(0.5, 750); //Turns clock-wise at half speed for three-quarters of a second to make 45-degree turn
-        moveByTime(-1.0, 2000); //Move backwards at full speed for 2 seconds
+        moveByTime(-0.5, 2000); //Move backwards at full speed for 2 seconds
         turnByTime(0.5, 2250); //Turns clock-wise at half speed for one-and-a-half seconds to make 135-degree turn
         moveByTime(0.25, 500); //Move forward at one-quarter speed for half a second to get closer to beacon
         goForButton(); //Determines blue side of beacon and hits button on that side
@@ -131,7 +131,7 @@ public class BlueAuto10366 extends LinearOpMode{
         //Claim Blue Beacon 2
         moveByTime(-0.5, 1500); //Move backwards at half speed for one-and-a-half seconds
         turnByTime(-0.5, 1500); //Turns counter-clock-wise at half speed for one-and-a-half seconds to make 90-degree turn
-        moveByTime(-1.0, 2500); //Move backwars at full speed for two-and-a-half seconds
+        moveByTime(-0.5, 2500); //Move backwars at full speed for two-and-a-half seconds
         turnByTime(0.5, 1500); //Turns clock-wise at half speed for one-and-a-half seconds to make 90-degree turn
         moveByTime(0.25, 500); //Move forward at one-quarter speed for half a second to get closer to beacon
         goForButton(); //Determines blue side of beacon and hits button on that side
@@ -139,13 +139,13 @@ public class BlueAuto10366 extends LinearOpMode{
         //Claim Blue Cap Ball
         moveByTime(-0.5, 1500); //Move backwards at half speed for one-and-a-half seconds
         turnByTime(-0.5, 2250); //Turns counter-clock-wise at half speed for one-and-a-half seconds to make 135-degree turn
-        moveByTime(1.0, 3000); //Move forwards at full speed for three seconds
+        moveByTime(0.5, 3000); //Move forwards at full speed for three seconds
         turnByTime(0.5, 750); //Turns clock-wise at half speed for three-quarters of a second to make 45-degree turn
         moveByTime(0.75, 1500); //Move forwards at full speed for 1 second
 
         //Park at Blue Corner Vortex
         turnByTime(0.5, 750); //Turns clock-wise at half speed for three-quarters of a second to make 45-degree turn
-        moveByTime(1.0, 1000); //Move forwards at full speed for 1 second
+        moveByTime(0.5, 1000); //Move forwards at full speed for 1 second
         moveByTime(0.25, 2000); //Move forwards at one-quarter speed for 2 seconds
         stopAllMotors();
     }
