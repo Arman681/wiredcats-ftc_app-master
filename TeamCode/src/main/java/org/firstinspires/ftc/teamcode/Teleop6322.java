@@ -160,14 +160,14 @@ public class Teleop6322 extends OpMode {
         //Left Continuous Rotation Servo
         if (gamepad1.x && c1 == 0) {
             runtime1.reset();
-            leftPusher.setPower(-1.0);
+            leftPusher.setPower(1.0);
             c1 = 1;
         }
         else if (!gamepad1.x && c1 == 1)
             c1 = 2;
         else if (gamepad1.x && c1 == 2) {
             runtime1.reset();
-            leftPusher.setPower(1.0);
+            leftPusher.setPower(-1.0);
             c1 = 3;
         }
         else if (!gamepad1.x && c1 == 3)
@@ -179,14 +179,14 @@ public class Teleop6322 extends OpMode {
         //Right Continuous Rotation Servo
         if (gamepad1.b && c2 == 0) {
             runtime2.reset();
-            rightPusher.setPower(1.0);
+            rightPusher.setPower(-1.0);
             c2 = 1;
         }
         else if (!gamepad1.b && c2 == 1)
             c2 = 2;
         else if (gamepad1.b && c2 == 2) {
             runtime2.reset();
-            rightPusher.setPower(-1.0);
+            rightPusher.setPower(1.0);
             c2 = 3;
         }
         else if (!gamepad1.b && c2 == 3)
