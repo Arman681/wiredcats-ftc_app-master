@@ -144,8 +144,8 @@ public class Auto6322Red extends LinearOpModeCamera {
         for (DcMotor motor : driveTrain)
             motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        BackLeft.setDirection(DcMotor.Direction.REVERSE);
-        FrontLeft.setDirection(DcMotor.Direction.REVERSE);
+        BackRight.setDirection(DcMotor.Direction.REVERSE);
+        FrontRight.setDirection(DcMotor.Direction.REVERSE);
 ///////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////
 
