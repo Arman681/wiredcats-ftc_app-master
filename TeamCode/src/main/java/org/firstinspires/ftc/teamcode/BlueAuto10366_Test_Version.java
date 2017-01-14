@@ -48,18 +48,29 @@ public class BlueAuto10366_Test_Version extends LinearOpMode{
     ColorSensor CSleft;
     ColorSensor CSright;
 
+   // Misc code for Camera ZTE Speed
     int bnum = 0;
     int ds2 = 2;  // additional downsampling of the image
 
     float hsvValues[] = {0F,0F,0F};
 
     //encoder constants
-    static final double TAU                  = 6.283185;
+
+    //Moror Values from Andymark for NeverRest 60
+    static final double TAU                  = 6.283185;  // = 2*pi
     static final double COUNTS_PER_MOTOR_REV = 1120;    // eg: neverrest 40
     static final double DRIVE_GEAR_REDUCTION = 1.0;     // This is < 1.0 if geared UP
     static final double WHEEL_RADIUS_INCHES  = 2.0;     // For figuring circumference
     static final double COUNTS_PER_INCH      = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) / (WHEEL_RADIUS_INCHES * TAU);
     static final double DEGREES_TO_ENCODER_INCHES = 0;
+
+    //Moror Values from Andymark for NeverRest 20
+    static final double TAU_20                 = 6.283185;
+    static final double COUNTS_PER_MOTOR_REV_20 = 1120;    // eg: neverrest 40
+    static final double DRIVE_GEAR_REDUCTION_20 = 1.0;     // This is < 1.0 if geared UP
+    static final double WHEEL_RADIUS_INCHES_20  = 2.0;     // For figuring circumference
+    static final double COUNTS_PER_INCH_20      = (COUNTS_PER_MOTOR_REV_20 * DRIVE_GEAR_REDUCTION_20) / (WHEEL_RADIUS_INCHES_20 * TAU_20);
+    static final double DEGREES_TO_ENCODER_INCHES_20 = 0;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -119,9 +130,9 @@ public class BlueAuto10366_Test_Version extends LinearOpMode{
         turnByTime(-0.25, 25); // Move Forward  at half speed for  .015 seconds counter clocl-wise ***code to correct initial clock-wise turn
         moveByTime(-0.25, 1250); //move Backward at one-quarter speed for 1.250 seconds
         // /Shooting 2 Balls Good distance  Manual Shooting perfect.  Need to get Servo Working
-        //Catapult.setPower(1); //Sets catapult winch servo backwards to recharge forward rotation
+        Catapult.setPower(1); //Sets catapult winch servo backwards to recharge forward rotation
 
-        //shoot(1.0, 3000, 1000); //Shoots particles at full power for 3 seconds and starts catapult after 1 second
+        shoot(1.0, 1000, 500); //Shoots particles at full power for 3 seconds and starts catapult after 1 second
 
         //Claim Blue Beacon 1
 
@@ -163,6 +174,7 @@ public class BlueAuto10366_Test_Version extends LinearOpMode{
         stopAllMotors();
     }
 
+    // Place all Method Code Below
     public void goForButton() throws InterruptedException {
 
         boolean dec = false;
@@ -175,9 +187,10 @@ public class BlueAuto10366_Test_Version extends LinearOpMode{
 
                 moveByTime(-0.25, 350);  //Move Backwards at one-quarter speed for .3.5 seconds to initial Beacon Position
                 turnByTime(-0.25, 410); //Turns counter-clock-wise at one-quarter speed for three-quarters of .4 seconds to make 45-degree turn
-                moveByTime(0.25, 250); //Move forwards at one-quarter speed for quarter .25 second
+                moveByTime(0.25, 500); //Move forwards at one-quarter speed for quarter .25 second
                 turnByTime(0.25, 410); //Turns clock-wise at one-quarter speed for three-quarters of .4 seconds to make 45-degree turn
                 moveByTime(0.25,250); //Move forwards at one-quarter speed for quarter .25 second
+                moveByTime(0.25,100); //Move forwards at one-quarter speed for quarter .25 second
                 dec = true;
             }
             else if (determinedSide == "right") {
@@ -187,6 +200,7 @@ public class BlueAuto10366_Test_Version extends LinearOpMode{
                 moveByTime(0.25, 500); //Move forwards at one-quarter speed for .25 a seconds
                 turnByTime(-0.25, 410); //Turns counter-clock-wise at one-quarter speed for three-quarters of .4 seconds to make 45-degree turn
                 moveByTime(0.25, 250); //Move forwards at one-quarter speed for .25 a seconds
+                moveByTime(0.25,100); //Move forwards at one-quarter speed for quarter .25 second
                 dec = true;
             }
             else if (determinedSide !=  "left" && determinedSide != "right") { //  != represents "NOT EQUAL" || represents "or"
@@ -219,7 +233,7 @@ public class BlueAuto10366_Test_Version extends LinearOpMode{
                 c = "left";  // If Left side of Beacon is Blue set direction to Left to push Blue button
                 dec = true;
             }
-            if ((CSright.blue() * 8 > CSright.red() * 8)) {
+            else if ((CSright.blue() * 8 > CSright.red() * 8)) {
                 c = "right"; // If Right Side is Blue set direction to Right to push Blue button
                 dec = true;
             }
@@ -246,6 +260,42 @@ public class BlueAuto10366_Test_Version extends LinearOpMode{
 
         return c;
     }
+
+  // Push Beacon Button
+    public void pushBeaconButton() throws InterruptedException{
+
+    }
+
+    public void moveBySteps(double power, double inches) throws InterruptedException {
+
+        int[] startPosition = new int[4];
+
+        // (Class Variable : Array)
+        for (DcMotor motor : driveTrain)
+            motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        for (int i = 0; i < driveTrain.length; i++)
+            startPosition[i] = driveTrain[i].getCurrentPosition();
+
+        for (int i = 0; i < driveTrain.length; i++)
+            driveTrain[i].setTargetPosition((int)(startPosition[i] + inches * COUNTS_PER_INCH));
+
+        for (DcMotor motor : driveTrain)
+            motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        FrontLeft.setPower(Math.abs(power));
+        BackLeft.setPower(Math.abs(power));
+        FrontRight.setPower(Math.abs(power));
+        BackRight.setPower(Math.abs(power));
+
+        while(driveTrain[0].isBusy() && driveTrain[1].isBusy() && driveTrain[2].isBusy() && driveTrain[3].isBusy() && opModeIsActive())
+            sleep(1);
+
+        for (DcMotor motor : driveTrain)
+            motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+    }
+
 
     public void moveByTime(double power, int time) throws InterruptedException {
 
@@ -287,8 +337,8 @@ public class BlueAuto10366_Test_Version extends LinearOpMode{
             r.setPower(0);
             l.setPower(0);
         }
-        //if (runtime1.time() > catapultDelay)
-        //    Catapult.setPower(0);
+        if (runtime1.time() > catapultDelay)
+           Catapult.setPower(0);
     }
 
     public void stopAllMotors() throws InterruptedException {
