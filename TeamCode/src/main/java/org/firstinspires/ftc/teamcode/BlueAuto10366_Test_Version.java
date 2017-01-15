@@ -50,14 +50,7 @@ public class BlueAuto10366_Test_Version extends LinearOpMode {
     ColorSensor CSleft;
     ColorSensor CSright;
 
-    // Misc code for Camera ZTE Speed
-    int bnum = 0;
-    int ds2 = 2;  // additional downsampling of the image
-
-    float hsvValues[] = {0F, 0F, 0F};
-
     //encoder constants
-
     //Moror Values from Andymark for NeverRest 60
     static final double TAU = 6.283185;  // = 2*pi
     static final double COUNTS_PER_MOTOR_REV = 1120;    // eg: neverrest 40
@@ -106,7 +99,7 @@ public class BlueAuto10366_Test_Version extends LinearOpMode {
         //Shooting Mechanism Motors
         r = hardwareMap.dcMotor.get("r");
         l = hardwareMap.dcMotor.get("l");
-        r.setDirection(DcMotorSimple.Direction.REVERSE);
+        l.setDirection(DcMotorSimple.Direction.REVERSE);
 
         //Intake Motor
         intake = hardwareMap.dcMotor.get("in");
@@ -133,11 +126,9 @@ public class BlueAuto10366_Test_Version extends LinearOpMode {
         // /Shooting 2 Balls Good distance  Manual Shooting perfect.  Need to get Servo Working
         Catapult.setPower(.5); //Sets catapult servo to stop
 
-
-        shoot(1.0, 500, 125); //Shoots particles at full power for 1 seconds and starts catapult after .25 seconds
+        shoot(1.0, 1.5, 250); //Shoots particles at full power for 1 seconds and starts catapult after .25 seconds
 
         //Claim Blue Beacon 1
-
         moveByTime(0.25, 850); //Move Forward at one quarter speed for .600 changed to ***.750 to 850 after ball was inflated***
         turnByTime(0.25, 405); //Turn Clock-wise at one-quarter speed for .410 seconds(.425 seconds - .15 Seconds) to offset (initialization) to make 45-degree turn
         moveByTime(-0.25, 1750); //Move Backward at one-quarter speed for 1.500 seconds ***Battery Full charge  14.44 - 14.00**
@@ -310,26 +301,24 @@ public class BlueAuto10366_Test_Version extends LinearOpMode {
             motor.setPower(0);
     }
 
-    public void shoot(double power, int targetTime, int catapultDelay) throws InterruptedException {
+    public void shoot(double power, double targetTime, int catapultDelay) throws InterruptedException {
 
         runtime1.reset();
         while (runtime1.time() < targetTime) {  //start shooter motors
             stopDriveTrain();
             r.setPower(power); //Right shooter wheel
             l.setPower(power); //Left Shooter wheel
-            //sleep(125);
-            sleep(catapultDelay);
             if (runtime1.time() > catapultDelay) {  //Check if time to start catapult servo
                 Catapult.setPower(1);  // set full power forward
-                //sleep(750);  // continue for .75 seconds
-                sleep(targetTime-catapultDelay+50);
             }
+            telemetry.addData("Time: " + runtime1.time(), null);
+            telemetry.addData("Target Time: " + targetTime, null);
+            telemetry.update();
         }
-        if (runtime1.time() > targetTime) {  // Check if finished
-            r.setPower(0);  // Turn Right shooter motor off
-            l.setPower(0);  // Turn LefT shooter motor off
-            Catapult.setPower(.5);  //Turn Catapult Servo motor off
-        }
+
+        stopAllMotors();
+        Catapult.setPower(.5);  //Turn Catapult Servo motor off
+
     }
 
     public void stopAllMotors() throws InterruptedException {
