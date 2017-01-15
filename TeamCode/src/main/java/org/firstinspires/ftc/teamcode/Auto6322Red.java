@@ -206,17 +206,17 @@ public class Auto6322Red extends LinearOpModeCamera {
         yawPIDController.setPID(YAW_PID_P, YAW_PID_I, YAW_PID_D);*/
 
         // start calibrating the gyro.
-        telemetry.addData(">", "Gyro Calibrating. Do Not move!");
-        telemetry.update();
-        gyro.calibrate();
+        //telemetry.addData(">", "Gyro Calibrating. Do Not move!");
+        //telemetry.update();
+        //gyro.calibrate();
 
         // make sure the gyro is calibrated.
-        while (gyro.isCalibrating())  {
-            Thread.sleep(50);
-            idle();
-        }
+        //while (gyro.isCalibrating())  {
+            //Thread.sleep(50);
+            //idle();
+        //}
 
-        telemetry.addData(">", "Gyro Calibrated.  Press Start.");
+        //telemetry.addData(">", "Gyro Calibrated.  Press Start.");
         telemetry.update();
 
         // wait for the start button to be pressed.
@@ -225,11 +225,11 @@ public class Auto6322Red extends LinearOpModeCamera {
         //turnByAngle(0.3, 180);
 
         moveBySteps(0.4, 30);
-        turnBySteps(0.8, 7);
-        runUntilWhite(0.3);
+        //turnBySteps(0.8, 7);
+        //runUntilWhite(0.3);
         //turnBySteps(0.8, -7.5);
-        moveBySteps(-0.4, 12);
-        moveBySteps(0,1);
+        //moveBySteps(-0.4, 12);
+        //moveBySteps(0,1);
         /*turnBySteps(0.8, -6);
         moveBySteps(0.4, -24);
         turnBySteps(0.8, 5);
