@@ -124,7 +124,6 @@ public class BlueAuto10366_Test_Version extends LinearOpMode {
         CSleft.enableLed(false);
         CSright.enableLed(false);
 
-
         waitForStart(); //Autonomous begins when play button is pressed on the Driver Station Phone
 
         moveByTime(-0.25, 10);  //Move Backward  at one-quarter speed for  .010 seconds  ***code to correct initial counter-clock-wise turn
@@ -253,12 +252,6 @@ public class BlueAuto10366_Test_Version extends LinearOpMode {
         }
 
         return c;
-
-    }
-
-    // Push Beacon Button
-    public void pushBeaconButton() throws InterruptedException {
-
     }
 
     public void moveBySteps(double power, double inches) throws InterruptedException {
@@ -290,7 +283,6 @@ public class BlueAuto10366_Test_Version extends LinearOpMode {
             motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
     }
-
 
     public void moveByTime(double power, int time) throws InterruptedException {
 
@@ -340,9 +332,6 @@ public class BlueAuto10366_Test_Version extends LinearOpMode {
         }
     }
 
-
-
-
     public void stopAllMotors() throws InterruptedException {
         FrontLeft.setPower(0);
         FrontRight.setPower(0);
@@ -359,6 +348,5 @@ public class BlueAuto10366_Test_Version extends LinearOpMode {
         BackLeft.setPower(0);
         BackRight.setPower(0);
     }
-
 
 }
