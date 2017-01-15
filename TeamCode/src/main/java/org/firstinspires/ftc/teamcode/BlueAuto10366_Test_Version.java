@@ -134,13 +134,14 @@ public class BlueAuto10366_Test_Version extends LinearOpMode {
         // /Shooting 2 Balls Good distance  Manual Shooting perfect.  Need to get Servo Working
         Catapult.setPower(.5); //Sets catapult servo to stop
 
-        shoot(1.0, 1000, 250); //Shoots particles at full power for 1 seconds and starts catapult after .25 seconds
+
+        shoot(1.0, 500, 125); //Shoots particles at full power for 1 seconds and starts catapult after .25 seconds
 
         //Claim Blue Beacon 1
 
-        moveByTime(0.25, 750); //Move Forward at one quarter speed for .600 changed to ***.750 after ball was inflated***
+        moveByTime(0.25, 850); //Move Forward at one quarter speed for .600 changed to ***.750 to 850 after ball was inflated***
         turnByTime(0.25, 405); //Turn Clock-wise at one-quarter speed for .410 seconds(.425 seconds - .15 Seconds) to offset (initialization) to make 45-degree turn
-        moveByTime(-0.25, 1675); //Move Backward at one-quarter speed for 1.500 seconds ***Battery Full charge  14.44 - 14.00**
+        moveByTime(-0.25, 1750); //Move Backward at one-quarter speed for 1.500 seconds ***Battery Full charge  14.44 - 14.00**
         turnByTime(-0.25, 1215); //Turns Counter-clock-wise at one-quarter speed for 1.230 seconds to make 135-degree turn
         //moveByTime(-0.25, 50); // Move Backward  at one-quarter speed for .050 seconds (***used to correct motor direction to go straight***)
         //moveByTime(0.25, 50);  // Move Forward   at one-quarter speed for .050 seconds (***used to correct motor direction to go straight***)
@@ -241,7 +242,6 @@ public class BlueAuto10366_Test_Version extends LinearOpMode {
             }
             c1++;
 
-
             telemetry.addData("LED", true ? "On" : "Off");
             telemetry.addData("L Red  ", CSleft.red() * 8);
             telemetry.addData("L Blue ", CSleft.blue() * 8);
@@ -249,9 +249,11 @@ public class BlueAuto10366_Test_Version extends LinearOpMode {
             telemetry.addData("R Blue ", CSright.blue() * 8);
             telemetry.addData("Iterations: " + c1, null);
             telemetry.update();
+
         }
 
         return c;
+
     }
 
     // Push Beacon Button
@@ -319,14 +321,19 @@ public class BlueAuto10366_Test_Version extends LinearOpMode {
     public void shoot(double power, int targetTime, int catapultDelay) throws InterruptedException {
 
         runtime1.reset();
-        if (runtime1.time() < targetTime) {  //start shooter motors
+        while (runtime1.time() < targetTime) {  //start shooter motors
+            stopDriveTrain();
             r.setPower(power); //Right shooter wheel
-            l.setPower(power);  //Left Shooter wheel
+            l.setPower(power); //Left Shooter wheel
+            //sleep(125);
+            sleep(catapultDelay);
             if (runtime1.time() > catapultDelay) {  //Check if time to start catapult servo
                 Catapult.setPower(1);  // set full power forward
-                sleep(500);  // continue for .5 seconds
+                //sleep(750);  // continue for .75 seconds
+                sleep(targetTime-catapultDelay+50);
             }
-        } else if (runtime1.time() > targetTime) {  // Check if finished
+        }
+        if (runtime1.time() > targetTime) {  // Check if finished
             r.setPower(0);  // Turn Right shooter motor off
             l.setPower(0);  // Turn LefT shooter motor off
             Catapult.setPower(.5);  //Turn Catapult Servo motor off
@@ -343,6 +350,14 @@ public class BlueAuto10366_Test_Version extends LinearOpMode {
         BackRight.setPower(0);
         r.setPower(0);
         l.setPower(0);
+    }
+
+    public void stopDriveTrain() throws InterruptedException {
+
+        FrontLeft.setPower(0);
+        FrontRight.setPower(0);
+        BackLeft.setPower(0);
+        BackRight.setPower(0);
     }
 
 
