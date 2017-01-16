@@ -25,25 +25,25 @@ public class Teleop10366 extends OpMode {
 
     ElapsedTime runtime1 = new ElapsedTime();
 
-    //Drive Train Motor Declarations
+    // Drive Train Motor Declarations
     DcMotor FrontLeft;
     DcMotor FrontRight;
     DcMotor BackLeft;
     DcMotor BackRight;
 
-    //Shooting Mechanism Motor Declarations
+    // Shooting Mechanism Motor Declarations
     DcMotor r;
     DcMotor l;
 
-    //Continuous Rotation Servo + Reg. Servo Declarations
+    // Continuous Rotation Servo + Reg. Servo Declarations
     CRServo Catapult;
     Servo Left;
     Servo Right;
 
-    //Intake Motor Declaration
+    // Intake Motor Declaration
     DcMotor intake;
 
-    //Lift Motor Declaration
+    // Lift Motor Declaration
     DcMotor lift;
 
     ColorSensor csl;
@@ -59,7 +59,7 @@ public class Teleop10366 extends OpMode {
     @Override
     public void init() {
 
-        //Drive Train Motors
+        // Drive Train Motors
         FrontRight = hardwareMap.dcMotor.get("fr");
         FrontLeft = hardwareMap.dcMotor.get("fl");
         BackRight = hardwareMap.dcMotor.get("br");
@@ -67,23 +67,23 @@ public class Teleop10366 extends OpMode {
         FrontRight.setDirection(DcMotor.Direction.REVERSE);
         BackRight.setDirection(DcMotor.Direction.REVERSE);
 
-        //Servos
+        // Servos
         Catapult = hardwareMap.crservo.get("c");
         Left = hardwareMap.servo.get("L");
         Right = hardwareMap.servo.get("R");
-        Catapult.setDirection(CRServo.Direction.REVERSE);
-        Right.setDirection(Servo.Direction.REVERSE);
+        Catapult.setDirection(CRServo.Direction.REVERSE); //not sure why this is here
+        Right.setDirection(Servo.Direction.REVERSE); //not sure why this is here
 
-        //Shooting Mechanism Motors
+        // Shooting Mechanism Motors
         r = hardwareMap.dcMotor.get("r");
         l = hardwareMap.dcMotor.get("l");
         r.setDirection(DcMotorSimple.Direction.REVERSE);
 
-        //Intake Motor
+        // Intake Motor
         intake = hardwareMap.dcMotor.get("in");
         intake.setDirection(DcMotorSimple.Direction.REVERSE);
 
-        //Lift Motor
+        // Lift Motor
         lift = hardwareMap.dcMotor.get("lift");
 
         csl = hardwareMap.colorSensor.get("csl");
@@ -97,10 +97,12 @@ public class Teleop10366 extends OpMode {
         Right.setPosition(-1.0);
         Left.setPosition(-1.0);
 
+
+        // Driving          *** Gamepad 1 Button Y ***
         float lefty1 = -gamepad1.left_stick_y;
         float righty1 = -gamepad1.right_stick_y;
 
-        //Drive Train
+        // Drive Train
         if (lefty1 < -.2 || lefty1 > .2) {
             FrontLeft.setPower(lefty1);
             BackLeft.setPower(lefty1);
@@ -122,7 +124,7 @@ public class Teleop10366 extends OpMode {
             }
         }
 
-        //Intake In
+        // Intake In    *** Gamepad 1 Button A ***
         if (gamepad1.a && c3 == 0) {
             intake.setPower(1.0);
             c3 = 1;
@@ -136,7 +138,7 @@ public class Teleop10366 extends OpMode {
         else if (!gamepad1.a && c3 == 3)
             c3 = 0;
 
-        //Intake Out
+        // Intake Out    *** Gamepad 1 Button Y ***
         if (gamepad1.y && c5 == 0) {
             intake.setPower(-1.0);
             c5 = 1;
@@ -150,32 +152,36 @@ public class Teleop10366 extends OpMode {
         else if (!gamepad1.y && c5 == 3)
             c5 = 0;
 
-        //Winch Servo Function
-        if (gamepad1.x)
-            Catapult.setPower(1);
-        else if (gamepad1.b)
-            Catapult.setPower(0);
+        // SPS Servo Function   *** Gamepad 2 Button X  for clockwise direction (>.5) ***
+        //                      *** Gamepad 2 Button X  for counter-clockwise direction (<.5) ***
+        if (gamepad2.x)  // X gamepade = clockwise = shoot
+            Catapult.setPower(1);  //turn clockwise
+       /* else if (gamepad2.b) // B gamepad  = counter-clockwise probably should not be used
+            Catapult.setPower(0); // Turn counter-clock-wise
+        */
         else
-            Catapult.setPower(0.5);
+            Catapult.setPower(0.5); // stop servo
 
-        //Shooting Mechanism Motors Function
-        if (gamepad2.y && c4 == 0) {
+        // Shooting Mechanism Motors *** Gamepad 2 Button Y ***
+        // Function  uses toggel system
+        if (gamepad2.y && c4 == 0) {  // when "Y" pressed starts motors
             r.setPower(-1.0);
             l.setPower(-1.0);
             c4 = 1;
         }
-        else if (!gamepad2.y && c4 == 1) {
+        else if (!gamepad2.y && c4 == 1) {  // when "Y let go keeps it where it was
             c4 = 2;
         }
-        else if (gamepad2.y && c4 == 2) {
+        else if (gamepad2.y && c4 == 2) {  // when "Y pressed againt will stop motors
             r.setPower(0);
             l.setPower(0);
             c4 = 3;
         }
-        else if (!gamepad2.y && c4 == 3)
+        else if (!gamepad2.y && c4 == 3)  // keeps motors where the were stopped waiting for next press
             c4 = 0;
 
-        //Lift Mechanism Function
+        // Lift Mechanism Function       *** Gamepad 2 Button X  clock-wise (positive Value)***
+        //                              *** Gamepad 2 Button B  Counter- clock-wise (negative Value) ***
         if (gamepad2.x)
             lift.setPower(0.25);
         else if (gamepad2.b)
