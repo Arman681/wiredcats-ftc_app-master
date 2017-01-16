@@ -566,6 +566,7 @@ public class Auto6322Red extends LinearOpModeCamera {
 
         for (DcMotor motor : driveTrain)
             motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        idle();
 
         for (int i = 0; i < driveTrain.length; i++)
             startPosition[i] = driveTrain[i].getCurrentPosition();
@@ -576,13 +577,11 @@ public class Auto6322Red extends LinearOpModeCamera {
         for (DcMotor motor : driveTrain)
             motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-        FrontLeft.setPower(Math.abs(power));
-        BackLeft.setPower(Math.abs(power));
-        FrontRight.setPower(Math.abs(power));
-        BackRight.setPower(Math.abs(power));
+        for (DcMotor motor : driveTrain)
+            motor.setPower(Math.abs(power));
 
         while(driveTrain[0].isBusy() && driveTrain[1].isBusy() && driveTrain[2].isBusy() && driveTrain[3].isBusy() && opModeIsActive())
-            sleep(1);
+            idle();
 
         for (DcMotor motor : driveTrain)
             motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
