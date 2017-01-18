@@ -18,6 +18,8 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 public class BlueAuto10366 extends LinearOpMode{
 
+  // Comment to push file
+
     ElapsedTime runtime1 = new ElapsedTime(); //Counter for shoot();
     ElapsedTime runtime2 = new ElapsedTime(); //Counter for determineRedSide();
 
