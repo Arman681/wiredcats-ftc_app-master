@@ -34,9 +34,9 @@ public class BlueAuto10366 extends LinearOpMode{
     DcMotor l;
 
     //Continuous Rotation Servo + Reg. Servo Declarations
-    CRServo Catapult;
-    Servo Left;  //left lift fork locking servo
-    Servo Right;  //right lift fork locking sevro
+    CRServo Catapult;  // Continuious Rotation Servo
+    Servo Left;  // Left lift fork locking servo
+    Servo Right;  // Right lift fork locking sevro
 
     //Intake Motor Declaration
     DcMotor intake;
@@ -118,7 +118,8 @@ public class BlueAuto10366 extends LinearOpMode{
         moveByTime(-0.25, 10);  //Move Backward  at one-quarter speed for  .010 seconds  ***code to correct initial counter-clock-wise turn
         turnByTime(-0.25, 25); // Move Forward  at half speed for  .015 seconds counter clocl-wise ***code to correct initial clock-wise turn
         moveByTime(-0.25, 1250); //move Backward at one-quarter speed for 1.250 seconds
-        // /Shooting 2 Balls Good distance  Manual Shooting perfect.  Need to get Servo Working
+
+        // Shooting 2 Balls Good distance  Manual Shooting perfect.  Need to get Servo Working
         //Catapult.setPower(1); //Sets catapult winch servo backwards to recharge forward rotation
 
         //shoot(1.0, 3000, 1000); //Shoots particles at full power for 3 seconds and starts catapult after 1 second
@@ -272,7 +273,7 @@ public class BlueAuto10366 extends LinearOpMode{
             l.setPower(0);
         }
         //if (runtime1.time() > catapultDelay)
-        //    Catapult.setPower(0);
+           // Catapult.setPower(0);
     }
 
     public void stopAllMotors() throws InterruptedException {
