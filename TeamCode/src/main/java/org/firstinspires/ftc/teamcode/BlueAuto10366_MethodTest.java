@@ -18,14 +18,18 @@ import java.security.PublicKey;
 
 @Autonomous(name = "BlueAuto10366_MethodTest", group = "Autonomous")
     public class BlueAuto10366_MethodTest extends LinearOpMode{  // LinearOpMode is for autonomous
-// @TeleOp(name="BlueAuto10366_MethodTest", group ="Opmode")  for TeleOp
+
+    // @TeleOp(name="BlueAuto10366_MethodTest", group ="Opmode")  for TeleOp
     // public class BlueAuto10366_MethodTest extends Linear{  // Linear is for TeleOp
+
     String determinedSide;
 
     ElapsedTime runtime1 = new ElapsedTime(); //Counter for shoot();
     ElapsedTime runtime2 = new ElapsedTime(); //Counter for determineRedSide();
 
-    //Drive Train Motor Declarations
+
+                //Drive Train Motor Declarations
+
     DcMotor FrontRight;  //DcMotor is a class  Frontright is an object
     DcMotor FrontLeft;
     DcMotor BackRight;
@@ -33,27 +37,41 @@ import java.security.PublicKey;
 
     final DcMotor[] driveTrain = new DcMotor[4];  // array decloration - [4] indicates 4  allocations (motors)
 
-    //Shooting Mechanism Motor Declarations
+
+                //Shooting Mechanism Motor Declarations
+
     DcMotor r;
     DcMotor l;
 
-    //Continuous Rotation Servo + Lift Reg. Angular Servo Declarations
-    CRServo Catapult;  //Continuous Rotation Servo
-    Servo Left;  // Left lift fork locking servo
-    Servo Right;  // Right lift fork locking sevro
 
-    //Intake Motor Declaration
+                //Continuous Rotation Servo + Lift Reg. Angular Servo Declarations
+
+    CRServo Catapult;   //Continuous Rotation Servo
+    Servo Left;         // Left lift fork locking servo
+    Servo Right;        // Right lift fork locking sevro
+
+
+                //Intake Motor Declaration
+
     DcMotor intake;
 
-    //Lift Motor Declaration
+
+                //Lift Motor Declaration
+
     DcMotor lift;
 
-    //Color Sensor Declarations
+
+                //Color Sensor Declarations
+
     ColorSensor CSleft;
     ColorSensor CSright;
 
-    //encoder constants
-    //Moror Values from Andymark for NeverRest 60
+
+
+            //Encoder Constants
+
+                //Moror Values from Andymark for NeverRest 60
+
     static final double TAU = 6.283185;  // = 2*pi
     static final double COUNTS_PER_MOTOR_REV = 1120;    // eg: neverrest 40
     static final double DRIVE_GEAR_REDUCTION = 1.0;     // This is < 1.0 if geared UP
@@ -61,7 +79,9 @@ import java.security.PublicKey;
     static final double COUNTS_PER_INCH = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) / (WHEEL_RADIUS_INCHES * TAU);
     static final double DEGREES_TO_ENCODER_INCHES = 0;
 
-    //Moror Values from Andymark for NeverRest 20
+
+                //Moror Values from Andymark for NeverRest 20
+
     static final double TAU_20 = 6.283185;
     static final double COUNTS_PER_MOTOR_REV_20 = 1120;    // eg: neverrest 40
     static final double DRIVE_GEAR_REDUCTION_20 = 1.0;     // This is < 1.0 if geared UP
@@ -71,7 +91,10 @@ import java.security.PublicKey;
 
     @Override
     public void runOpMode() throws InterruptedException {
-        //Drive Train Motors
+
+
+                    //Drive Train Motors
+
         FrontRight = hardwareMap.dcMotor.get("fr");
         FrontLeft = hardwareMap.dcMotor.get("fl");
         BackRight = hardwareMap.dcMotor.get("br");
@@ -91,26 +114,36 @@ import java.security.PublicKey;
         FrontRight.setDirection(DcMotor.Direction.REVERSE);
         BackRight.setDirection(DcMotor.Direction.REVERSE);
 
-        //Servos
+
+                    //Servos
+
         Catapult = hardwareMap.crservo.get("c");
         Left = hardwareMap.servo.get("L");
         Right = hardwareMap.servo.get("R");
         //Catapult.setDirection(CRServo.Direction.REVERSE); //would need to use if servo was mounted backwards
         Right.setDirection(Servo.Direction.REVERSE); // sets right lift fork servo to go opposite of left
 
-        //Shooting Mechanism Motors
+
+                    //Shooting Mechanism Motors
+
         r = hardwareMap.dcMotor.get("r");
         l = hardwareMap.dcMotor.get("l");
         l.setDirection(DcMotorSimple.Direction.REVERSE);
 
-        //Intake Motor
+
+                    //Intake Motor
+
         intake = hardwareMap.dcMotor.get("in");
         intake.setDirection(DcMotorSimple.Direction.REVERSE);
 
-        //Lift Motor
+
+                    //Lift Motor
+
         lift = hardwareMap.dcMotor.get("lift");
 
-        //Color Sensors
+
+                    //Color Sensors
+
         CSleft = hardwareMap.colorSensor.get("csl");
         CSright = hardwareMap.colorSensor.get("csr");
 
@@ -121,7 +154,8 @@ import java.security.PublicKey;
 
         waitForStart(); //Autonomous begins when play button is pressed on the Driver Station Phone
 
-        // /Shooting 2 Balls Good distance  Manual Shooting perfect.  Need to get Servo Working
+                    // /Shooting 2 Balls Good distance  Manual Shooting perfect.  Need to get Servo Working
+
         Catapult.setPower(.5); //Sets catapult servo to stop
 
         shoot(1.0, 4.0, 1.0); //Shoots particles at full power for 2 seconds and starts catapult after .25 seconds
