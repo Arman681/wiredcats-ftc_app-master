@@ -98,7 +98,8 @@ public class Teleop10366 extends OpMode {
         Left.setPosition(-1.0);
 
 
-        // Driving          *** Gamepad 1 Button Y ***
+        // Driving          *** Gamepad 1 Left Stick Y
+        //                  *** Gamepad 1 Left Stick Y
         float lefty1 = -gamepad1.left_stick_y;
         float righty1 = -gamepad1.right_stick_y;
 
@@ -163,7 +164,7 @@ public class Teleop10366 extends OpMode {
             Catapult.setPower(0.5); // stop servo
 
         // Shooting Mechanism Motors *** Gamepad 2 Button Y ***
-        // Function  uses toggel system
+        // Function  uses toggle system  On/Maintain/Stop/Maintain
         if (gamepad2.y && c4 == 0) {  // when "Y" pressed starts motors
             r.setPower(-1.0);
             l.setPower(-1.0);
