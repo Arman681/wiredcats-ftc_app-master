@@ -116,20 +116,16 @@ public class Teleop10366_Test_Version extends OpMode {
         Right.setPosition(-1.0);
         Left.setPosition(-1.0);
 
-
-                // Driving          *** Gamepad 1 Button Y ***
-
         float lefty1 = -gamepad1.left_stick_y;
         float righty1 = -gamepad1.right_stick_y;
-
-
 
                 // Drive Train
 
         if (lefty1 < -.2 || lefty1 > .2) {
             FrontLeft.setPower(lefty1);
             BackLeft.setPower(lefty1);
-        } else {
+        }
+        else {
             for (int i = 1; i > .0001; i *= .1) {
                 FrontLeft.setPower(lefty1 * i);
                 BackLeft.setPower(lefty1 * i);
@@ -138,7 +134,8 @@ public class Teleop10366_Test_Version extends OpMode {
         if (righty1 < -.2 || righty1 > .2) {
             FrontRight.setPower(righty1);
             BackRight.setPower(righty1);
-        } else {
+        }
+        else {
             for (int i = 1; i > .0001; i *= .1) {
                 FrontRight.setPower(righty1 * i);
                 BackRight.setPower(righty1 * i);
@@ -150,26 +147,29 @@ public class Teleop10366_Test_Version extends OpMode {
         if (gamepad1.a && c3 == 0) {
             intake.setPower(1.0);
             c3 = 1;
-        } else if (!gamepad1.a && c3 == 1)
+        }
+        else if (!gamepad1.a && c3 == 1)
             c3 = 2;
         else if (gamepad1.a && c3 == 2) {
             intake.setPower(0);
             c3 = 3;
-        } else if (!gamepad1.a && c3 == 3)
+        }
+        else if (!gamepad1.a && c3 == 3)
             c3 = 0;
-
 
                 // Intake Out       *** Gamepad 1 Button Y ***
 
         if (gamepad1.y && c5 == 0) {
             intake.setPower(-1.0);
             c5 = 1;
-        } else if (!gamepad1.y && c5 == 1)
+        }
+        else if (!gamepad1.y && c5 == 1)
             c5 = 2;
         else if (gamepad1.y && c5 == 2) {
             intake.setPower(0);
             c5 = 3;
-        } else if (!gamepad1.y && c5 == 3)
+        }
+        else if (!gamepad1.y && c5 == 3)
             c5 = 0;
 
 
@@ -184,26 +184,24 @@ public class Teleop10366_Test_Version extends OpMode {
         else
             Catapult.setPower(0.5); // stop servo
 
+                // Shooting Mechanism Motors *** Gamepad 2 Up Arrow Key ***
+                // Function  uses toggle system
 
-                // Shooting Mechanism Motors *** Gamepad 2 Button Y ***
-                // Function  uses toggel system
-
-        if (gamepad2.y && c4 == 0) {  // when "Y" pressed starts motors
+        if (gamepad2.dpad_up && c4 == 0) {  // when up arrow key pressed, starts motors
             r.setPower(-1.0);
             l.setPower(-1.0);
             c4 = 1;
-        } else if (!gamepad2.y && c4 == 1) {  // when "Y let go keeps it where it was
+        }
+        else if (!gamepad2.dpad_up && c4 == 1) {  // when up arrow key is let go, keeps it where it was
             c4 = 2;
-        } else if (gamepad2.y && c4 == 2) {  // when "Y pressed againt will stop motors
+        }
+        else if (gamepad2.dpad_up && c4 == 2) {  // when up arrow key is pressed again, stops motors
             r.setPower(0);
             l.setPower(0);
             c4 = 3;
-        } else if (!gamepad2.y && c4 == 3)  // keeps motors where the were stopped waiting for next press
+        }
+        else if (!gamepad2.dpad_up && c4 == 3)  // keeps motors where the were stopped waiting for next press
             c4 = 0;
-
-
-                // *** CHANGE TO USE UP/DOWN/LEFT RIGHT BUTTON ON LEFT SIDE OF JOY STICK) ***
-                //  *** CHANGE TO UP TO GO CLOCKWISE AND DOWN TO GOT COUNTER CLOCKWISE  ***
 
                 // Lift Mechanism Function      *** Gamepad 2 Button X  clock-wise (positive Value)***
                 //                              *** Gamepad 2 Button B  Counter- clock-wise (negative Value) ***
