@@ -163,9 +163,12 @@ public class BlueAuto10366_Test_Version extends LinearOpMode {
         moveByTime(-0.25, 1000); //move Backward at one-quarter speed for 1.250 seconds*** changed to 1000***
 
                     // Shoot 2 Particals
-        Catapult.setPower(.5); //Sets catapult servo to stop
 
-        shoot(1.0, 2.0, .25); //Shoots particles at full power for 1 seconds and starts catapult after .25 seconds
+        shoot(1.0, 5.5, 1.75); //Shoots particles at full power for  change  changed to 4.75 / 1.5
+
+        //Catapult.setPower(.5); //Sets catapult servo to stop
+
+        //shoot(1.0, 2.0, .25); //Shoots particles at full power for 1 seconds and starts catapult after .25 seconds
 
 
                     //Claim Blue Beacon 1
@@ -379,15 +382,14 @@ public class BlueAuto10366_Test_Version extends LinearOpMode {
             stopDriveTrain();
             r.setPower(power); //Right shooter wheel
             l.setPower(power); //Left Shooter wheel
-            if (runtime1.time() > catapultDelay) {  //Check if time to start catapult servo
+
+            if (runtime1.time() > catapultDelay)   //Check if time to start catapult servo
                 Catapult.setPower(power);  // set full power forward
-            }
+
             telemetry.addData("Time: " + runtime1.time(), null);
             telemetry.addData("Target Time: " + targetTime, null);
-            telemetry.addData("Delay Time: " + catapultDelay, null);
             telemetry.update();
         }
-
         stopAllMotors();
 
     }
