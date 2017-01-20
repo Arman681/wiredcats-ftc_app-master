@@ -35,11 +35,11 @@ public class Gen3teleop extends OpMode {
     DcMotor right, left;
 
     //Particle System Motor Declarations
-    DcMotor intake, conveyor;
+    DcMotor intake;
 
     //Servo Button Pusher Declaration
-    CRServo rightPusher;
-    CRServo leftPusher;
+    CRServo rightPusher, leftPusher, conveyor;
+
 
     @Override
     public void init() {
@@ -58,9 +58,8 @@ public class Gen3teleop extends OpMode {
 
         //Intake and Conveyor Motors
         intake = hardwareMap.dcMotor.get("i");
-        conveyor = hardwareMap.dcMotor.get("c");
+        conveyor = hardwareMap.crservo.get("c");
         intake.setDirection(DcMotor.Direction.REVERSE);
-        conveyor.setDirection(DcMotor.Direction.REVERSE);
 
         //Button Pusher Servos
         rightPusher = hardwareMap.crservo.get("rp");
@@ -166,7 +165,7 @@ public class Gen3teleop extends OpMode {
         else if (gamepad2.a)
             conveyor.setPower(1.0);
         else
-            conveyor.setPower(0.0);
+            conveyor.setPower(0.5);
 
         telemetry.addData("Intake Power: " + intake.getPower(), null);
         telemetry.addData("Intake Counter: " + c4, null);
