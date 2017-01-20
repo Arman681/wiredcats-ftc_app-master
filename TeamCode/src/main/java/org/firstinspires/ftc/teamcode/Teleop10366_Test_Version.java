@@ -19,7 +19,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 public class Teleop10366_Test_Version extends OpMode {
 
- //comment to push file
+ //comment to push file *
 
     ElapsedTime runtime1 = new ElapsedTime();
 
@@ -172,7 +172,6 @@ public class Teleop10366_Test_Version extends OpMode {
         else if (!gamepad1.y && c5 == 3)
             c5 = 0;
 
-
                 // SPS Servo Function   *** Gamepad 2 Button X  for clockwise direction (>.5) ***
                 //                      *** Gamepad 2 Button B  for counter-clockwise direction (<.5) ***  Do NOT USE***
 
@@ -184,35 +183,37 @@ public class Teleop10366_Test_Version extends OpMode {
         else
             Catapult.setPower(0.5); // stop servo
 
-                // Shooting Mechanism Motors *** Gamepad 2 Up Arrow Key ***
-                // Function  uses toggle system
+                // Shooting Mechanism Motors *** Gamepad 2 Button Y ***
+                // Function  uses toggel system
 
-        if (gamepad2.dpad_up && c4 == 0) {  // when up arrow key pressed, starts motors
+        if (gamepad2.y && c4 == 0) {  // when "Y" pressed starts motors
             r.setPower(-1.0);
             l.setPower(-1.0);
             c4 = 1;
         }
-        else if (!gamepad2.dpad_up && c4 == 1) {  // when up arrow key is let go, keeps it where it was
+        else if (!gamepad2.y && c4 == 1) {  // when "Y let go keeps it where it was
             c4 = 2;
         }
-        else if (gamepad2.dpad_up && c4 == 2) {  // when up arrow key is pressed again, stops motors
+        else if (gamepad2.y && c4 == 2) {  // when "Y pressed againt will stop motors
             r.setPower(0);
             l.setPower(0);
             c4 = 3;
         }
-        else if (!gamepad2.dpad_up && c4 == 3)  // keeps motors where the were stopped waiting for next press
+        else if (!gamepad2.y && c4 == 3)  // keeps motors where the were stopped waiting for next press
             c4 = 0;
+
+                // *** CHANGE TO USE UP/DOWN/LEFT RIGHT BUTTON ON LEFT SIDE OF JOY STICK) ***
+                //  *** CHANGE TO UP TO GO CLOCKWISE AND DOWN TO GOT COUNTER CLOCKWISE  ***
 
                 // Lift Mechanism Function      *** Gamepad 2 Button X  clock-wise (positive Value)***
                 //                              *** Gamepad 2 Button B  Counter- clock-wise (negative Value) ***
 
-        if (gamepad2.x)
+        if (gamepad2.dpad_up)
             lift.setPower(0.25);
-        else if (gamepad2.b)
+        else if (gamepad2.dpad_down)
             lift.setPower(-1.0);
         else
             lift.setPower(0);
-
 
         telemetry.addData("Catapult Power: " + Catapult.getPower(), null);
 
