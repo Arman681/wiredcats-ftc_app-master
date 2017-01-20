@@ -187,6 +187,7 @@ public class Teleop10366_Test_Version extends OpMode {
                 // Function  uses toggel system
 
         if (gamepad2.y && c4 == 0) {  // when "Y" pressed starts motors
+            runtime1.reset();
             r.setPower(-1.0);
             l.setPower(-1.0);
             c4 = 1;
@@ -194,9 +195,12 @@ public class Teleop10366_Test_Version extends OpMode {
         else if (!gamepad2.y && c4 == 1) {  // when "Y let go keeps it where it was
             c4 = 2;
         }
+        else if (!gamepad2.y && c4 == 2 && runtime1.time() > 2)
+            Catapult.setPower(1.0);
         else if (gamepad2.y && c4 == 2) {  // when "Y pressed againt will stop motors
             r.setPower(0);
             l.setPower(0);
+            Catapult.setPower(0.5);
             c4 = 3;
         }
         else if (!gamepad2.y && c4 == 3)  // keeps motors where the were stopped waiting for next press
