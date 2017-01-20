@@ -166,7 +166,8 @@ public class BlueAuto10366_Test_Version extends LinearOpMode {
 
         shoot(1.0, 5.5, 1.75); //Shoots particles at full power for  change  changed to 4.75 / 1.5
 
-        //Catapult.setPower(.5); //Sets catapult servo to stop
+            Catapult.setPower(.5); //Sets catapult servo to stop
+
 
         //shoot(1.0, 2.0, .25); //Shoots particles at full power for 1 seconds and starts catapult after .25 seconds
 
