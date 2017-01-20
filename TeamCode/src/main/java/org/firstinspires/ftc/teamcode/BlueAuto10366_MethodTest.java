@@ -159,7 +159,7 @@ import java.security.PublicKey;
 
         //Catapult.setPower(.5); //Sets catapult servo to stop
 
-        shoot(1.0, 4.75, 2.0); //Shoots particles at full power for  change to 4..50 / 2 from ( over rotate 4.75 / 2 (3 full rotations)seconds and starts catapult after 2 seconds
+        shoot(1.0, 5.5, 1.75); //Shoots particles at full power for  change  changed to 4.75 / 1.5 to 4.50 / 2 from ( over rotate 4.75 / 2 (3 full rotations)seconds and starts catapult after 2 seconds
         //shoot(1.0, 2.5, 0.3); //Shoots particles at full power for 2 seconds and set catapult Delay to 0 to test catapult
     }
 
