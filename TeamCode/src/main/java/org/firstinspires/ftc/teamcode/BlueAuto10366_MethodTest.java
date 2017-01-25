@@ -15,7 +15,7 @@ import java.security.PublicKey;
 /**
  * Created by Carol on 1/15/2017.
  */
-// Comment to pus file
+
 
 @Autonomous(name = "BlueAuto10366_MethodTest", group = "Autonomous")
     public class BlueAuto10366_MethodTest extends LinearOpMode{  // LinearOpMode is for autonomous
@@ -157,10 +157,10 @@ import java.security.PublicKey;
 
                     // /Shooting 2 Balls Good distance  Manual Shooting perfect.  Need to get Servo Working
 
-        //Catapult.setPower(.5); //Sets catapult servo to stop
+
 
         shoot(1.0, 5.5, 1.75); //Shoots particles at full power for  change  changed to 4.75 / 1.5 to 4.50 / 2 from ( over rotate 4.75 / 2 (3 full rotations)seconds and starts catapult after 2 seconds
-        //shoot(1.0, 2.5, 0.3); //Shoots particles at full power for 2 seconds and set catapult Delay to 0 to test catapult
+        Catapult.setPower(.5); //Sets catapult servo to stop
     }
 
 
@@ -169,16 +169,18 @@ import java.security.PublicKey;
         runtime1.reset();
         while (runtime1.time() < targetTime) {  //start shooter motors
             stopDriveTrain();
-            r.setPower(power); //Right shooter wheel
-            l.setPower(power); //Left Shooter wheel
+            //r.setPower(power); //Right shooter wheel
+            //l.setPower(power); //Left Shooter wheel
 
             if (runtime1.time() > catapultDelay)   //Check if time to start catapult servo
                 Catapult.setPower(power);  // set full power forward
 
             telemetry.addData("Time: " + runtime1.time(), null);
             telemetry.addData("Target Time: " + targetTime, null);
+            telemetry.addData ("Catapult Delay" + catapultDelay,null);
             telemetry.update();
         }
+
         stopAllMotors();
 
     }
