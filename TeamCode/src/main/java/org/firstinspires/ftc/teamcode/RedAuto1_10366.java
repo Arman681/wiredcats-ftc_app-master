@@ -167,30 +167,30 @@ public class RedAuto1_10366  extends LinearOpMode{
 
         // Shoot 2 Particles
 
-        //shoot(1.0, 5.5, 1.75); //Shoots particles at full power for  change  changed to 4.75 / 1.5
+        shoot(1.0, 5.5, 1.75); //Shoots particles at full power for  change  changed to 4.75 / 1.5
 
         Catapult.setPower(.5); //Sets catapult servo to stop
 
 
-        //Claim Blue Beacon 1  ***changed quarter turn from .405 to .410
+        //Claim red Beacon 1  Changes for Blue to Red  Clock-Wise to Counter Clock-wise to Clock-wise and Clock-wise to Counter Clock-wise
 
         moveByTime(0.25, 850); //Move Forward at one quarter speed for .600 changed to ***.750 to 850 after ball was inflated***
-        turnByTime(0.25, fourtyfivedegrees); //Turn Clock-wise at one-quarter speed for .410 seconds(.425 seconds - .15 Seconds) to offset (initialization) to make 45-degree turn
+        turnByTime(-0.25, fourtyfivedegrees); //Turn Counter Clock-wise at one-quarter speed for .410 seconds(.425 seconds - .15 Seconds) to offset (initialization) to make 45-degree turn
         moveByTime(-0.25, 2200); //Move Backward at one-quarter speed for 2.200 seconds ***Battery Full charge  14.44 - 14.00** changed to 20000 from 1750
-        turnByTime(-0.25, onethirtyfivedegree); //Turns Counter-clock-wise at one-quarter speed for 1.230 seconds to make 135-DEGREE (3 X 45-DEGREE) turn
+        turnByTime(0.25, onethirtyfivedegree); //Turns Clock-wise at one-quarter speed for 1.230 seconds to make 135-DEGREE (3 X 45-DEGREE) turn
         //moveByTime(-0.25, 50); // Move Backward  at one-quarter speed for .050 seconds (***used to correct motor direction to go straight***)
         //moveByTime(0.25, 50);  // Move Forward   at one-quarter speed for .050 seconds (***used to correct motor direction to go straight***)
         moveByTime(0.25, 500); // Move Forward at one-quarter speed for .650 seconds to establish initial Beacon Startion position
         moveByTime(0.25, 250); // Move Forward at one-quarter speed for .350 seconds to get closer to beacon
-        goForButton(); //Determines blue side of beacon and hits button on that side
+        goForButton(); //Determines Red side of beacon and hits button on that side
 
 
-        //Claim Blue Beacon 2
+        //Claim Red Beacon 2  *** Changed for Blue to Red turn after determining Side from Counter Clock-wise to Clock-wise
 
         moveByTime(-0.25, 1000); //Move Backwards at half speed for 1 seconds
         turnByTime(-0.25, ninetydegrees + fourtyfivedegrees/2); //Turns Counter-clock-wise at one-quarter speed for .8 seconds to make 90-DEGREE (2 X 45-DEGREE) turn
-        //turnByTime(-0.25, onethirtyfivedegree); //Turns Counter-clock-wise at one-quarter speed for .8 seconds to make 135-DEGREE (2 X 45-DEGREE) turn  correction  not sure why 90 is not enough
-        // checking which side was Blue -  Left Side of Beacon 1 is furter away from Right Side and requires more time
+        //turnByTime(-0.25, onethirtyfivedegrees); //Turns Counter-clock-wise at one-quarter speed for .8 seconds to make 135-DEGREE (2 X 45-DEGREE) turn  correction  not sure why 90 is not enough
+        // checking which side was Red -  Left Side of Beacon 1 is furter away from Right Side and requires more time
         if (determinedSide == "left") {  //check side to determine time to reach next beacon ( left is longer than right)
             moveByTime(0.25, 2000);  //Move Forward  at one-quarter speed for 1.75 seconds
         } else if (determinedSide  == "right") {
@@ -208,19 +208,19 @@ public class RedAuto1_10366  extends LinearOpMode{
         //telemetry.addData("Claim Blue Beacon 2 Done");
         //telemetry.update();
 
-        //Claim Blue Cap Ball
+        //Claim Blue Cap Ball   ***Changed Counter Clock-wise to Clockwise for Blue to Red
 
         moveByTime(-0.25, 1000); //Move Backwards at one-quarter speed for .5 second changed to 1 second
-        turnByTime(0.25, onethirtyfivedegree); //Turns Clock-wise at half speed for 1.6 seconds to make 135-DEGREE turn (3 X 45-DEGREE)  to put intake in front position
+        turnByTime(-0.25, onethirtyfivedegree); //Turns Counter Clock-wise at half speed for 1.6 seconds to make 135-DEGREE turn (3 X 45-DEGREE)  to put intake in front position
         //moveByTime(-0.25, 50); // Move Backward  at one-quarter speed for .05 seconds (***used to correct motor direction to go straight***)
         //moveByTime(0.25, 50);  // Move Forward   at one-quarter speed for .05 seconds (***used to correct motor direction to go straight***)
         moveByTime(0.25, 2500); //Move Forwards  at one-quarter speed for 1.5 seconds changed to 2.5 seconds for longer distance
         turnByTime(0.25, fourtyfivedegrees); //Turns Clock-wise at one-quarter speed for .4 to make 45-DEGREE turn
         moveByTime(0.25, 1500); //Move forwards at one-quarter speed for 1.5 seconds
 
-        //Park at Blue Corner Vortex
+        //Park at Blue Corner Vortex  ***Changed Counter Clock-wise to Clockwise for Blue to Red
 
-        //turnByTime(-0.25, nintydegrees); //Turns counterClock-wise at one-quarter speed for three-quarters of a second to make 90-degree turn  ***was 45 degrees***
+        //turnByTime(0.25, nintydegrees); //Turns Clock-wise at one-quarter speed for three-quarters of a second to make 90-degree turn  ***was 45 degrees***
         //moveByTime(0.25, 500); //Move  Forwards at one-quarter speed for one-half second
         //moveByTime(0.25, 1000); //Move Forwards at one-quarter speed for one second
         stopAllMotors();
@@ -264,7 +264,7 @@ public class RedAuto1_10366  extends LinearOpMode{
     }
 
 
-    //Determine Blue Side
+    //Determine Red Side    *** changes from Blue to Red - Changed all Blue "right" to "left"   and   all "left" to "right"
 
     public String determineBlueSide() throws InterruptedException {
 
@@ -274,22 +274,22 @@ public class RedAuto1_10366  extends LinearOpMode{
         runtime2.reset();
         while (!dec) {
             if ((CSleft.red() * 8 > CSleft.blue() * 8) && (CSright.blue() * 8 > CSright.red() * 8)) {
-                c = "right"; // If Left side of Beacon is Red and Right Side is Blue set direction to Right to push Blue button
+                c = "left"; // If Left side of Beacon is Red and Right Side is Blue set direction to Left to push REd button
                 dec = true;
             } else if ((CSleft.blue() * 8 > CSleft.red() * 8) && (CSright.red() * 8 > CSright.blue() * 8)) {
-                c = "left";  // If Left side of Beacon is Blue and Right Side is Red set direction to Left to push Blue button
+                c = "right";  // If Left side of Beacon is Blue and Right Side is Red set direction to Right to push Red button
                 dec = true;
             } else if ((CSleft.red() * 8 > CSleft.blue() * 8)) {
-                c = "right"; // If Left side of Beacon is Red  Set direction to Right to push Blue button
+                c = "left"; // If Left side of Beacon is Red  Set direction to Left to push red button
                 dec = true;
             } else if ((CSleft.blue() * 8 > CSleft.red() * 8)) {
-                c = "left";  // If Left side of Beacon is Blue set direction to Left to push Blue button
+                c = "right";  // If Left side of Beacon is Blue set direction to Right to push Red button
                 dec = true;
             } else if ((CSright.blue() * 8 > CSright.red() * 8)) {
-                c = "right"; // If Right Side is Blue set direction to Right to push Blue button
+                c = "left"; // If Right Side is Blue set direction to Left to push Red button
                 dec = true;
             } else if ((CSright.red() * 8 > CSright.blue() * 8)) {
-                c = "left";  // If Right Side is Red set direction to Left to push Blue button
+                c = "right";  // If Right Side is Red set direction to Right to push Red button
                 dec = true;
             } else if (runtime2.time() > 2000) {
                 c = "null";  //if neither is true set direction to null
