@@ -159,25 +159,25 @@ public class Teleop6322 extends OpMode {
             }
         }
 
-        //DriveTrain Rotation Function
-        if (gamepad1.right_bumper && !gamepad1.left_bumper && gamepad1.right_stick_y == 0 && gamepad1.left_stick_y == 0) {
+        /*DriveTrain Rotation Function
+        if (gamepad1.right_bumper && !gamepad1.left_bumper && (gamepad1.right_stick_y > -1 && gamepad1.right_stick_y < 1) && (gamepad1.left_stick_y > -1 && gamepad1.left_stick_y < 1)) {
             FrontLeft.setPower(1.0);
             BackLeft.setPower(1.0);
             FrontRight.setPower(-1.0);
             BackRight.setPower(-1.0);
         }
-        else if (gamepad1.left_bumper && !gamepad1.right_bumper && gamepad1.right_stick_y == 0 && gamepad1.left_stick_y == 0) {
+        else if (gamepad1.left_bumper && !gamepad1.right_bumper && (gamepad1.right_stick_y > -1 && gamepad1.right_stick_y < 1) && (gamepad1.left_stick_y > -1 && gamepad1.left_stick_y < 1)) {
             FrontLeft.setPower(-1.0);
             BackLeft.setPower(-1.0);
             FrontRight.setPower(1.0);
             BackRight.setPower(1.0);
         }
-        else if (!gamepad1.right_bumper && !gamepad1.left_bumper && gamepad1.right_stick_y == 0 && gamepad1.left_stick_y == 0) {
+        else if (!gamepad1.right_bumper && !gamepad1.left_bumper && (gamepad1.right_stick_y > -1 && gamepad1.right_stick_y < 1) && (gamepad1.left_stick_y > -1 && gamepad1.left_stick_y < 1)) {
             FrontLeft.setPower(0);
             BackLeft.setPower(0);
             FrontRight.setPower(0);
             BackRight.setPower(0);
-        }
+        }*/
 
         //Left Continuous Rotation Servo
         if (gamepad1.x && c1 == 0) {
