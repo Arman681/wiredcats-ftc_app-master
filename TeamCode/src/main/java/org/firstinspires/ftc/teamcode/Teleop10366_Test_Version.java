@@ -173,11 +173,11 @@ public class Teleop10366_Test_Version extends OpMode {
             c5 = 0;
 
                 // SPS Servo Function   *** Gamepad 2 Button X  for clockwise direction (>.5) ***
-                //                      *** Gamepad 2 Button B  for counter-clockwise direction (<.5) ***  Do NOT USE***
+                //                      *** Gamepad 2 Button B  for counter-clockwise direction (<.5)
 
         if (gamepad2.x)  // X gamepade = clockwise = shoot
             Catapult.setPower(1);  //turn clockwise
-       /* else if (gamepad2.b) // B gamepad  = counter-clockwise probably should not be used
+       /* else if (gamepad2.b) // B gamepad  = counter-clockwise probably ****  DO NOT USE ****
             Catapult.setPower(0); // Turn counter-clock-wise
         */
         else
@@ -206,11 +206,13 @@ public class Teleop10366_Test_Version extends OpMode {
         else if (!gamepad2.y && c4 == 3)  // keeps motors where the were stopped waiting for next press
             c4 = 0;
 
-                // *** CHANGE TO USE UP/DOWN/LEFT RIGHT BUTTON ON LEFT SIDE OF JOY STICK) ***
-                //  *** CHANGE TO UP TO GO CLOCKWISE AND DOWN TO GOT COUNTER CLOCKWISE  ***
 
-                // Lift Mechanism Function      *** Gamepad 2 Button X  clock-wise (positive Value)***
-                //                              *** Gamepad 2 Button B  Counter- clock-wise (negative Value) ***
+                // Cap Ball Lift Mechanism Function
+                    // *** CHANGE TO USE UP/DOWN/LEFT RIGHT BUTTON ON LEFT SIDE OF JOY STICK) ***
+                    //  *** CHANGE TO UP TO GO CLOCKWISE AND DOWN TO GOT COUNTER CLOCKWISE  ***
+
+                    // ***OLD CODE***     *** Gamepad 2 Button X  clock-wise (positive Value)***
+                    // ***OLD CODE***     *** Gamepad 2 Button B  Counter- clock-wise (negative Value) ***
 
         if (gamepad2.dpad_up)
             lift.setPower(0.25);
