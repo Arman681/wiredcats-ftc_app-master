@@ -47,6 +47,9 @@ public class RedAuto1_10366  extends LinearOpMode{
     Servo Left;         // Left lift fork locking servo
     Servo Right;        // Right lift fork locking sevro
 
+    double catapultClockwise = 1;
+    double catapultCClockwise = -1;
+    double catapultStop = 0;
 
     //Intake Motor Declaration
 
@@ -169,7 +172,7 @@ public class RedAuto1_10366  extends LinearOpMode{
 
         shoot(1.0, 5.5, 1.75); //Shoots particles at full power for  change  changed to 4.75 / 1.5
 
-        Catapult.setPower(.5); //Sets catapult servo to stop
+        Catapult.setPower(catapultStop); //Sets catapult servo to stop
 
 
         //Claim red Beacon 1  Changes for Blue to Red  Clock-Wise to Counter Clock-wise to Clock-wise and Clock-wise to Counter Clock-wise
@@ -205,8 +208,6 @@ public class RedAuto1_10366  extends LinearOpMode{
         moveByTime(0.25, 250); //Move Forward  at one-quarter speed for .5 a seconds to get closer to beacon
         goForButton(); //Determines blue side of beacon and hits button on that side
 
-        //telemetry.addData("Claim Blue Beacon 2 Done");
-        //telemetry.update();
 
         //Claim Blue Cap Ball   ***Changed Counter Clock-wise to Clockwise for Blue to Red
 
@@ -379,8 +380,8 @@ public class RedAuto1_10366  extends LinearOpMode{
 
     public void shoot(double power, double targetTime, double catapultDelay) throws InterruptedException {
 
-       /* runtime1.reset();
-        While (runtime1.time() < targetTime) {  //start shooter motors
+        runtime1.reset();
+        while (runtime1.time() < targetTime) {  //start shooter motors
             stopDriveTrain();
             r.setPower(power); //Right shooter wheel
             l.setPower(power); //Left Shooter wheel
@@ -390,30 +391,11 @@ public class RedAuto1_10366  extends LinearOpMode{
 
             telemetry.addData("Time: " + runtime1.time(), null);
             telemetry.addData("Target Time: " + targetTime, null);
+            telemetry.addData ("Catapult Delay" + catapultDelay,null);
             telemetry.update();
         }
         stopAllMotors();
-
-    }
-*/
-        // Replaced whilie with if logic to try to stop servo when done.
-        // will need to place in Auto 2 if it works
-        runtime1.reset();
-        if (runtime1.time() < targetTime) {  //start shooter motors
-            stopDriveTrain();
-            r.setPower(power); //Right shooter wheel
-            l.setPower(power); //Left Shooter wheel
-
-            if (runtime1.time() > catapultDelay)   //Check if time to start catapult servo
-                Catapult.setPower(power);  // set full power forward
-
-            telemetry.addData("Time: " + runtime1.time(), null);
-            telemetry.addData("Target Time: " + targetTime, null);
-            telemetry.update();
-        }
-        else if (runtime1.time() > targetTime){
-            stopAllMotors();
-        }
+        Catapult.setPower(catapultStop);  //Turn Catapult Servo motor off
 
     }
 
@@ -426,7 +408,7 @@ public class RedAuto1_10366  extends LinearOpMode{
         BackRight.setPower(0);
         r.setPower(0);
         l.setPower(0);
-        Catapult.setPower(.5);  //Turn Catapult Servo motor off
+        Catapult.setPower(catapultStop);  //Turn Catapult Servo motor off
 
     }
 
