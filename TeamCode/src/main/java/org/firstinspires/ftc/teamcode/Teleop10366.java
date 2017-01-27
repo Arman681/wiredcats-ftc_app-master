@@ -1,51 +1,58 @@
 package org.firstinspires.ftc.teamcode;
 
-import android.graphics.Color;
-
-import com.qualcomm.robotcore.hardware.CRServo;
-import com.qualcomm.robotcore.hardware.CRServoImpl;
-import com.qualcomm.robotcore.hardware.ColorSensor;
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.CRServo;
+import com.qualcomm.robotcore.hardware.ColorSensor;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.GyroSensor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import static android.os.SystemClock.sleep;
-
 /**
- * Created by SethHorwitz on 10/29/16.
+ * Created by Carol on 1/17/2017.
  */
 
-// Comment to push file
 
 @TeleOp(name="Teleop10366", group ="Opmode")
 
 public class Teleop10366 extends OpMode {
 
+    //comment to push file *
+
     ElapsedTime runtime1 = new ElapsedTime();
 
-    // Drive Train Motor Declarations
+
+
+    //  Drive Train Motor Declarations
+
     DcMotor FrontLeft;
     DcMotor FrontRight;
     DcMotor BackLeft;
     DcMotor BackRight;
 
+
     // Shooting Mechanism Motor Declarations
+
     DcMotor r;
     DcMotor l;
 
+
     // Continuous Rotation Servo + Reg. Servo Declarations
+
     CRServo Catapult;
     Servo Left;
     Servo Right;
 
+
     // Intake Motor Declaration
+
     DcMotor intake;
 
+
     // Lift Motor Declaration
+
     DcMotor lift;
 
     ColorSensor csl;
@@ -61,7 +68,9 @@ public class Teleop10366 extends OpMode {
     @Override
     public void init() {
 
+
         // Drive Train Motors
+
         FrontRight = hardwareMap.dcMotor.get("fr");
         FrontLeft = hardwareMap.dcMotor.get("fl");
         BackRight = hardwareMap.dcMotor.get("br");
@@ -69,23 +78,30 @@ public class Teleop10366 extends OpMode {
         FrontRight.setDirection(DcMotor.Direction.REVERSE);
         BackRight.setDirection(DcMotor.Direction.REVERSE);
 
+
         // Servos
+
         Catapult = hardwareMap.crservo.get("c");
-        Left = hardwareMap.servo.get("L");
-        Right = hardwareMap.servo.get("R");
-        Catapult.setDirection(CRServo.Direction.REVERSE); //not sure why this is here
-        Right.setDirection(Servo.Direction.REVERSE); //not sure why this is here
+        Left = hardwareMap.servo.get("L");  // Cap Ball Fork Servo
+        Right = hardwareMap.servo.get("R");  // Cap Ball Fork Servo
+        Right.setDirection(Servo.Direction.REVERSE); //not sure why this is here  // Cap Ball Fork Servo
+
 
         // Shooting Mechanism Motors
+
         r = hardwareMap.dcMotor.get("r");
         l = hardwareMap.dcMotor.get("l");
         r.setDirection(DcMotorSimple.Direction.REVERSE);
 
+
         // Intake Motor
+
         intake = hardwareMap.dcMotor.get("in");
         intake.setDirection(DcMotorSimple.Direction.REVERSE);
 
+
         // Lift Motor
+
         lift = hardwareMap.dcMotor.get("lift");
 
         csl = hardwareMap.colorSensor.get("csl");
@@ -99,13 +115,11 @@ public class Teleop10366 extends OpMode {
         Right.setPosition(-1.0);
         Left.setPosition(-1.0);
 
-
-        // Driving          *** Gamepad 1 Left Stick Y
-        //                  *** Gamepad 1 Left Stick Y
         float lefty1 = -gamepad1.left_stick_y;
         float righty1 = -gamepad1.right_stick_y;
 
         // Drive Train
+
         if (lefty1 < -.2 || lefty1 > .2) {
             FrontLeft.setPower(lefty1);
             BackLeft.setPower(lefty1);
@@ -127,7 +141,8 @@ public class Teleop10366 extends OpMode {
             }
         }
 
-        // Intake In    *** Gamepad 1 Button A ***
+        // Intake In        *** Gamepad 1 Button A ***
+
         if (gamepad1.a && c3 == 0) {
             intake.setPower(1.0);
             c3 = 1;
@@ -141,7 +156,8 @@ public class Teleop10366 extends OpMode {
         else if (!gamepad1.a && c3 == 3)
             c3 = 0;
 
-        // Intake Out    *** Gamepad 1 Button Y ***
+        // Intake Out       *** Gamepad 1 Button Y ***
+
         if (gamepad1.y && c5 == 0) {
             intake.setPower(-1.0);
             c5 = 1;
@@ -156,18 +172,21 @@ public class Teleop10366 extends OpMode {
             c5 = 0;
 
         // SPS Servo Function   *** Gamepad 2 Button X  for clockwise direction (>.5) ***
-        //                      *** Gamepad 2 Button X  for counter-clockwise direction (<.5) ***
+        //                      *** Gamepad 2 Button B  for counter-clockwise direction (<.5) **** DO NOT USE ****
+
         if (gamepad2.x)  // X gamepade = clockwise = shoot
             Catapult.setPower(1);  //turn clockwise
-       /* else if (gamepad2.b) // B gamepad  = counter-clockwise probably should not be used
+       /* else if (gamepad2.b) // B gamepad  = counter-clockwise **** DO NOT USE ****
             Catapult.setPower(0); // Turn counter-clock-wise
         */
         else
             Catapult.setPower(0.5); // stop servo
 
         // Shooting Mechanism Motors *** Gamepad 2 Button Y ***
-        // Function  uses toggle system  On/Maintain/Stop/Maintain
+        // Function  uses toggel system
+
         if (gamepad2.y && c4 == 0) {  // when "Y" pressed starts motors
+            runtime1.reset();
             r.setPower(-1.0);
             l.setPower(-1.0);
             c4 = 1;
@@ -175,23 +194,31 @@ public class Teleop10366 extends OpMode {
         else if (!gamepad2.y && c4 == 1) {  // when "Y let go keeps it where it was
             c4 = 2;
         }
+        else if (!gamepad2.y && c4 == 2 && runtime1.time() > 2)
+            Catapult.setPower(1.0);
         else if (gamepad2.y && c4 == 2) {  // when "Y pressed againt will stop motors
             r.setPower(0);
             l.setPower(0);
+            Catapult.setPower(0.5);
             c4 = 3;
         }
         else if (!gamepad2.y && c4 == 3)  // keeps motors where the were stopped waiting for next press
             c4 = 0;
 
-        // Lift Mechanism Function       *** Gamepad 2 Button X  clock-wise (positive Value)***
-        //                              *** Gamepad 2 Button B  Counter- clock-wise (negative Value) ***
-        if (gamepad2.x)
+
+        // Cap Ball Lift Mechanism Function
+        // *** CHANGE TO USE UP/DOWN/LEFT RIGHT BUTTON ON LEFT SIDE OF JOY STICK) ***
+        //  *** CHANGE TO UP TO GO CLOCKWISE AND DOWN TO GOT COUNTER CLOCKWISE  ***
+
+        // ***OLD CODE***     *** Gamepad 2 Button X  clock-wise (positive Value)***
+        // ***OLD CODE***     *** Gamepad 2 Button B  Counter- clock-wise (negative Value) ***
+
+        if (gamepad2.dpad_up)
             lift.setPower(0.25);
-        else if (gamepad2.b)
+        else if (gamepad2.dpad_down)
             lift.setPower(-1.0);
         else
-        lift.setPower(0);
-
+            lift.setPower(0);
 
         telemetry.addData("Catapult Power: " + Catapult.getPower(), null);
 
