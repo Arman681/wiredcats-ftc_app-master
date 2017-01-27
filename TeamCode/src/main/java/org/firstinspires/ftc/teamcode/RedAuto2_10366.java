@@ -47,6 +47,9 @@ public class RedAuto2_10366 extends LinearOpMode {
     Servo Left;         // Left lift fork locking servo
     Servo Right;        // Right lift fork locking sevro
 
+    double catapultClockwise = 1;
+    double catapultCClockwise = -1;
+    double catapultStop = 0;
 
     //Intake Motor Declaration
 
@@ -168,7 +171,7 @@ public class RedAuto2_10366 extends LinearOpMode {
 
         shoot(1.0, 5.5, 1.75); //Shoots particles at full power for  change  changed to 4.75 / 1.5
 
-        Catapult.setPower(.5); //Sets catapult servo to stop
+        Catapult.setPower(catapultStop); //Sets catapult servo to stop
 
 
 
@@ -355,9 +358,11 @@ public class RedAuto2_10366 extends LinearOpMode {
 
             telemetry.addData("Time: " + runtime1.time(), null);
             telemetry.addData("Target Time: " + targetTime, null);
+            telemetry.addData ("Catapult Delay" + catapultDelay,null);
             telemetry.update();
         }
         stopAllMotors();
+        Catapult.setPower(catapultStop);  //Turn Catapult Servo motor off
 
     }
 
@@ -370,7 +375,7 @@ public class RedAuto2_10366 extends LinearOpMode {
         BackRight.setPower(0);
         r.setPower(0);
         l.setPower(0);
-        Catapult.setPower(.5);  //Turn Catapult Servo motor off
+        Catapult.setPower(catapultStop);  //Turn Catapult Servo motor off
 
     }
 
