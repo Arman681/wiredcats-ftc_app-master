@@ -67,7 +67,7 @@ public class BlueAuto10366_Test_Version extends LinearOpMode {
 
     int fourtyfivedegrees = 410;
     int ninetydegrees = (fourtyfivedegrees*2 + 10);
-    int onethirtyfivedegree = (fourtyfivedegrees*3 + 20);
+    int onethirtyfivedegrees = (fourtyfivedegrees*3 + 20);
 
             //Encoder Constants
 
@@ -168,17 +168,17 @@ public class BlueAuto10366_Test_Version extends LinearOpMode {
 
                     // Shoot 2 Particles
 
-        //shoot(1.0, 5.5, 1.75); //Shoots particles at full power for  change  changed to 4.75 / 1.5
+        shoot(1.0, 5.5, 1.75); //Shoots particles at full power for  change  changed to 4.75 / 1.5
 
             Catapult.setPower(.5); //Sets catapult servo to stop
 
 
-                            //Claim Blue Beacon 1  ***changed quarter turn from .405 to .410
+                    //Claim Blue Beacon 1  ***changed quarter turn from .405 to .410
 
         moveByTime(0.25, 850); //Move Forward at one quarter speed for .600 changed to ***.750 to 850 after ball was inflated***
         turnByTime(0.25, fourtyfivedegrees); //Turn Clock-wise at one-quarter speed for .410 seconds(.425 seconds - .15 Seconds) to offset (initialization) to make 45-degree turn
         moveByTime(-0.25, 2200); //Move Backward at one-quarter speed for 2.200 seconds ***Battery Full charge  14.44 - 14.00** changed to 20000 from 1750
-        turnByTime(-0.25, onethirtyfivedegree); //Turns Counter-clock-wise at one-quarter speed for 1.230 seconds to make 135-DEGREE (3 X 45-DEGREE) turn
+        turnByTime(-0.25, onethirtyfivedegrees); //Turns Counter-clock-wise at one-quarter speed for 1.230 seconds to make 135-DEGREE (3 X 45-DEGREE) turn
         //moveByTime(-0.25, 50); // Move Backward  at one-quarter speed for .050 seconds (***used to correct motor direction to go straight***)
         //moveByTime(0.25, 50);  // Move Forward   at one-quarter speed for .050 seconds (***used to correct motor direction to go straight***)
         moveByTime(0.25, 500); // Move Forward at one-quarter speed for .650 seconds to establish initial Beacon Startion position
@@ -212,7 +212,7 @@ public class BlueAuto10366_Test_Version extends LinearOpMode {
                     //Claim Blue Cap Ball
 
         moveByTime(-0.25, 1000); //Move Backwards at one-quarter speed for .5 second changed to 1 second
-        turnByTime(0.25, onethirtyfivedegree); //Turns Clock-wise at half speed for 1.6 seconds to make 135-DEGREE turn (3 X 45-DEGREE)  to put intake in front position
+        turnByTime(0.25, onethirtyfivedegrees); //Turns Clock-wise at half speed for 1.6 seconds to make 135-DEGREE turn (3 X 45-DEGREE)  to put intake in front position
         //moveByTime(-0.25, 50); // Move Backward  at one-quarter speed for .05 seconds (***used to correct motor direction to go straight***)
         //moveByTime(0.25, 50);  // Move Forward   at one-quarter speed for .05 seconds (***used to correct motor direction to go straight***)
         moveByTime(0.25, 2500); //Move Forwards  at one-quarter speed for 1.5 seconds changed to 2.5 seconds for longer distance
@@ -247,6 +247,7 @@ public class BlueAuto10366_Test_Version extends LinearOpMode {
                 turnByTime(0.25, fourtyfivedegrees); //Turns clock-wise at one-quarter speed for three-quarters of .4 seconds to make 45-degree turn
                 moveByTime(0.25, 250); //Move forwards at one-quarter speed for quarter .25 second
                 moveByTime(0.25, 50); //Move forwards at one-quarter speed for quarter .25 second
+                moveByTime(0.25, 50); //Move forwards at one-quarter speed for quarter .25 second
                 dec = true;
             } else if (determinedSide == "left") {
 
@@ -255,6 +256,7 @@ public class BlueAuto10366_Test_Version extends LinearOpMode {
                 moveByTime(0.25, 750); //Move forwards at one-quarter speed for .25 a seconds
                 turnByTime(-0.25, fourtyfivedegrees); //Turns counter-clock-wise at one-quarter speed for three-quarters of .4 seconds to make 45-degree turn
                 moveByTime(0.25, 250); //Move forwards at one-quarter speed for .25 a seconds
+                moveByTime(0.25, 50); //Move forwards at one-quarter speed for quarter .25 second
                 moveByTime(0.25, 50); //Move forwards at one-quarter speed for quarter .25 second
                 dec = true;
             } else if (determinedSide != "left" && determinedSide != "right") { //  != represents "NOT EQUAL" || represents "or"
@@ -406,6 +408,7 @@ public class BlueAuto10366_Test_Version extends LinearOpMode {
         BackRight.setPower(0);
         r.setPower(0);
         l.setPower(0);
+        Catapult.setPower(.5);  //Turn Catapult Servo motor off
         Catapult.setPower(.5);  //Turn Catapult Servo motor off
 
     }
