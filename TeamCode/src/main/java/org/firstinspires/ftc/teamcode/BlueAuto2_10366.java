@@ -166,7 +166,7 @@ public class BlueAuto2_10366 extends LinearOpMode {
 
         // Shoot 2 Particles
 
-        //shoot(1.0, 5.5, 1.75); //Shoots particles at full power for  change  changed to 4.75 / 1.5
+        shoot(1.0, 5.5, 1.75); //Shoots particles at full power for  change  changed to 4.75 / 1.5
 
         Catapult.setPower(.5); //Sets catapult servo to stop
 
@@ -176,15 +176,18 @@ public class BlueAuto2_10366 extends LinearOpMode {
 
         moveByTime(-0.25, 500); //Move Backwards at one-quarter speed for .5 second
         turnByTime(-0.25, ninetydegrees); //Turns CounterClock-wise at half speed for X seconds to make90-DEGREE turn (2 X 45-DEGREE) ***Should push cap ball***
-        moveByTime(0.25, 500); //Move Forwards  at one-quarter speed for 1.5 seconds changed to .5 seconds for longer distance
+        moveByTime(0.25, 750); //Move Forwards  at one-quarter speed for .05 seconds changed to .5 seconds for longer distance
+        moveByTime(0.25, 500); //Move Forwards  at one-quarter speed for .05 seconds changed to .5 seconds for longer distance
             // turnByTime(0.25, fourtyfivedegrees); //Turns Clock-wise at one-quarter speed for .4 to make 45-DEGREE turn
             // moveByTime(0.25, 1500); //Move forwards at one-quarter speed for 1.5 seconds
 
         //Park at Blue Corner Vortex
 
-        turnByTime(-0.25, fourtyfivedegrees); //Turns counterClock-wise at one-quarter speed for three-quarters of a second to make 45-degree turn
-        moveByTime(0.25, 500); //Move  Forwards at one-quarter speed for one-half second
-        moveByTime(0.25, 1000); //Move Forwards at one-quarter speed for one second
+        turnByTime(0.25, fourtyfivedegrees); //Turns Clock-wise at one-quarter speed for three-quarters of a second to make 45-degree turn
+        moveByTime(0.25, 750); //Move  Forwards at one-quarter speed for one-half second
+        moveByTime(0.25, 750); //Move Forwards at one-quarter speed for one second
+        moveByTime(0.25, 750); //Move Forwards at one-quarter speed for one second
+        moveByTime(0.25, 500); //Move Forwards at one-quarter speed for one second
         stopAllMotors();
     }
 
@@ -208,6 +211,7 @@ public class BlueAuto2_10366 extends LinearOpMode {
                 turnByTime(0.25, fourtyfivedegrees); //Turns clock-wise at one-quarter speed for three-quarters of .4 seconds to make 45-degree turn
                 moveByTime(0.25, 250); //Move forwards at one-quarter speed for quarter .25 second
                 moveByTime(0.25, 50); //Move forwards at one-quarter speed for quarter .25 second
+                moveByTime(0.25, 50); //Move forwards at one-quarter speed for quarter .25 second
                 dec = true;
             } else if (determinedSide == "left") {
 
@@ -216,6 +220,7 @@ public class BlueAuto2_10366 extends LinearOpMode {
                 moveByTime(0.25, 750); //Move forwards at one-quarter speed for .25 a seconds
                 turnByTime(-0.25, fourtyfivedegrees); //Turns counter-clock-wise at one-quarter speed for three-quarters of .4 seconds to make 45-degree turn
                 moveByTime(0.25, 250); //Move forwards at one-quarter speed for .25 a seconds
+                moveByTime(0.25, 50); //Move forwards at one-quarter speed for quarter .25 second
                 moveByTime(0.25, 50); //Move forwards at one-quarter speed for quarter .25 second
                 dec = true;
             } else if (determinedSide != "left" && determinedSide != "right") { //  != represents "NOT EQUAL" || represents "or"
