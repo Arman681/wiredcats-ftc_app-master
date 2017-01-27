@@ -379,8 +379,8 @@ public class RedAuto1_10366  extends LinearOpMode{
 
     public void shoot(double power, double targetTime, double catapultDelay) throws InterruptedException {
 
-        runtime1.reset();
-        while (runtime1.time() < targetTime) {  //start shooter motors
+       /* runtime1.reset();
+        While (runtime1.time() < targetTime) {  //start shooter motors
             stopDriveTrain();
             r.setPower(power); //Right shooter wheel
             l.setPower(power); //Left Shooter wheel
@@ -393,6 +393,27 @@ public class RedAuto1_10366  extends LinearOpMode{
             telemetry.update();
         }
         stopAllMotors();
+
+    }
+*/
+        // Replaced whilie with if logic to try to stop servo when done.
+        // will need to place in Auto 2 if it works
+        runtime1.reset();
+        if (runtime1.time() < targetTime) {  //start shooter motors
+            stopDriveTrain();
+            r.setPower(power); //Right shooter wheel
+            l.setPower(power); //Left Shooter wheel
+
+            if (runtime1.time() > catapultDelay)   //Check if time to start catapult servo
+                Catapult.setPower(power);  // set full power forward
+
+            telemetry.addData("Time: " + runtime1.time(), null);
+            telemetry.addData("Target Time: " + targetTime, null);
+            telemetry.update();
+        }
+        else if (runtime1.time() > targetTime){
+            stopAllMotors();
+        }
 
     }
 
