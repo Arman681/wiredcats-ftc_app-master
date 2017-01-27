@@ -39,6 +39,7 @@ import java.security.PublicKey;
     final DcMotor[] driveTrain = new DcMotor[4];  // array decloration - [4] indicates 4  allocations (motors)
 
 
+
                 //Shooting Mechanism Motor Declarations
 
     DcMotor r;
@@ -51,6 +52,9 @@ import java.security.PublicKey;
     Servo Left;         // Left lift fork locking servo
     Servo Right;        // Right lift fork locking sevro
 
+    double catapultClockwise = 1;
+    double catapultCClockwise = -1;
+    double catapultStop = 0;
 
                 //Intake Motor Declaration
 
@@ -153,24 +157,29 @@ import java.security.PublicKey;
         CSleft.enableLed(false);
         CSright.enableLed(false);
 
+        int fourtyfivedegrees = 410;
+        int ninetydegrees = (fourtyfivedegrees*2 + 10);
+        int onethirtyfivedegrees = (fourtyfivedegrees*3 + 20);
+
+
         waitForStart(); //Autonomous begins when play button is pressed on the Driver Station Phone
 
-                    // /Shooting 2 Balls Good distance  Manual Shooting perfect.  Need to get Servo Working
+        shoot(1.0, 5.5, 1.75); //Shoots particles at full power for  change from 5.5 to 5.25 to correct servo position at stop
+        Catapult.setPower(catapultStop);
 
+        sleep(3000);
 
-
-        shoot(1.0, 5.5, 1.75); //Shoots particles at full power for  change  changed to 4.75 / 1.5 to 4.50 / 2 from ( over rotate 4.75 / 2 (3 full rotations)seconds and starts catapult after 2 seconds
-        Catapult.setPower(.5); //Sets catapult servo to stop
     }
 
+    // Place all Methods Below
 
     public void shoot(double power, double targetTime, double catapultDelay) throws InterruptedException {
 
         runtime1.reset();
         while (runtime1.time() < targetTime) {  //start shooter motors
             stopDriveTrain();
-            //r.setPower(power); //Right shooter wheel
-            //l.setPower(power); //Left Shooter wheel
+            r.setPower(power); //Right shooter wheel
+            l.setPower(power); //Left Shooter wheel
 
             if (runtime1.time() > catapultDelay)   //Check if time to start catapult servo
                 Catapult.setPower(power);  // set full power forward
@@ -179,10 +188,10 @@ import java.security.PublicKey;
             telemetry.addData("Target Time: " + targetTime, null);
             telemetry.addData ("Catapult Delay" + catapultDelay,null);
             telemetry.update();
+
         }
 
         stopAllMotors();
-
     }
 
     public void stopDriveTrain() throws InterruptedException {
@@ -200,7 +209,7 @@ import java.security.PublicKey;
         BackRight.setPower(0);
         r.setPower(0);
         l.setPower(0);
-        Catapult.setPower(.5);  //Turn Catapult Servo motor off
+        Catapult.setPower(catapultStop);  //Turn Catapult Servo motor off
     }
 
 }
