@@ -49,6 +49,9 @@ public class RedAuto3_10366 extends LinearOpMode {  // LinearOpMode is for auton
     Servo Left;         // Left lift fork locking servo
     Servo Right;        // Right lift fork locking sevro
 
+    double catapultClockwise = 1;
+    double catapultCClockwise = -1;
+    double catapultStop = 0;
 
     //Intake Motor Declaration
 
@@ -170,7 +173,7 @@ public class RedAuto3_10366 extends LinearOpMode {  // LinearOpMode is for auton
 
         shoot(1.0, 5.5, 1.75); //Shoots particles at full power for  change  changed to 4.75 / 1.5
 
-        Catapult.setPower(.5); //Sets catapult servo to stop
+        Catapult.setPower(catapultStop); //Sets catapult servo to stop
 
 
         //Claim red Beacon 1  Changes for Blue to Red  Clock-Wise to Counter Clock-wise to Clock-wise and Clock-wise to Counter Clock-wise
@@ -392,9 +395,11 @@ public class RedAuto3_10366 extends LinearOpMode {  // LinearOpMode is for auton
 
             telemetry.addData("Time: " + runtime1.time(), null);
             telemetry.addData("Target Time: " + targetTime, null);
+            telemetry.addData ("Catapult Delay" + catapultDelay,null);
             telemetry.update();
         }
         stopAllMotors();
+        Catapult.setPower(catapultStop);  //Turn Catapult Servo motor off
 
     }
 
@@ -407,7 +412,7 @@ public class RedAuto3_10366 extends LinearOpMode {  // LinearOpMode is for auton
         BackRight.setPower(0);
         r.setPower(0);
         l.setPower(0);
-        Catapult.setPower(.5);  //Turn Catapult Servo motor off
+        Catapult.setPower(catapultStop);  //Turn Catapult Servo motor off
 
     }
 
