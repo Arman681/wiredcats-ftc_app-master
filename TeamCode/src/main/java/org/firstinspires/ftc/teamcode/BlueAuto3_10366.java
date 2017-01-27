@@ -168,7 +168,7 @@ public class BlueAuto3_10366 extends LinearOpMode {  // LinearOpMode is for auto
 
         // Shoot 2 Particles
 
-        //shoot(1.0, 5.5, 1.75); //Shoots particles at full power for  change  changed to 4.75 / 1.5
+        shoot(1.0, 5.5, 1.75); //Shoots particles at full power for  change  changed to 4.75 / 1.5
 
         Catapult.setPower(.5); //Sets catapult servo to stop
 
