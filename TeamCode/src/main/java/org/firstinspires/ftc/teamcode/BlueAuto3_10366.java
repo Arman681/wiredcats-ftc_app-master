@@ -49,6 +49,10 @@ public class BlueAuto3_10366 extends LinearOpMode {  // LinearOpMode is for auto
     Servo Left;         // Left lift fork locking servo
     Servo Right;        // Right lift fork locking sevro
 
+    double catapultClockwise = 1;
+    double catapultCClockwise = -1;
+    double catapultStop = 0;
+
 
     //Intake Motor Declaration
 
@@ -391,9 +395,11 @@ public class BlueAuto3_10366 extends LinearOpMode {  // LinearOpMode is for auto
 
             telemetry.addData("Time: " + runtime1.time(), null);
             telemetry.addData("Target Time: " + targetTime, null);
+            telemetry.addData ("Catapult Delay" + catapultDelay,null);
             telemetry.update();
         }
         stopAllMotors();
+        Catapult.setPower(catapultStop);  //Turn Catapult Servo motor off
 
     }
 
