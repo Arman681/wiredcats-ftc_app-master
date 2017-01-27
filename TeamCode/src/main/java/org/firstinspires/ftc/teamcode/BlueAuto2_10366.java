@@ -47,6 +47,9 @@ public class BlueAuto2_10366 extends LinearOpMode {
     Servo Left;         // Left lift fork locking servo
     Servo Right;        // Right lift fork locking sevro
 
+    double catapultClockwise = 1;
+    double catapultCClockwise = -1;
+    double catapultStop = 0;
 
     //Intake Motor Declaration
 
@@ -342,7 +345,7 @@ public class BlueAuto2_10366 extends LinearOpMode {
             motor.setPower(0);
     }
 
-                // Shoot
+    // Shoot
 
     public void shoot(double power, double targetTime, double catapultDelay) throws InterruptedException {
 
@@ -357,9 +360,11 @@ public class BlueAuto2_10366 extends LinearOpMode {
 
             telemetry.addData("Time: " + runtime1.time(), null);
             telemetry.addData("Target Time: " + targetTime, null);
+            telemetry.addData ("Catapult Delay" + catapultDelay,null);
             telemetry.update();
         }
         stopAllMotors();
+        Catapult.setPower(catapultStop);  //Turn Catapult Servo motor off
 
     }
 
