@@ -37,6 +37,9 @@ public class Gen3teleop extends OpMode {
     //Particle System Motor Declarations
     DcMotor intake;
 
+    //Lift System Motor Declarations
+    DcMotor winch;
+
     //Servo Button Pusher Declaration
     CRServo rightPusher, leftPusher, conveyor;
 
@@ -62,6 +65,9 @@ public class Gen3teleop extends OpMode {
         intake.setDirection(DcMotor.Direction.REVERSE);
 
         conveyor.setPower(0);
+
+        //Lift System Motors
+        winch = hardwareMap.dcMotor.get("w");
 
         //Button Pusher Servos
         rightPusher = hardwareMap.crservo.get("rp");
@@ -132,6 +138,15 @@ public class Gen3teleop extends OpMode {
         }
         else if (!gamepad2.dpad_up && c3 == 3)
             c3 = 0;
+
+        //Lift Mechanism Function
+        //Winch Function
+        if (gamepad2.b)
+            winch.setPower(1.0);
+        else if (gamepad2.x)
+            winch.setPower(-1.0);
+        else
+            winch.setPower(0);
 
         //Intake Motor Function In
         if (gamepad2.dpad_left && c4 == 0) {
