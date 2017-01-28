@@ -45,6 +45,11 @@ public class Teleop10366 extends OpMode {
     Servo Left;
     Servo Right;
 
+    double catapultClockwise = 1;
+    double catapultCClockwise = -1;
+    double catapultStop = 0;
+
+
 
     // Intake Motor Declaration
 
@@ -82,9 +87,9 @@ public class Teleop10366 extends OpMode {
         // Servos
 
         Catapult = hardwareMap.crservo.get("c");
-        Left = hardwareMap.servo.get("L");  // Cap Ball Fork Servo
-        Right = hardwareMap.servo.get("R");  // Cap Ball Fork Servo
-        Right.setDirection(Servo.Direction.REVERSE); //not sure why this is here  // Cap Ball Fork Servo
+        Left = hardwareMap.servo.get("L");
+        Right = hardwareMap.servo.get("R");
+        Right.setDirection(Servo.Direction.REVERSE); //not sure why this is here
 
 
         // Shooting Mechanism Motors
@@ -118,7 +123,8 @@ public class Teleop10366 extends OpMode {
         float lefty1 = -gamepad1.left_stick_y;
         float righty1 = -gamepad1.right_stick_y;
 
-        // Drive Train
+        // Drive Train  *** Left  WheelsGamepad 1 Left Stick
+        //              *** Right WheelsGamepad 1 Right Stick
 
         if (lefty1 < -.2 || lefty1 > .2) {
             FrontLeft.setPower(lefty1);
@@ -172,38 +178,39 @@ public class Teleop10366 extends OpMode {
             c5 = 0;
 
         // SPS Servo Function   *** Gamepad 2 Button X  for clockwise direction (>.5) ***
-        //                      *** Gamepad 2 Button B  for counter-clockwise direction (<.5) **** DO NOT USE ****
+        //                      *** Gamepad 2 Button B  for counter-clockwise direction (<.5)
 
-        if (gamepad2.x)  // X gamepade = clockwise = shoot
+        /*if (gamepad2.x)  // X gamepade = clockwise = shoot
             Catapult.setPower(1);  //turn clockwise
-       /* else if (gamepad2.b) // B gamepad  = counter-clockwise **** DO NOT USE ****
-            Catapult.setPower(0); // Turn counter-clock-wise
-        */
+          //else if (gamepad2.b) // B gamepad  = counter-clockwise probably ****  DO NOT USE ****
+          // Catapult.setPower(-1); // Turn counter-clock-wise
+
         else
             Catapult.setPower(0.5); // stop servo
-
+*/
         // Shooting Mechanism Motors *** Gamepad 2 Button Y ***
         // Function  uses toggel system
 
         if (gamepad2.y && c4 == 0) {  // when "Y" pressed starts motors
-            runtime1.reset();
-            r.setPower(-1.0);
-            l.setPower(-1.0);
             c4 = 1;
         }
         else if (!gamepad2.y && c4 == 1) {  // when "Y let go keeps it where it was
-            c4 = 2;
+            runtime1.reset();
+            r.setPower(-1.0);
+            l.setPower(-1.0);c4 = 2;
         }
-        else if (!gamepad2.y && c4 == 2 && runtime1.time() > 2)
-            Catapult.setPower(1.0);
-        else if (gamepad2.y && c4 == 2) {  // when "Y pressed againt will stop motors
+        else if (!gamepad2.y && c4 == 2 && runtime1.time() > 1.75)
+            Catapult.setPower(catapultClockwise);
+        else if (gamepad2.y && c4 == 2&& runtime1.time() > 5.5) {  // when "Y pressed againt will stop motors
             r.setPower(0);
             l.setPower(0);
-            Catapult.setPower(0.5);
+            Catapult.setPower(catapultStop);
             c4 = 3;
         }
+
         else if (!gamepad2.y && c4 == 3)  // keeps motors where the were stopped waiting for next press
             c4 = 0;
+
 
 
         // Cap Ball Lift Mechanism Function
