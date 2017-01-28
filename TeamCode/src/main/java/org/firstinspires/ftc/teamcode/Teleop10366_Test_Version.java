@@ -45,8 +45,13 @@ public class Teleop10366_Test_Version extends OpMode {
     Servo Left;
     Servo Right;
 
+    double catapultClockwise = 1;
+    double catapultCClockwise = -1;
+    double catapultStop = 0;
 
-            // Intake Motor Declaration
+
+
+    // Intake Motor Declaration
 
     DcMotor intake;
 
@@ -178,7 +183,7 @@ public class Teleop10366_Test_Version extends OpMode {
         /*if (gamepad2.x)  // X gamepade = clockwise = shoot
             Catapult.setPower(1);  //turn clockwise
           //else if (gamepad2.b) // B gamepad  = counter-clockwise probably ****  DO NOT USE ****
-          // Catapult.setPower(0); // Turn counter-clock-wise
+          // Catapult.setPower(-1); // Turn counter-clock-wise
 
         else
             Catapult.setPower(0.5); // stop servo
@@ -195,11 +200,11 @@ public class Teleop10366_Test_Version extends OpMode {
             l.setPower(-1.0);c4 = 2;
         }
         else if (!gamepad2.y && c4 == 2 && runtime1.time() > 1.75)
-            Catapult.setPower(1.0);
+            Catapult.setPower(catapultClockwise);
         else if (gamepad2.y && c4 == 2&& runtime1.time() > 5.5) {  // when "Y pressed againt will stop motors
             r.setPower(0);
             l.setPower(0);
-            Catapult.setPower(0.5);
+            Catapult.setPower(catapultStop);
             c4 = 3;
         }
 
