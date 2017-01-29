@@ -18,18 +18,21 @@ public class Gen3teleop extends OpMode {
 
     ElapsedTime runtime1 = new ElapsedTime(); //Left Button Pusher Timer
     ElapsedTime runtime2 = new ElapsedTime(); //Right Button Pusher Timer
+    ElapsedTime runtime3 = new ElapsedTime(); //Fork Lock Timer 2.a
+    ElapsedTime runtime4 = new ElapsedTime(); //Fork Lock Timer 2.y
 
     int c1 = 0;     //Left Button Pusher Counter
     int c2 = 0;     //Right Button Pusher Counter
     int c3 = 0;     //Shooter Counter
-    int c4 = 0;    //Intake Motor In Counter
-    int c5 = 0;    //Intake Motor Out Counter
+    int c4 = 0;     //Intake Motor In Counter
+    int c5 = 0;     //Intake Motor Out Counter
+    int c6 = 0;     //Fork Lock 2.a
+    int c7 = 0;     //Fork Lock 2.y
     double z1 = 0.05; //Right and Left Motors deceleration Counter
     double z2 = 0.05; //Right and Left Motors acceleration Counter
 
     //Drive Train Motor Declarations
-    DcMotor frontleft, backleft;
-    DcMotor frontright, backright;
+    DcMotor dtleft, dtright;
 
     //Shooting Mechanism Motor Declarations
     DcMotor right, left;
@@ -38,22 +41,21 @@ public class Gen3teleop extends OpMode {
     DcMotor intake;
 
     //Lift System Motor Declarations
-    DcMotor winch;
+    DcMotor winch, conveyor;
+
+    //Fork Lock Servo Declaration
+    CRServo lock;
 
     //Servo Button Pusher Declaration
-    CRServo rightPusher, leftPusher, conveyor;
-
+    CRServo rightPusher, leftPusher;
 
     @Override
     public void init() {
 
         //Drive Train Motors
-        frontleft = hardwareMap.dcMotor.get("fl");
-        backleft = hardwareMap.dcMotor.get("bl");
-        frontright = hardwareMap.dcMotor.get("fr");
-        backright = hardwareMap.dcMotor.get("br");
-        backright.setDirection(DcMotor.Direction.REVERSE);
-        frontright.setDirection(DcMotor.Direction.REVERSE);
+        dtright = hardwareMap.dcMotor.get("dtr");
+        dtleft = hardwareMap.dcMotor.get("dtl");
+        dtright.setDirection(DcMotor.Direction.REVERSE);
 
         //Shooting Mechanism Motors
         right = hardwareMap.dcMotor.get("r");
@@ -61,7 +63,7 @@ public class Gen3teleop extends OpMode {
 
         //Intake and Conveyor Motors
         intake = hardwareMap.dcMotor.get("i");
-        conveyor = hardwareMap.crservo.get("c");
+        conveyor = hardwareMap.dcMotor.get("c");
         intake.setDirection(DcMotor.Direction.REVERSE);
 
         conveyor.setPower(0);
@@ -72,6 +74,9 @@ public class Gen3teleop extends OpMode {
         //Button Pusher Servos
         rightPusher = hardwareMap.crservo.get("rp");
         leftPusher = hardwareMap.crservo.get("lp");
+
+        //Fork Lock Servo
+        lock = hardwareMap.crservo.get("k");
     }
 
     @Override
@@ -81,10 +86,8 @@ public class Gen3teleop extends OpMode {
         float leftY = -gamepad1.left_stick_y;
         float rightY = -gamepad1.right_stick_y;
 
-        frontleft.setPower(leftY);
-        backleft.setPower(leftY);
-        backright.setPower(rightY);
-        frontright.setPower(rightY);
+        dtleft.setPower(leftY);
+        dtright.setPower(rightY);
 
         //Left Button Pusher Servo
         if (gamepad1.x && c1 == 0) {
@@ -125,8 +128,8 @@ public class Gen3teleop extends OpMode {
 
         //Shooting Mechanism Motors Function
         if (gamepad2.dpad_up && c3 == 0) {
-            right.setPower(0.18);
-            left.setPower(0.18);
+            right.setPower(1.0);
+            left.setPower(1.0);
             c3 = 1;
         }
         else if (!gamepad2.dpad_up && c3 == 1)
@@ -139,7 +142,6 @@ public class Gen3teleop extends OpMode {
         else if (!gamepad2.dpad_up && c3 == 3)
             c3 = 0;
 
-        //Lift Mechanism Function
         //Winch Function
         if (gamepad2.b)
             winch.setPower(1.0);
@@ -177,12 +179,40 @@ public class Gen3teleop extends OpMode {
             c5 = 0;
 
         //Conveyor Belt Function
-        if (gamepad2.y)
+        if (gamepad2.right_trigger == 1)
             conveyor.setPower(-1.0);
-        else if (gamepad2.a)
+        else if (gamepad2.left_trigger == 1)
             conveyor.setPower(1.0);
         else
             conveyor.setPower(0);
+
+        //Fork Lock Function 2.a
+        if (gamepad2.a && c6 == 0) {
+            runtime3.reset();
+            lock.setPower(-1.0);
+            c6 = 1;
+        }
+        else if (!gamepad2.a && c6 == 1) {
+            c6 = 2;
+        }
+        else if (!gamepad2.a && c6 == 2) {
+            if (runtime3.time() > 2)
+                lock.setPower(0);
+            c6 = 3;
+        }
+        else if (gamepad2.a && c6 == 3) {
+            runtime3.reset();
+            lock.setPower(1.0);
+            c6 = 4;
+        }
+        else if (!gamepad2.a && c6 == 4) {
+            c6 = 5;
+        }
+        else if (!gamepad2.a && c6 == 5) {
+            if (runtime3.time() > 2)
+                lock.setPower(0);
+            c6 = 0;
+        }
 
         telemetry.addData("Intake Power: " + intake.getPower(), null);
         telemetry.addData("Intake Counter: " + c4, null);
