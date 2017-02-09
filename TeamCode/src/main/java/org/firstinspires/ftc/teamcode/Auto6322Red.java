@@ -7,7 +7,6 @@ import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cGyro;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.hardware.ColorSensor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.GyroSensor;
 import com.qualcomm.robotcore.hardware.OpticalDistanceSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -21,6 +20,7 @@ import com.kauailabs.navx.ftc.navXPIDController;
 import java.text.DecimalFormat;
 
 import org.firstinspires.ftc.robotcontroller.internal.LinearOpModeCamera;
+import org.firstinspires.ftc.robotcontroller.internal.testcode.MatrixControllerDemo;
 
 /**
  * TeleOp Mode
@@ -36,6 +36,7 @@ public class Auto6322Red extends LinearOpModeCamera {
 
     ElapsedTime runtime1 = new ElapsedTime();
     ElapsedTime runtime2 = new ElapsedTime();
+    ElapsedTime runtime3 = new ElapsedTime();
 
 ///////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////
@@ -47,6 +48,8 @@ public class Auto6322Red extends LinearOpModeCamera {
     DcMotor BackLeft;
 
     final DcMotor[] driveTrain = new DcMotor[4];
+    final DcMotor[] rightDriveTrain = new DcMotor[2];
+    final DcMotor[] leftDriveTrain = new DcMotor[2];
 
 ///////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////
@@ -137,15 +140,14 @@ public class Auto6322Red extends LinearOpModeCamera {
         driveTrain[1] = FrontLeft;
         driveTrain[2] = BackRight;
         driveTrain[3] = BackLeft;
+        rightDriveTrain[0] = FrontRight;
+        rightDriveTrain[1] = BackRight;
+        leftDriveTrain[0] = FrontLeft;
+        leftDriveTrain[1] = BackLeft;
 
-        for (DcMotor motor : driveTrain)
-            motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        BackLeft.setDirection(DcMotor.Direction.REVERSE);
+        FrontLeft.setDirection(DcMotor.Direction.REVERSE);
 
-        for (DcMotor motor : driveTrain)
-            motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-        BackRight.setDirection(DcMotor.Direction.REVERSE);
-        FrontRight.setDirection(DcMotor.Direction.REVERSE);
 ///////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////
 
@@ -157,6 +159,9 @@ public class Auto6322Red extends LinearOpModeCamera {
 
         //Intake Motor(s)
         intake = hardwareMap.dcMotor.get("i");
+
+        //Conveyor Mechanism Motor
+        conveyor = hardwareMap.dcMotor.get("c");
 
 ///////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////
@@ -205,38 +210,31 @@ public class Auto6322Red extends LinearOpModeCamera {
         yawPIDController.setTolerance(navXPIDController.ToleranceType.ABSOLUTE, TOLERANCE_DEGREES);
         yawPIDController.setPID(YAW_PID_P, YAW_PID_I, YAW_PID_D);*/
 
-        // start calibrating the gyro.
-        //telemetry.addData(">", "Gyro Calibrating. Do Not move!");
-        //telemetry.update();
-        //gyro.calibrate();
-
-        // make sure the gyro is calibrated.
-        //while (gyro.isCalibrating())  {
-            //Thread.sleep(50);
-            //idle();
-        //}
-
-        //telemetry.addData(">", "Gyro Calibrated.  Press Start.");
-        telemetry.update();
-
         // wait for the start button to be pressed.
         waitForStart();
 
-        //turnByAngle(0.3, 180);
+        moveBySteps(0.3, 8);
+        moveByTime(0.0, 1000);
+        //shoot(0.7, 5, 2);
 
-        moveBySteps(0.4, 30);
-        //turnBySteps(0.8, 7);
-        //runUntilWhite(0.3);
-        //turnBySteps(0.8, -7.5);
-        //moveBySteps(-0.4, 12);
-        //moveBySteps(0,1);
-        /*turnBySteps(0.8, -6);
-        moveBySteps(0.4, -24);
-        turnBySteps(0.8, 5);
-        moveBySteps(0.4, 12);
-        for (DcMotor motor : driveTrain)
-            motor.setPower(0);
+        turnBySteps(0.3, 5);
+        moveByTime(0.0, 1000);
 
+        runUntilWhite(0.4);
+        moveByTime(0.0, 1000);
+
+        turnBySteps(0.4, -4.2);
+        moveByTime(0.0, 1000);
+
+        moveBySteps(-0.4, -10);
+        moveByTime(0.0, 1000);
+
+        //moveBySteps(0.4, 24);
+        //turnBySteps(0.8, 5);
+        //moveBySteps(0.4, 12);
+        //for (DcMotor motor : driveTrain)
+            //motor.setPower(0);
+        /*
         if (determineColor() == "red") {
             moveBySteps(0.3, -3.5);
             rightPusher.setPower(-1.0);
@@ -299,12 +297,10 @@ public class Auto6322Red extends LinearOpModeCamera {
             motor.setPower(0);
         sleep(2500);
 
-
         /*moveBySteps(0.5, 38);
         turnBySteps(0.2, -14);
         moveByTime(0, 1000);
         moveBySteps(0.3, 6);
-
 
         color = this.determineColor();
         if (color == "blue"){
@@ -321,11 +317,6 @@ public class Auto6322Red extends LinearOpModeCamera {
         runtime1.reset();
         while (runtime1.time() < 1.5);
         leftPusher.setPower(0);*/
-
-
-
-
-
 
         //moveBySteps(0.2, 12);
 
@@ -402,8 +393,34 @@ public class Auto6322Red extends LinearOpModeCamera {
             telemetry.addData("ODSleft Values: " + ODSleft.getRawLightDetected(), null);
             telemetry.addData("ODSright Values: " + ODSright.getRawLightDetected(), null);
             telemetry.update();
-            idle();
+            sleep(1);
         }
+    }
+
+    public void shoot(double power, double time, double conveyorDelay) throws InterruptedException {
+        runtime3.reset();
+        while(runtime3.time() < time) {
+            stopDriveTrain();
+            shooter.setPower(power);
+
+            if ((runtime3.time() > conveyorDelay) && (runtime3.time() < (conveyorDelay + 0.5))) {
+                conveyor.setPower(1.0);
+                intake.setPower(1.0);
+            }
+            else if (runtime3.time() > (conveyorDelay + 0.5) && runtime3.time() < (conveyorDelay + 1.0)) {
+                intake.setPower(0.0);
+                conveyor.setPower(0.0);
+            }
+            else if (runtime3.time() > (conveyorDelay + 1.5)) {
+                conveyor.setPower(1.0);
+                intake.setPower(1.0);
+            }
+
+        }
+        shooter.setPower(0.0);
+        conveyor.setPower(0.0);
+        intake.setPower(0.0);
+
     }
 
     public void adjustAtWhite() throws InterruptedException {
@@ -560,6 +577,13 @@ public class Auto6322Red extends LinearOpModeCamera {
             motor.setPower(0);
     }
 
+    public void stopDriveTrain() throws InterruptedException {
+        FrontLeft.setPower(0);
+        FrontRight.setPower(0);
+        BackLeft.setPower(0);
+        BackRight.setPower(0);
+    }
+
     public void moveBySteps(double power, double inches) throws InterruptedException {
 
         int[] startPosition = new int[4];
@@ -567,6 +591,9 @@ public class Auto6322Red extends LinearOpModeCamera {
         for (DcMotor motor : driveTrain)
             motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         idle();
+
+        for (DcMotor motor : driveTrain)
+            motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         for (int i = 0; i < driveTrain.length; i++)
             startPosition[i] = driveTrain[i].getCurrentPosition();
@@ -581,11 +608,81 @@ public class Auto6322Red extends LinearOpModeCamera {
             motor.setPower(Math.abs(power));
 
         while(driveTrain[0].isBusy() && driveTrain[1].isBusy() && driveTrain[2].isBusy() && driveTrain[3].isBusy() && opModeIsActive())
-            idle();
+            sleep(1);
 
         for (DcMotor motor : driveTrain)
             motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+    }
 
+    public void encoderDrive(double speed,
+                             double leftInches, double rightInches,
+                             double timeoutS) throws InterruptedException {
+        int newLeftTarget;
+        int newRightTarget;
+
+        // Ensure that the opmode is still active
+        if (opModeIsActive()) {
+
+            // Determine new target position, and pass to motor controller
+            newLeftTarget = FrontLeft.getCurrentPosition() + (int) (leftInches * COUNTS_PER_INCH);
+            newRightTarget = FrontRight.getCurrentPosition() + (int) (rightInches * COUNTS_PER_INCH);
+            FrontLeft.setTargetPosition(newLeftTarget);
+            FrontRight.setTargetPosition(newRightTarget);
+            newLeftTarget = BackLeft.getCurrentPosition() + (int) (leftInches * COUNTS_PER_INCH);
+            newRightTarget = BackRight.getCurrentPosition() + (int) (rightInches * COUNTS_PER_INCH);
+            BackLeft.setTargetPosition(newLeftTarget);
+            BackRight.setTargetPosition(newRightTarget);
+
+            // Turn On RUN_TO_POSITION
+            FrontLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            FrontRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+            // reset the timeout time and start motion.
+            runtime1.reset();
+            FrontLeft.setPower(speed);
+            FrontRight.setPower(speed);
+
+            BackLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            BackLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+            // reset the timeout time and start motion.
+            runtime1.reset();
+            BackLeft.setPower(speed);
+            BackRight.setPower(speed);
+
+            // keep looping while we are still active, and there is time left, and both motors are running.
+            while (opModeIsActive() &&
+                    (runtime1.seconds() < timeoutS) &&
+                    (FrontLeft.isBusy() && FrontRight.isBusy() && BackLeft.isBusy() && BackRight.isBusy())) {
+
+                // Display it for the driver.
+                telemetry.addData("Path1", "Running to %7d :%7d", newLeftTarget, newRightTarget);
+                telemetry.addData("Path2", "Running at %7d :%7d",
+                        FrontLeft.getCurrentPosition(),
+                        FrontRight.getCurrentPosition(),
+                        BackLeft.getCurrentPosition(),
+                        BackRight.getCurrentPosition());
+
+                telemetry.update();
+
+                // Allow time for other processes to run.
+                idle();
+            }
+
+            // Stop all motion;
+            FrontLeft.setPower(0);
+            FrontRight.setPower(0);
+            BackLeft.setPower(0);
+            BackRight.setPower(0);
+
+            // Turn off RUN_TO_POSITION
+            FrontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            FrontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            BackLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            BackRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+            sleep(1000);
+        }
     }
 
     public void turnBySteps(double power, double inches) throws InterruptedException {
