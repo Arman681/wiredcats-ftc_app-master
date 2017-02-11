@@ -103,8 +103,8 @@ public class Auto6322Red extends LinearOpModeCamera {
     int ds2 = 2;  // additional downsampling of the image
 
     //IMU setup
-    //AHRS navx_device;
-    //navXPIDController yawPIDController;
+    AHRS navx_device;
+    navXPIDController yawPIDController;
 
     final int NAVX_DIM_I2C_PORT = 0;
 
@@ -198,38 +198,39 @@ public class Auto6322Red extends LinearOpModeCamera {
 ///////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////
 
-        /*navx_device = AHRS.getInstance(hardwareMap.deviceInterfaceModule.get("dim"),
+        navx_device = AHRS.getInstance(hardwareMap.deviceInterfaceModule.get("dim"),
                       NAVX_DIM_I2C_PORT,
                       AHRS.DeviceDataType.kProcessedData,
                       NAVX_DEVICE_UPDATE_RATE_HZ);
 
         // Create a PID Controller which uses the Yaw Angle as input.
-        yawPIDController = new navXPIDController( navx_device, navXPIDController.navXTimestampedDataSource.YAW);
+        yawPIDController = new navXPIDController(navx_device, navXPIDController.navXTimestampedDataSource.YAW);
         yawPIDController.setContinuous(true);
         yawPIDController.setOutputRange(MIN_MOTOR_OUTPUT_VALUE, MAX_MOTOR_OUTPUT_VALUE);
         yawPIDController.setTolerance(navXPIDController.ToleranceType.ABSOLUTE, TOLERANCE_DEGREES);
-        yawPIDController.setPID(YAW_PID_P, YAW_PID_I, YAW_PID_D);*/
+        yawPIDController.setPID(YAW_PID_P, YAW_PID_I, YAW_PID_D);
 
         // wait for the start button to be pressed.
         waitForStart();
 
-        moveBySteps(0.3, 8);
+       /* moveBySteps(0.4, 8);
         moveByTime(0.0, 1000);
         //shoot(0.7, 5, 2);
 
-        turnBySteps(0.3, 5);
+        turnBySteps(0.4, 5);
         moveByTime(0.0, 1000);
 
         runUntilWhite(0.4);
         moveByTime(0.0, 1000);
 
-        turnBySteps(0.4, -4.2);
+        turnBySteps(0.4, -5);
         moveByTime(0.0, 1000);
 
-        moveBySteps(-0.4, -10);
+        moveBySteps(-0.4, -5.5);
         moveByTime(0.0, 1000);
 
-        //moveBySteps(0.4, 24);
+        turnBySteps(0.4, 3);
+        moveByTime(0.0, 1000);*/
         //turnBySteps(0.8, 5);
         //moveBySteps(0.4, 12);
         //for (DcMotor motor : driveTrain)
@@ -744,7 +745,7 @@ public class Auto6322Red extends LinearOpModeCamera {
     }
 
     //Uses gyroscopic features in the NAVX Micro Sensor
-    /*public void turnByAngle(double power, double angle) throws InterruptedException {
+    public void turnByAngle(double power, double angle) throws InterruptedException {
 
         ElapsedTime runtime = new ElapsedTime();
 
@@ -804,7 +805,7 @@ public class Auto6322Red extends LinearOpModeCamera {
         catch (InterruptedException ex) {
             Thread.currentThread().interrupt();
         }
-    }*/
+    }
 
     //Determines the color of the button using the ZTE Camera
     /*public int determineButton() {
