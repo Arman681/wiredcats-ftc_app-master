@@ -106,7 +106,7 @@ public class Auto6322Red extends LinearOpModeCamera {
     AHRS navx_device;
     navXPIDController yawPIDController;
 
-    final int NAVX_DIM_I2C_PORT = 0;
+    final int NAVX_DIM_I2C_PORT = 4;
 
     final byte NAVX_DEVICE_UPDATE_RATE_HZ = 50;
     final double TOLERANCE_DEGREES = 1.0;
@@ -198,7 +198,7 @@ public class Auto6322Red extends LinearOpModeCamera {
 ///////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////
 
-        navx_device = AHRS.getInstance(hardwareMap.deviceInterfaceModule.get("dim"),
+        navx_device = AHRS.getInstance(hardwareMap.deviceInterfaceModule.get("n"),
                       NAVX_DIM_I2C_PORT,
                       AHRS.DeviceDataType.kProcessedData,
                       NAVX_DEVICE_UPDATE_RATE_HZ);
@@ -212,6 +212,8 @@ public class Auto6322Red extends LinearOpModeCamera {
 
         // wait for the start button to be pressed.
         waitForStart();
+
+        turnByAngle(0.5, 90);
 
        /* moveBySteps(0.4, 8);
         moveByTime(0.0, 1000);
@@ -440,7 +442,7 @@ public class Auto6322Red extends LinearOpModeCamera {
         }
     }
 
-    public void turnByAngle(double power, int degrees) throws InterruptedException {
+    public void turnByAngle2(double power, int degrees) throws InterruptedException {
 
         int s = -1;
 
@@ -807,7 +809,7 @@ public class Auto6322Red extends LinearOpModeCamera {
         }
     }
 
-    //Determines the color of the button using the ZTE Camera
+    //Determines the color of the button using the ZTE Speed Camera
     /*public int determineButton() {
 
         int benum = 0;
