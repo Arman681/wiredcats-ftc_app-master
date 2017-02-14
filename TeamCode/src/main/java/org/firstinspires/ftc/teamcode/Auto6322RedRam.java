@@ -334,7 +334,6 @@ public class Auto6322RedRam extends LinearOpModeCamera {
 
         for (DcMotor motor : driveTrain)
             motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
     }
 
     public void turnBySteps(double power, double inches) throws InterruptedException {
