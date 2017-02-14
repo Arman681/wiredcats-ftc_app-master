@@ -198,7 +198,7 @@ public class Auto6322Red extends LinearOpModeCamera {
 ///////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////
 
-        navx_device = AHRS.getInstance(hardwareMap.deviceInterfaceModule.get("n"),
+        navx_device = AHRS.getInstance(hardwareMap.deviceInterfaceModule.get("dim"),
                       NAVX_DIM_I2C_PORT,
                       AHRS.DeviceDataType.kProcessedData,
                       NAVX_DEVICE_UPDATE_RATE_HZ);
