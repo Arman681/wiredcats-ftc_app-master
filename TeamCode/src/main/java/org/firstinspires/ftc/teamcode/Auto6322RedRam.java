@@ -162,7 +162,7 @@ public class Auto6322RedRam extends LinearOpModeCamera {
 
         waitForStart();
 
-        moveBySteps(0.0,36);
+        moveBySteps(36);
         /*moveByTime(0.0, 10000);
         moveByTime(0.2, 2600);
         right.setPower(0.3);
@@ -312,14 +312,15 @@ public class Auto6322RedRam extends LinearOpModeCamera {
             motor.setPower(0);
     }
 
-    public void moveBySteps(double power, double inches) throws InterruptedException {
+    public void moveBySteps(double inches) throws InterruptedException {
 
         int[] startPosition = new int[4];
 
         double halfinches = inches/2;
-        double b = 1.0;
-        double c = 0.5;
-        double p = 0;
+        int b = 10;
+        int t = 1;
+        double c = 1.4;
+        double p = 0.0;
 
 
 
@@ -328,23 +329,28 @@ public class Auto6322RedRam extends LinearOpModeCamera {
 
         for (int i = 0; i < driveTrain.length; i++)
             startPosition[i] = driveTrain[i].getCurrentPosition();
-        if (startPosition[0] < halfinches && startPosition[1] < halfinches && startPosition[2] < halfinches && startPosition[3] < halfinches)
+        if (startPosition[0] < halfinches && startPosition[1] < halfinches && startPosition[2] < halfinches && startPosition[3] < halfinches &&  p == 0.0)
         {
-            b++;
-            p = Math.pow(b,c);
+            b = 10;
+           for (int i = 0; i < 10; i++){
+
+            b = b - 1;
+            p = Math.pow(c,b);
+        }
+
+
 
         }
-        else if (startPosition[0] > halfinches && startPosition[1] > halfinches && startPosition[2] > halfinches && startPosition[3] > halfinches)
+        else if (startPosition[0] > halfinches && startPosition[1] > halfinches && startPosition[2] > halfinches && startPosition[3] > halfinches && p == 1.0 )
         {
-            b--;
-            p = Math.pow(b,c);
+            b = -1;
+            for (int i = 0; i < 10; i++){
 
-        }
-        if (-1.0 < p ){
-            p = -1.0;
-        }
-        else if (p > 1.0){
-            p = 1.0;
+                b = b + 1;
+                p = Math.pow(c,b);
+            }
+
+
         }
 
         for (int i = 0; i < driveTrain.length; i++)
@@ -357,7 +363,8 @@ public class Auto6322RedRam extends LinearOpModeCamera {
             motor.setPower(Math.abs(p));
 
         while(driveTrain[0].isBusy() && driveTrain[1].isBusy() && driveTrain[2].isBusy() && driveTrain[3].isBusy() && opModeIsActive())
-            telemetry.addData("power: ", "value: " + p);
+            telemetry.addData("Power Value: ", " " + p);
+            telemetry.addData("Input Power:", " ", + b);
             telemetry.update();
             sleep(1);
 
