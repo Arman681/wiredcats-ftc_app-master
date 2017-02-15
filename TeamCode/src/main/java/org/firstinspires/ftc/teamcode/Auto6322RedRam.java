@@ -336,7 +336,7 @@ public class Auto6322RedRam extends LinearOpModeCamera {
         }
         else if (startPosition[0] > halfinches && startPosition[1] > halfinches && startPosition[2] > halfinches && startPosition[3] > halfinches)
         {
-            b++;
+            b--;
             p = Math.pow(b,c);
 
         }
