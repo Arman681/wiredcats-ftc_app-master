@@ -782,8 +782,8 @@ public class Auto6322Red extends LinearOpModeCamera {
                             motor.setPower(0);
 
                         turnComplete = true;
-
-                    } else {
+                    }
+                    else {
 
                         double output = yawPIDResult.getOutput();
 
@@ -793,7 +793,6 @@ public class Auto6322Red extends LinearOpModeCamera {
                         BackLeft.setPower(output);
 
                         telemetry.addData("PIDOutput", df.format(output) + ", " + df.format(-output));
-
                     }
                 }
                 else {
