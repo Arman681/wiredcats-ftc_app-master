@@ -46,7 +46,7 @@ public class Auto6322RedRam extends LinearOpModeCamera {
 
     //Intake Motor Declaration
     DcMotor intake;
-
+    DcMotor shooter;
     //Color Sensor Declarations
     ColorSensor CSleft;
     ColorSensor CSright;
@@ -138,6 +138,7 @@ public class Auto6322RedRam extends LinearOpModeCamera {
         //Continuous Rotation Sensors
         rightPusher = hardwareMap.crservo.get("rp");
         leftPusher = hardwareMap.crservo.get("lp");
+        shooter = hardwareMap.dcMotor.get("s");
 
         //Winch
         //winch = hardwareMap.crservo.get("w");
@@ -317,10 +318,11 @@ public class Auto6322RedRam extends LinearOpModeCamera {
         int[] startPosition = new int[4];
 
         double halfinches = inches/2;
+        int o = 0;
         int b = 10;
-        int t = 1;
-        double c = 1.4;
+        double c = 0.5;
         double p = 0.0;
+        int t = 0;
 
 
 
@@ -329,29 +331,28 @@ public class Auto6322RedRam extends LinearOpModeCamera {
 
         for (int i = 0; i < driveTrain.length; i++)
             startPosition[i] = driveTrain[i].getCurrentPosition();
-        if (startPosition[0] < halfinches && startPosition[1] < halfinches && startPosition[2] < halfinches && startPosition[3] < halfinches &&  p == 0.0)
-        {
-            b = 10;
-           for (int i = 0; i < 10; i++){
+        if(o == 0 && p == 0.0 && t == 0){
+            b = 11;
+            for (double i = 0; i < 10; i++){
 
-            b = b - 1;
-            p = Math.pow(c,b);
+                b = b - 1;
+                p = Math.pow(c,b);
+                t++;
+
+            }
+            o = 1;
         }
 
-
-
-        }
-        else if (startPosition[0] > halfinches && startPosition[1] > halfinches && startPosition[2] > halfinches && startPosition[3] > halfinches && p == 1.0 )
-        {
-            b = -1;
+        if (o == 1 && p == 0.5 && t == 10){
+            b = 0 ;
             for (int i = 0; i < 10; i++){
 
                 b = b + 1;
                 p = Math.pow(c,b);
+
             }
-
-
         }
+        shooter.setPower(p);
 
         for (int i = 0; i < driveTrain.length; i++)
             driveTrain[i].setTargetPosition((int)(startPosition[i] + inches * COUNTS_PER_INCH));
@@ -360,7 +361,7 @@ public class Auto6322RedRam extends LinearOpModeCamera {
             motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         for (DcMotor motor : driveTrain)
-            motor.setPower(Math.abs(p));
+            motor.setPower(Math.abs(0));
 
         while(driveTrain[0].isBusy() && driveTrain[1].isBusy() && driveTrain[2].isBusy() && driveTrain[3].isBusy() && opModeIsActive())
             telemetry.addData("Power Value: ", " " + p);
