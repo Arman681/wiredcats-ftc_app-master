@@ -106,7 +106,7 @@ public class Auto6322Red extends LinearOpModeCamera {
     AHRS navx_device;
     navXPIDController yawPIDController;
 
-    final int NAVX_DIM_I2C_PORT = 4;
+    final int NAVX_DIM_I2C_PORT = 5;
 
     final byte NAVX_DEVICE_UPDATE_RATE_HZ = 50;
     final double TOLERANCE_DEGREES = 1.0;
@@ -477,6 +477,7 @@ public class Auto6322Red extends LinearOpModeCamera {
             telemetry.addData("2", "X av. %03d", xVal);
             telemetry.addData("3", "Y av. %03d", yVal);
             telemetry.addData("4", "Z av. %03d", zVal);
+            telemetry.update();
             telemetry.update();
             waitOneFullHardwareCycle();
         }
