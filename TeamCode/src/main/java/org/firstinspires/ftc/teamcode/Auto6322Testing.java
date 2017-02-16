@@ -4,6 +4,7 @@ import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.util.Log;
 
+import com.kauailabs.navx.ftc.*;
 import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cGyro;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
@@ -15,6 +16,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.CRServo;
+
 
 import com.kauailabs.navx.ftc.AHRS;
 import com.kauailabs.navx.ftc.navXPIDController;
@@ -231,8 +233,8 @@ public class Auto6322Testing extends LinearOpMode{
         while ( runtime.time() < TOTAL_RUN_TIME_SECONDS ) {
             if ( yawPIDController.waitForNewUpdate(yawPIDResult, DEVICE_TIMEOUT_MS ) ) {
                 if ( yawPIDResult.isOnTarget() ) {
-                    FrontLeft.setPower(0.0);
-                    FrontRight.setPower(0.0);
+                    FrontLeft.setPowerFloat();
+                    FrontRight.setPowerFloat();
                 } else {
                     double output = yawPIDResult.getOutput();
                     if ( output < 0 ) {
