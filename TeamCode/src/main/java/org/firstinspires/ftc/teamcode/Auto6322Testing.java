@@ -225,6 +225,7 @@ public class Auto6322Testing extends LinearOpMode{
         /* Wait for new Yaw PID output values, then update the motors
            with the new PID value with each new output value.
          */
+        //turnByAngle(0.5, 90);
 
         final double TOTAL_RUN_TIME_SECONDS = 30.0;
         int DEVICE_TIMEOUT_MS = 500;
@@ -233,18 +234,24 @@ public class Auto6322Testing extends LinearOpMode{
         while ( runtime.time() < TOTAL_RUN_TIME_SECONDS ) {
             if ( yawPIDController.waitForNewUpdate(yawPIDResult, DEVICE_TIMEOUT_MS ) ) {
                 if ( yawPIDResult.isOnTarget() ) {
-                    FrontLeft.setPowerFloat();
-                    FrontRight.setPowerFloat();
+                    FrontLeft.setPower(0.0);
+                    FrontRight.setPower(0.0);
+                    BackRight.setPower(0.0);
+                    BackLeft.setPower(0.0);
                 } else {
                     double output = yawPIDResult.getOutput();
                     if ( output < 0 ) {
                         /* Rotate Left */
                         FrontLeft.setPower(-output);
                         FrontRight.setPower(output);
+                        BackLeft.setPower(-output);
+                        BackRight.setPower(output);
                     } else {
                         /* Rotate Right */
                         FrontLeft.setPower(output);
                         FrontRight.setPower(-output);
+                        BackLeft.setPower(output);
+                        BackRight.setPower(-output);
                     }
                 }
             } else {
@@ -629,11 +636,41 @@ public class Auto6322Testing extends LinearOpMode{
 
     public void moveBySteps(double power, double inches) throws InterruptedException {
 
+        int o = 0;
+        int b = 10;
+        double c = 0.5;
+        double p = 0.0;
+        int t = 0;
         int[] startPosition = new int[4];
+
+        if(t == 0){
+            b = 11;
+            for (double i = 0; i < 10; i++){
+
+                b = b - 1;
+                p = Math.pow(c,b);
+                t++;
+
+            }
+        }
+
+        if (t == 10){
+            b = 0 ;
+            for (int i = 0; i < 10; i++){
+
+                b = b + 1;
+                p = Math.pow(c,b);
+
+            }
+        }
 
         for (DcMotor motor : driveTrain)
             motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        idle();
+
+        for (int i = 0; i < driveTrain.length; i++)
+            startPosition[i] = driveTrain[i].getCurrentPosition();
+
+        shooter.setPower(p);
 
         for (DcMotor motor : driveTrain)
             motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
