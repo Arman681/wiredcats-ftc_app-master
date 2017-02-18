@@ -36,6 +36,8 @@ public class Auto6322Blue extends LinearOpModeCamera {
 
     ElapsedTime runtime1 = new ElapsedTime();
     ElapsedTime runtime2 = new ElapsedTime();
+    ElapsedTime runtime3 = new ElapsedTime();
+    ElapsedTime runtime4 = new ElapsedTime(); //runUntilWhile(); timer
 
 ///////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////
@@ -158,6 +160,8 @@ public class Auto6322Blue extends LinearOpModeCamera {
         //Intake Motor(s)
         intake = hardwareMap.dcMotor.get("i");
 
+        conveyor = hardwareMap.dcMotor.get("c");
+
 ///////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////
 
@@ -205,7 +209,7 @@ public class Auto6322Blue extends LinearOpModeCamera {
         yawPIDController.setTolerance(navXPIDController.ToleranceType.ABSOLUTE, TOLERANCE_DEGREES);
         yawPIDController.setPID(YAW_PID_P, YAW_PID_I, YAW_PID_D);*/
 
-        // start calibrating the gyro.
+        /* start calibrating the gyro.
         telemetry.addData(">", "Gyro Calibrating. Do Not move!");
         telemetry.update();
         gyro.calibrate();
@@ -217,10 +221,20 @@ public class Auto6322Blue extends LinearOpModeCamera {
         }
 
         telemetry.addData(">", "Gyro Calibrated.  Press Start.");
-        telemetry.update();
+        telemetry.update();*/
 
         // wait for the start button to be pressed.
         waitForStart();
+
+        //moveBySteps(0.4, 8);
+        //moveByTime(0.0, 1000);
+
+        //shoot(0.7, 5, 2);
+
+        //turnBySteps(0.4, -3);
+        //moveByTime(0.0, 1000);
+
+        runUntilWhite(0.3);
 
         //turnByAngle(0.3, 180);
 
@@ -233,7 +247,7 @@ public class Auto6322Blue extends LinearOpModeCamera {
         //moveBySteps(0.4, -24);
         //turnBySteps(0.8, 5);
         //moveBySteps(0.4, 12);
-        moveBySteps(1, 20);
+        //moveBySteps(1, 20);
 
         /*shooter.setPower(1.0);
         conveyor.setPower(1.0);
@@ -243,14 +257,7 @@ public class Auto6322Blue extends LinearOpModeCamera {
             shooter.setPower(0);
         }
         */
-
-
-
-
-
-
-
-
+        /*
         turnBySteps(-1, 14);
         moveBySteps(1, 40);
         turnBySteps(-1, -14);
@@ -314,7 +321,7 @@ public class Auto6322Blue extends LinearOpModeCamera {
             for (DcMotor motor : driveTrain)
                 motor.setPower(0);
             sleep(1500);
-        }
+        }*/
         /*runUntilWhite(0.3);
         turnBySteps(0.8, 12);
         moveBySteps(0.3, 6);
@@ -415,20 +422,25 @@ public class Auto6322Blue extends LinearOpModeCamera {
 
     public void runUntilWhite(double power) throws InterruptedException {
         boolean dec = false;
+        boolean tec = false;
         while (!dec) {
-            if (ODSleft.getRawLightDetected()*13 < .8 || ODSright.getRawLightDetected() < .9) {
+            if (ODSleft.getRawLightDetected()*13 < .8 || ODSright.getRawLightDetected() < .8) {
                 for (DcMotor motor : driveTrain)
                     motor.setPower(power);
             }
-            else if (ODSleft.getRawLightDetected()*13 > .8 || ODSright.getRawLightDetected() > .9) {
+            else if (ODSleft.getRawLightDetected()*13 > .8 || ODSright.getRawLightDetected() > .8) {
                 for (DcMotor motor : driveTrain)
                     motor.setPower(0);
-                dec = true;
+                tec = true;
             }
+            //if (tec == true) {
+                //runtime4.reset();
+                //if (runtime4.time() > 1)
+            //}
             telemetry.addData("ODSleft Values: " + ODSleft.getRawLightDetected(), null);
             telemetry.addData("ODSright Values: " + ODSright.getRawLightDetected(), null);
             telemetry.update();
-            idle();
+            sleep(1);
         }
     }
 
@@ -491,6 +503,31 @@ public class Auto6322Blue extends LinearOpModeCamera {
             motor.setPower(0);
     }
 
+    public void shoot(double power, double time, double conveyorDelay) throws InterruptedException {
+        runtime3.reset();
+        while(runtime3.time() < time) {
+            stopDriveTrain();
+            shooter.setPower(power);
+
+            if ((runtime3.time() > conveyorDelay) && (runtime3.time() < (conveyorDelay + 0.5))) {
+                conveyor.setPower(1.0);
+                intake.setPower(1.0);
+            }
+            else if (runtime3.time() > (conveyorDelay + 0.5) && runtime3.time() < (conveyorDelay + 1.0)) {
+                intake.setPower(0.0);
+                conveyor.setPower(0.0);
+            }
+            else if (runtime3.time() > (conveyorDelay + 1.5)) {
+                conveyor.setPower(1.0);
+                intake.setPower(1.0);
+            }
+
+        }
+        shooter.setPower(0.0);
+        conveyor.setPower(0.0);
+        intake.setPower(0.0);
+
+    }
 
     public String determineColor() throws InterruptedException {
 
@@ -584,6 +621,13 @@ public class Auto6322Blue extends LinearOpModeCamera {
 
         for (DcMotor motor : driveTrain)
             motor.setPower(0);
+    }
+
+    public void stopDriveTrain() throws InterruptedException {
+        FrontLeft.setPower(0);
+        FrontRight.setPower(0);
+        BackLeft.setPower(0);
+        BackRight.setPower(0);
     }
 
     public void moveBySteps(double power, double inches) throws InterruptedException {

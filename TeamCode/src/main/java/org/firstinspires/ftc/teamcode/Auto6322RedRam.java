@@ -46,7 +46,7 @@ public class Auto6322RedRam extends LinearOpModeCamera {
 
     //Intake Motor Declaration
     DcMotor intake;
-
+    DcMotor shooter;
     //Color Sensor Declarations
     ColorSensor CSleft;
     ColorSensor CSright;
@@ -115,12 +115,12 @@ public class Auto6322RedRam extends LinearOpModeCamera {
         FrontRight.setDirection(DcMotor.Direction.REVERSE);
 
         //Shooting Mechanism Motors
-        right = hardwareMap.dcMotor.get("r");
-        left = hardwareMap.dcMotor.get("l");
-        right.setDirection(DcMotorSimple.Direction.REVERSE);
+       // right = hardwareMap.dcMotor.get("r");
+        //left = hardwareMap.dcMotor.get("l");
+       // right.setDirection(DcMotorSimple.Direction.REVERSE);
 
         //Intake Motor(s)
-        intake = hardwareMap.dcMotor.get("in");
+        intake = hardwareMap.dcMotor.get("i");
 
         //Color Sensors
         CSleft = hardwareMap.colorSensor.get("csl");
@@ -138,9 +138,10 @@ public class Auto6322RedRam extends LinearOpModeCamera {
         //Continuous Rotation Sensors
         rightPusher = hardwareMap.crservo.get("rp");
         leftPusher = hardwareMap.crservo.get("lp");
+        shooter = hardwareMap.dcMotor.get("s");
 
         //Winch
-        winch = hardwareMap.crservo.get("w");
+        //winch = hardwareMap.crservo.get("w");
 
         //Lock
         lock = hardwareMap.servo.get("k");
@@ -161,7 +162,9 @@ public class Auto6322RedRam extends LinearOpModeCamera {
         yawPIDController.setPID(YAW_PID_P, YAW_PID_I, YAW_PID_D);*/
 
         waitForStart();
-        moveByTime(0.0, 10000);
+
+        moveBySteps(36);
+        /*moveByTime(0.0, 10000);
         moveByTime(0.2, 2600);
         right.setPower(0.3);
         left.setPower(0.3);
@@ -183,7 +186,7 @@ public class Auto6322RedRam extends LinearOpModeCamera {
         left.setPower(0);
         intake.setPower(0);
 
-        moveBySteps(0.5, 18);
+        moveBySteps(0.5, 18);*/
 /*
         moveBySteps(0.5, 14);
         turnBySteps(0.6, -22);
@@ -310,15 +313,46 @@ public class Auto6322RedRam extends LinearOpModeCamera {
             motor.setPower(0);
     }
 
-    public void moveBySteps(double power, double inches) throws InterruptedException {
+    public void moveBySteps(double inches) throws InterruptedException {
 
         int[] startPosition = new int[4];
+
+        double halfinches = inches/2;
+        int o = 0;
+        int b = 10;
+        double c = 0.5;
+        double p = 0.0;
+        int t = 0;
+
+
 
         for (DcMotor motor : driveTrain)
             motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         for (int i = 0; i < driveTrain.length; i++)
             startPosition[i] = driveTrain[i].getCurrentPosition();
+        if(o == 0 && p == 0.0 && t == 0){
+            b = 11;
+            for (double i = 0; i < 10; i++){
+
+                b = b - 1;
+                p = Math.pow(c,b);
+                t++;
+
+            }
+            o = 1;
+        }
+
+        if (o == 1 && p == 0.5 && t == 10){
+            b = 0 ;
+            for (int i = 0; i < 10; i++){
+
+                b = b + 1;
+                p = Math.pow(c,b);
+
+            }
+        }
+        shooter.setPower(p);
 
         for (int i = 0; i < driveTrain.length; i++)
             driveTrain[i].setTargetPosition((int)(startPosition[i] + inches * COUNTS_PER_INCH));
@@ -327,9 +361,12 @@ public class Auto6322RedRam extends LinearOpModeCamera {
             motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         for (DcMotor motor : driveTrain)
-            motor.setPower(Math.abs(power));
+            motor.setPower(Math.abs(0));
 
         while(driveTrain[0].isBusy() && driveTrain[1].isBusy() && driveTrain[2].isBusy() && driveTrain[3].isBusy() && opModeIsActive())
+            telemetry.addData("Power Value: ", " " + p);
+            telemetry.addData("Input Power:", " ", + b);
+            telemetry.update();
             sleep(1);
 
         for (DcMotor motor : driveTrain)
@@ -363,6 +400,8 @@ public class Auto6322RedRam extends LinearOpModeCamera {
 
         for (DcMotor motor : driveTrain)
             motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+
     }
 
     //Uses gyroscopic features in the NAVX Micro Sensor

@@ -1,5 +1,4 @@
 package org.firstinspires.ftc.teamcode;
-
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -11,12 +10,16 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-/**
- * Created by SethHorwitz on 12/17/16.
- */
-@Autonomous(name="BlueAuto_10366", group="Autonomous")
+import java.security.PublicKey;
 
-public class BlueAuto10366 extends LinearOpMode{
+/**
+ * Created by Carol on 1/24/2017.
+ */
+
+@Autonomous(name="RedAuto2_10366", group="Autonomous")
+
+public class RedAuto2_10366 extends LinearOpMode {
+
 
     String determinedSide;
 
@@ -44,6 +47,9 @@ public class BlueAuto10366 extends LinearOpMode{
     Servo Left;         // Left lift fork locking servo
     Servo Right;        // Right lift fork locking sevro
 
+    double catapultClockwise = 1;
+    double catapultCClockwise = -1;
+    double catapultStop = 0;
 
     //Intake Motor Declaration
 
@@ -59,6 +65,10 @@ public class BlueAuto10366 extends LinearOpMode{
 
     ColorSensor CSleft;
     ColorSensor CSright;
+
+    int fourtyfivedegrees = 410;
+    int ninetydegrees = (fourtyfivedegrees*2 + 10);
+    int onethirtyfivedegree = (fourtyfivedegrees*3 + 20);
 
     //Encoder Constants
 
@@ -129,7 +139,7 @@ public class BlueAuto10366 extends LinearOpMode{
         intake.setDirection(DcMotorSimple.Direction.REVERSE);
 
 
-            //Lift Motor
+        //Lift Motor
 
         lift = hardwareMap.dcMotor.get("lift");
 
@@ -150,73 +160,37 @@ public class BlueAuto10366 extends LinearOpMode{
         //Correct Initial Counter Clock-Wise Turn
 
         moveByTime(-0.25, 10);  //Move Backward  at one-quarter speed for  .010 seconds  ***code to correct initial counter-clock-wise turn
-        turnByTime(-0.25, 25); // Move Forward  at half speed for  .015 seconds counter clocl-wise ***code to correct initial clock-wise turn
+        turnByTime(-0.25, 50); // Move Forward  at half speed for  .050seconds counter clock-wise ***code to correct initial clock-wise turn
 
 
         // Move into Shooting Position and Shoot 2 Particals
 
         moveByTime(-0.25, 1000); //move Backward at one-quarter speed for 1.250 seconds*** changed to 1000***
 
-        // Shoot 2 Particals
+        //Shoot 2 Particles
 
         shoot(1.0, 5.5, 1.75); //Shoots particles at full power for  change  changed to 4.75 / 1.5
 
-        Catapult.setPower(.5); //Sets catapult servo to stop
+        Catapult.setPower(catapultStop); //Sets catapult servo to stop
 
 
-        //shoot(1.0, 2.0, .25); //Shoots particles at full power for 1 seconds and starts catapult after .25 seconds
 
+        //Claim Red Cap Ball
 
-        //Claim Blue Beacon 1
+        moveByTime(-0.25, 500); //Move Backwards at one-quarter speed for .5 second
+        turnByTime(0.25, ninetydegrees); //Turns Clock-wise at half speed for X seconds to make90-DEGREE turn (2 X 45-DEGREE) ***Should push cap ball***
+        moveByTime(0.25, 750); //Move Forwards  at one-quarter speed for 1.5 seconds changed to .5 seconds for longer distance
+        moveByTime(0.25, 500); //Move Forwards  at one-quarter speed for 1.5 seconds changed to .5 seconds for longer distance
+        // turnByTime(0.25, fourtyfivedegrees); //Turns Clock-wise at one-quarter speed for .4 to make 45-DEGREE turn
+        // moveByTime(0.25, 1500); //Move forwards at one-quarter speed for 1.5 seconds
 
-        moveByTime(0.25, 850); //Move Forward at one quarter speed for .600 changed to ***.750 to 850 after ball was inflated***
-        turnByTime(0.25, 405); //Turn Clock-wise at one-quarter speed for .410 seconds(.425 seconds - .15 Seconds) to offset (initialization) to make 45-degree turn
-        moveByTime(-0.25, 2250); //Move Backward at one-quarter speed for 1.500 seconds ***Battery Full charge  14.44 - 14.00** changed to 20000 from 1750
-        turnByTime(-0.25, 1215); //Turns Counter-clock-wise at one-quarter speed for 1.230 seconds to make 135-DEGREE (3 X 45-DEGREE) turn
-        //moveByTime(-0.25, 50); // Move Backward  at one-quarter speed for .050 seconds (***used to correct motor direction to go straight***)
-        //moveByTime(0.25, 50);  // Move Forward   at one-quarter speed for .050 seconds (***used to correct motor direction to go straight***)
-        moveByTime(0.25, 500); // Move Forward at one-quarter speed for .650 seconds to establish initial Beacon Startion position
-        moveByTime(0.25, 500); // Move Forward at one-quarter speed for .350 seconds to get closer to beacon
-        goForButton(); //Determines blue side of beacon and hits button on that side
+        //Park at Red Corner Vortex
 
-
-        //Claim Blue Beacon 2
-
-        moveByTime(-0.25, 1000); //Move Backwards at half speed for 1 seconds
-        turnByTime(-0.25, 810); //Turns Counter-clock-wise at one-quarter speed for .8 seconds to make 90-DEGREE (2 X 45-DEGREE) turn
-        //moveByTime(-0.25, 50); // Move Backward at one-quarter speed for .05 seconds (***used to correct motor direction to go straight***)
-        //moveByTime(0.25, 50);  // Move Forward  at one-quarter speed for .05 seconds (***used to correct motor direction to go straight***)
-
-        // checking which side was Blue -  Left Side of Beacon 1 is furter away from Right Side and requires more time
-        if (determinedSide == "left") {  //check side to determine time to reach next beacon ( left is longer than right)
-            moveByTime(0.25, 2250);  //Move Forward  at one-quarter speed for 1.75 seconds
-        } else if (determinedSide  == "right") {
-            moveByTime(0.25, 2000);  //Move Forward  at one-quarter speed for 1.5 seconds
-        }
-
-        turnByTime(0.25, 810); //Turns Clock-wise at one-quarter speed for .81 seconds to make 90-DEGREE turn (2 x 45-DEGREE turn)
-        moveByTime(0.25, 500); //Move Forward  at one-quarter speed for .5 a seconds to get closer to beacon
-        moveByTime(0.25, 500); //Move Forward  at one-quarter speed for .5 a seconds to get closer to beacon
-        goForButton(); //Determines blue side of beacon and hits button on that side
-
-        //telemetry.addData("Claim Blue Beacon 2 Done");
-        //telemetry.update();
-
-        //Claim Blue Cap Ball
-
-        moveByTime(-0.25, 1000); //Move Backwards at one-quarter speed for .5 second changed to 1 second
-        turnByTime(-0.25, 1215); //Turns Counter-clock-wise at half speed for 1.6 seconds to make 135-DEGREE turn (3 X 45-DEGREE)  to put intake in front position
-        //moveByTime(-0.25, 50); // Move Backward  at one-quarter speed for .05 seconds (***used to correct motor direction to go straight***)
-        //moveByTime(0.25, 50);  // Move Forward   at one-quarter speed for .05 seconds (***used to correct motor direction to go straight***)
-        moveByTime(0.25, 2500); //Move Forwards  at one-quarter speed for 1.5 seconds changed to 2.5 seconds for longer distance
-        turnByTime(0.25, 400); //Turns Clock-wise at one-quarter speed for .4 to make 45-DEGREE turn
-        moveByTime(0.25, 1500); //Move forwards at one-quarter speed for 1.5 seconds
-
-        //Park at Blue Corner Vortex
-
-        //turnByTime(0.25, 400); //Turns Clock-wise at one-quarter speed for three-quarters of a second to make 45-degree turn
-        //moveByTime(0.25, 500); //Move  Forwards at one-quarter speed for one-half second
-        //moveByTime(0.25, 1000); //Move Forwards at one-quarter speed for one second
+        turnByTime(-0.25, fourtyfivedegrees); //Turns Counter Clock-wise at one-quarter speed for three-quarters of a second to make 45-degree turn
+        moveByTime(0.25, 750); //Move  Forwards at one-quarter speed for one-half second
+        moveByTime(0.25, 750); //Move Forwards at one-quarter speed for one second
+        moveByTime(0.25, 750); //Move Forwards at one-quarter speed for one second
+        moveByTime(0.25, 500); //Move Forwards at one-quarter speed for one second
         stopAllMotors();
     }
 
@@ -235,18 +209,18 @@ public class BlueAuto10366 extends LinearOpMode{
             if (determinedSide == "right") {
 
                 moveByTime(-0.25, 350); //Move Backwards at one-quarter speed for .3.5 seconds to initial Beacon Position
-                turnByTime(-0.25, 410); //Turns counter-clock-wise at one-quarter speed for three-quarters of .4 seconds to make 45-degree turn
+                turnByTime(-0.25, fourtyfivedegrees); //Turns counter-clock-wise at one-quarter speed for three-quarters of .4 seconds to make 45-degree turn
                 moveByTime(0.25, 750); //Move forwards at one-quarter speed for quarter .25 second
-                turnByTime(0.25, 410); //Turns clock-wise at one-quarter speed for three-quarters of .4 seconds to make 45-degree turn
+                turnByTime(0.25, fourtyfivedegrees); //Turns clock-wise at one-quarter speed for three-quarters of .4 seconds to make 45-degree turn
                 moveByTime(0.25, 250); //Move forwards at one-quarter speed for quarter .25 second
                 moveByTime(0.25, 50); //Move forwards at one-quarter speed for quarter .25 second
                 dec = true;
-            } else if (determinedSide == "letf") {
+            } else if (determinedSide == "left") {
 
                 moveByTime(-0.25, 350); //Move Backwards at one-quarter speed for .3.5 seconds to initial Beacon Position
-                turnByTime(0.25, 410); //Turns clock-wise at one-quarter speed for three-quarters of .41 seconds to make 45-degree turn
+                turnByTime(0.25, fourtyfivedegrees); //Turns clock-wise at one-quarter speed for three-quarters of .41 seconds to make 45-degree turn
                 moveByTime(0.25, 750); //Move forwards at one-quarter speed for .25 a seconds
-                turnByTime(-0.25, 410); //Turns counter-clock-wise at one-quarter speed for three-quarters of .4 seconds to make 45-degree turn
+                turnByTime(-0.25, fourtyfivedegrees); //Turns counter-clock-wise at one-quarter speed for three-quarters of .4 seconds to make 45-degree turn
                 moveByTime(0.25, 250); //Move forwards at one-quarter speed for .25 a seconds
                 moveByTime(0.25, 50); //Move forwards at one-quarter speed for quarter .25 second
                 dec = true;
@@ -258,7 +232,7 @@ public class BlueAuto10366 extends LinearOpMode{
     }
 
 
-    //Determine Blue Side
+    //Determine Red Side
 
     public String determineBlueSide() throws InterruptedException {
 
@@ -384,9 +358,11 @@ public class BlueAuto10366 extends LinearOpMode{
 
             telemetry.addData("Time: " + runtime1.time(), null);
             telemetry.addData("Target Time: " + targetTime, null);
+            telemetry.addData ("Catapult Delay" + catapultDelay,null);
             telemetry.update();
         }
         stopAllMotors();
+        Catapult.setPower(catapultStop);  //Turn Catapult Servo motor off
 
     }
 
@@ -399,7 +375,7 @@ public class BlueAuto10366 extends LinearOpMode{
         BackRight.setPower(0);
         r.setPower(0);
         l.setPower(0);
-        Catapult.setPower(.5);  //Turn Catapult Servo motor off
+        Catapult.setPower(catapultStop);  //Turn Catapult Servo motor off
 
     }
 

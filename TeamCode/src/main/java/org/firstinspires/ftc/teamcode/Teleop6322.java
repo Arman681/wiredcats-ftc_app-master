@@ -26,6 +26,8 @@ public class Teleop6322 extends OpMode {
     ElapsedTime runtime1 = new ElapsedTime(); //Left Continuous Rotation Servo Timer
     ElapsedTime runtime2 = new ElapsedTime(); //Right Continuous Rotation Servo Timer
 
+    int q = 0;
+
     //Drive Train Motor Declarations
     DcMotor FrontLeft;
     DcMotor FrontRight;
@@ -156,6 +158,26 @@ public class Teleop6322 extends OpMode {
                 BackRight.setPower(righty1*i);
             }
         }
+
+        /*DriveTrain Rotation Function
+        if (gamepad1.right_bumper && !gamepad1.left_bumper && (gamepad1.right_stick_y > -1 && gamepad1.right_stick_y < 1) && (gamepad1.left_stick_y > -1 && gamepad1.left_stick_y < 1)) {
+            FrontLeft.setPower(1.0);
+            BackLeft.setPower(1.0);
+            FrontRight.setPower(-1.0);
+            BackRight.setPower(-1.0);
+        }
+        else if (gamepad1.left_bumper && !gamepad1.right_bumper && (gamepad1.right_stick_y > -1 && gamepad1.right_stick_y < 1) && (gamepad1.left_stick_y > -1 && gamepad1.left_stick_y < 1)) {
+            FrontLeft.setPower(-1.0);
+            BackLeft.setPower(-1.0);
+            FrontRight.setPower(1.0);
+            BackRight.setPower(1.0);
+        }
+        else if (!gamepad1.right_bumper && !gamepad1.left_bumper && (gamepad1.right_stick_y > -1 && gamepad1.right_stick_y < 1) && (gamepad1.left_stick_y > -1 && gamepad1.left_stick_y < 1)) {
+            FrontLeft.setPower(0);
+            BackLeft.setPower(0);
+            FrontRight.setPower(0);
+            BackRight.setPower(0);
+        }*/
 
         //Left Continuous Rotation Servo
         if (gamepad1.x && c1 == 0) {
