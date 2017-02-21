@@ -16,6 +16,7 @@ import com.qualcomm.robotcore.hardware.CRServo;
 
 import com.kauailabs.navx.ftc.AHRS;
 import com.kauailabs.navx.ftc.navXPIDController;
+import com.qualcomm.robotcore.util.Range;
 
 import java.text.DecimalFormat;
 
@@ -213,13 +214,11 @@ public class Auto6322Red extends LinearOpModeCamera {
         // wait for the start button to be pressed.
         waitForStart();
 
-        turnByAngle(0.5, 90);
-
-       /* moveBySteps(0.4, 8);
+        driveStraight(0.4, 14);
         moveByTime(0.0, 1000);
-        //shoot(0.7, 5, 2);
+        shoot(0.7, 5, 2);
 
-        turnBySteps(0.4, 5);
+        turnBySteps(0.4, 12);
         moveByTime(0.0, 1000);
 
         runUntilWhite(0.4);
@@ -228,16 +227,16 @@ public class Auto6322Red extends LinearOpModeCamera {
         turnBySteps(0.4, -5);
         moveByTime(0.0, 1000);
 
-        moveBySteps(-0.4, -5.5);
+        driveStraight(-0.4, -5.5);
         moveByTime(0.0, 1000);
 
         turnBySteps(0.4, 3);
-        moveByTime(0.0, 1000);*/
-        //turnBySteps(0.8, 5);
-        //moveBySteps(0.4, 12);
-        //for (DcMotor motor : driveTrain)
-            //motor.setPower(0);
-        /*
+        moveByTime(0.0, 1000);
+        turnBySteps(0.8, 5);
+        driveStraight(0.4, 12);
+        for (DcMotor motor : driveTrain)
+            motor.setPower(0);
+
         if (determineColor() == "red") {
             moveBySteps(0.3, -3.5);
             rightPusher.setPower(-1.0);
@@ -442,7 +441,7 @@ public class Auto6322Red extends LinearOpModeCamera {
         }
     }
 
-    public void turnByAngle2(double power, int degrees) throws InterruptedException {
+    public void turnByGyro(double power, int degrees) throws InterruptedException {
 
         int s = -1;
 
@@ -486,6 +485,43 @@ public class Auto6322Red extends LinearOpModeCamera {
             motor.setPower(0);
     }
 
+    public void driveStraight(double power, double inches) throws InterruptedException{
+
+        double leftSpeed;
+        double rightSpeed;
+
+        double target = gyro.getHeading();
+        double startPosition = FrontLeft.getCurrentPosition();
+
+        while(FrontLeft.getCurrentPosition() < (inches*COUNTS_PER_INCH) + startPosition){
+
+            int zAccumulated = gyro.getHeading();
+
+            leftSpeed = power + (zAccumulated - target)/100;
+            rightSpeed = power + (zAccumulated - target)/100;
+
+            leftSpeed = Range.clip(leftSpeed, -1.0, 1.0);
+            rightSpeed = Range.clip(rightSpeed , -1.0, 1.0);
+
+            FrontLeft.setPower(leftSpeed);
+            BackLeft.setPower(leftSpeed);
+            FrontRight.setPower(rightSpeed);
+            BackRight.setPower(rightSpeed);
+            idle();
+
+        }
+        FrontLeft.setPower(0);
+        BackLeft.setPower(0);
+        FrontRight.setPower(0);
+        BackRight.setPower(0);
+
+        FrontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        FrontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        BackLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        BackRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        idle();
+
+    }
 
     public String determineColor() throws InterruptedException {
 
@@ -748,7 +784,7 @@ public class Auto6322Red extends LinearOpModeCamera {
     }
 
     //Uses gyroscopic features in the NAVX Micro Sensor
-    public void turnByAngle(double power, double angle) throws InterruptedException {
+    public void turnByNavx(double power, double angle) throws InterruptedException {
 
         ElapsedTime runtime = new ElapsedTime();
 
