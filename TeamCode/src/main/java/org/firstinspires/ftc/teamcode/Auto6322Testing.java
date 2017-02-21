@@ -17,6 +17,8 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.CRServo;
 
+import com.qualcomm.robotcore.util.Range;
+
 
 import com.kauailabs.navx.ftc.AHRS;
 import com.kauailabs.navx.ftc.navXPIDController;
@@ -28,7 +30,7 @@ import org.firstinspires.ftc.robotcontroller.internal.LinearOpModeCamera;
 /**
  * Created by Dylanjamaludin on 2/16/17.
  */
-@Autonomous(name="testing", group="Autonomous")
+@Autonomous(name="Auto6322Testing", group="Autonomous")
 
 public class Auto6322Testing extends LinearOpMode{
 
@@ -106,12 +108,18 @@ public class Auto6322Testing extends LinearOpMode{
     final int NAVX_DIM_I2C_PORT = 5;
 
     final byte NAVX_DEVICE_UPDATE_RATE_HZ = 50;
-    final double TOLERANCE_DEGREES = 1.0;
+    final double TOLERANCE_DEGREES = 2.0;
     final double MIN_MOTOR_OUTPUT_VALUE = -1.0;
     final double MAX_MOTOR_OUTPUT_VALUE = 1.0;
     final double YAW_PID_P = 0.005;
     final double YAW_PID_I = 0.0;
     final double YAW_PID_D = 0.0;
+
+    int xVal, yVal, zVal = 0;     // Gyro rate Values
+    int heading = 0;              // Gyro integrated heading
+    int angleZ = 0;
+    boolean lastResetState = false;
+    boolean curResetState  = false;
 
     //encoder constants
     static final double TAU                  = 6.283185;
@@ -205,80 +213,165 @@ public class Auto6322Testing extends LinearOpMode{
 
         // Create a PID Controller which uses the Yaw Angle as input.
         yawPIDController = new navXPIDController(navx_device, navXPIDController.navXTimestampedDataSource.YAW);
-        yawPIDController.setContinuous(true);
+        yawPIDController.setContinuous(false);
         yawPIDController.setOutputRange(MIN_MOTOR_OUTPUT_VALUE, MAX_MOTOR_OUTPUT_VALUE);
         yawPIDController.setTolerance(navXPIDController.ToleranceType.ABSOLUTE, TOLERANCE_DEGREES);
         yawPIDController.setPID(YAW_PID_P, YAW_PID_I, YAW_PID_D);
-
-        // wait for the start button to be pressed.
-        yawPIDController.setContinuous(true);
-        yawPIDController.setOutputRange(MIN_MOTOR_OUTPUT_VALUE, MAX_MOTOR_OUTPUT_VALUE);
-        //yawPIDController.setTolerance(TimestampedPIDController.ToleranceType.ABSOLUTE, TOLERANCE_DEGREES);
-        yawPIDController.setPID(YAW_PID_P, YAW_PID_I, YAW_PID_D);
         yawPIDController.enable(true);
 
-        waitForStart();
+        // start calibrating the gyro.
+        telemetry.addData(">", "Gyro Calibrating. Do Not move!");
+        telemetry.update();
+        gyro.calibrate();
 
-        while ( !calibration_complete ) {
-            /* navX-Micro Calibration completes automatically ~15 seconds after it is
+        // make sure the gyro is calibrated.
+        while (!isStopRequested() && gyro.isCalibrating())  {
+            sleep(50);
+            idle();
+        }
+
+        telemetry.addData(">", "Gyro Calibrated.  Press Start.");
+        telemetry.update();
+
+        waitForStart(); //START HERE
+
+        /*while ( !calibration_complete ) {
+            *//* navX-Micro Calibration completes automatically ~15 seconds after it is
             powered on, as long as the device is still.  To handle the case where the
             navX-Micro has not been able to calibrate successfully, hold off using
             the navX-Micro Yaw value until calibration is complete.
-             */
-            calibration_complete = !navx_device.isCalibrating();
+             *//*
             if (!calibration_complete) {
                 telemetry.addData("navX-Micro", "Startup Calibration in Progress");
             }
+            calibration_complete = !navx_device.isCalibrating();
         }
 
-        turnByAngle(90); //90 degrees
+        turnByNavx(90); //90 degrees
 
         navx_device.close();
-        telemetry.addData("LinearOp", "Complete");
+        telemetry.addData("LinearOp", "Complete");*/
+
+        //turnByGyro(0.3, 180);
+        //1000 = 30 inches
+        driveStraight(24, 0.4);
     }
 
     //Uses gyroscopic features in the NAVX Micro Sensor
-    public void turnByAngle(double angle) throws InterruptedException {
+    public void turnByNavx(double angle) throws InterruptedException {
 
         ElapsedTime runtime = new ElapsedTime();
 
         boolean turnComplete = false;
+        final double TOTAL_RUN_TIME_SECONDS = 30.0;
 
         navx_device.zeroYaw(); //Resets yaw to zero
         yawPIDController.setSetpoint(angle); //Sets desired angle
-
-        final double TOTAL_RUN_TIME_SECONDS = 30.0;
 
         navXPIDController.PIDResult yawPIDResult = new navXPIDController.PIDResult();
 
         DecimalFormat df = new DecimalFormat("#.##");
 
-        while ((runtime.time() < TOTAL_RUN_TIME_SECONDS) && !Thread.currentThread().isInterrupted() && !turnComplete) {
+        while ((runtime.time() < TOTAL_RUN_TIME_SECONDS) && !Thread.currentThread().isInterrupted()) {
 
             double output = yawPIDResult.getOutput();
+            int DEVICE_TIMEOUT_MS = 500;
 
-            if (!yawPIDResult.isOnTarget()) {
+            if (yawPIDController.waitForNewUpdate(yawPIDResult, DEVICE_TIMEOUT_MS)) {
+                if (!yawPIDResult.isOnTarget()) {
 
-                FrontRight.setPower(-output);
-                FrontLeft.setPower(output);
-                BackRight.setPower(-output);
-                BackLeft.setPower(output);
+                    FrontRight.setPower(-output);
+                    FrontLeft.setPower(output);
+                    BackRight.setPower(-output);
+                    BackLeft.setPower(output);
 
-                //telemetry.addData("PIDOutput", df.format(output) + ", " + df.format(-output));
-            }
-            else {
+                    //telemetry.addData("PIDOutput", df.format(output) + ", " + df.format(-output));
+                } else {
 
-                for (DcMotor motor : driveTrain)
-                    motor.setPower(0);
+                    for (DcMotor motor : driveTrain)
+                        motor.setPower(0);
 
-                turnComplete = true;
+                    turnComplete = true;
+                }
+                telemetry.addData("Yaw", df.format(navx_device.getYaw()));
+                telemetry.addData("Output: " + yawPIDResult.getOutput(), null);
+                telemetry.update();
             }
 
             telemetry.addData("Yaw", df.format(navx_device.getYaw()));
-            telemetry.addData("yawPIDResult" + yawPIDResult.getOutput(), null);
+            telemetry.addData("Output: " + yawPIDResult.getOutput(), null);
             telemetry.update();
         }
         telemetry.addData("DONE!!!!!", null);
+
+    }
+
+    public void turnByGyro(double power, int degrees) throws InterruptedException {
+
+        double constantOfDegrees = (2/3);
+
+        int s = -1;
+        boolean turnComplete = false;
+        double initialPosition = gyro.getIntegratedZValue();
+        gyro.resetZAxisIntegrator();
+
+        while (!turnComplete) {
+
+
+            double currentPosition = gyro.getIntegratedZValue();
+            double target = initialPosition + (degrees - 45);
+
+            if ((Math.abs(target)) > currentPosition) {
+                for (DcMotor motor : driveTrain) {
+                    motor.setPower(power * s);
+                    s *= -1;
+                }
+            }
+            else
+                turnComplete = true;
+            telemetry.addData("Degrees: " + currentPosition, null);
+            telemetry.update();
+        }
+
+        for (DcMotor motor : driveTrain)
+            motor.setPower(0);
+    }
+
+    public void driveStraight(int inches, double power) throws InterruptedException{
+
+        double leftSpeed;
+        double rightSpeed;
+
+        double target = gyro.getHeading();
+        double startPosition = FrontLeft.getCurrentPosition();
+
+        while(FrontLeft.getCurrentPosition() < (inches*COUNTS_PER_INCH) + startPosition){
+
+            int zAccumulated = gyro.getHeading();
+
+            leftSpeed = power + (zAccumulated - target)/100;
+            rightSpeed = power + (zAccumulated - target)/100;
+
+            leftSpeed = Range.clip(leftSpeed, -1.0, 1.0);
+            rightSpeed = Range.clip(rightSpeed , -1.0, 1.0);
+
+            FrontLeft.setPower(leftSpeed);
+            BackLeft.setPower(leftSpeed);
+            FrontRight.setPower(rightSpeed);
+            BackRight.setPower(rightSpeed);
+            idle();
+
+        }
+        FrontLeft.setPower(0);
+        BackLeft.setPower(0);
+        FrontRight.setPower(0);
+        BackRight.setPower(0);
+
+        FrontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        FrontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        BackLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        BackRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        idle();
 
     }
 
