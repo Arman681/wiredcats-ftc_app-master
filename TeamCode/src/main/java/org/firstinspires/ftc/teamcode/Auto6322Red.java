@@ -228,21 +228,25 @@ public class Auto6322Red extends LinearOpModeCamera {
         // wait for the start button to be pressed.
         waitForStart();
 
-        driveStraight(0.4, 10);
+        driveStraight(0.5, 10);
         moveByTime(0.0, 500);
         //shoot(0.7, 5, 2);
 
-        turnBySteps(0.4, 6);
+        turnBySteps(0.5, 8);
         moveByTime(0.0, 500);
 
-        runUntilWhite(0.4);
+        runUntilWhite(0.6);
         moveByTime(0.0, 500);
 
-        turnBySteps(0.4, -4);
+        turnBySteps(0.5, -7);
         moveByTime(0.0, 500);
 
-        driveStraight(0.4, -7);
+        moveBySteps(0.5, -11);
         moveByTime(0.0, 500);
+
+        turnBySteps(0.5, 3);
+
+        driveStraight(0.3, 6);
 
         /*turnBySteps(0.4, 3);
         moveByTime(0.0, 1000);
