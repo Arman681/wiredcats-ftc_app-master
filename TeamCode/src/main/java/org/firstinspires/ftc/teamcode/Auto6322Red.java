@@ -232,13 +232,13 @@ public class Auto6322Red extends LinearOpModeCamera {
         moveByTime(0.0, 500);
         //shoot(0.7, 5, 2);
 
-        turnBySteps(0.5, 8);
+        turnBySteps(0.5, 4.25);
         moveByTime(0.0, 500);
 
         runUntilWhite(0.6);
         moveByTime(0.0, 500);
 
-        turnBySteps(0.5, -7);
+        turnBySteps(0.5, -4.25);
         moveByTime(0.0, 500);
 
         moveBySteps(0.5, -11);
