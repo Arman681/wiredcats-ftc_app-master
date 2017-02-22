@@ -252,9 +252,13 @@ public class Auto6322Testing extends LinearOpMode{
         navx_device.close();
         telemetry.addData("LinearOp", "Complete");*/
 
-        //turnByGyro(0.3, 180);
-        //1000 = 30 inches
-        driveStraight(24, 0.4);
+        driveStraight(0.3, 10);
+        moveByTime(0.0, 1000);
+        //shoot(1.0, 5, 2); //Power, time, conveyordelay
+
+        //turnBySteps(0.4, 10);
+        turnByGyro(0.5, 48);
+        moveByTime(0.0, 3000);
     }
 
     //Uses gyroscopic features in the NAVX Micro Sensor
@@ -337,7 +341,7 @@ public class Auto6322Testing extends LinearOpMode{
             motor.setPower(0);
     }
 
-    public void driveStraight(int inches, double power) throws InterruptedException{
+    public void driveStraight(double power, int inches) throws InterruptedException{
 
         double leftSpeed;
         double rightSpeed;
@@ -433,6 +437,17 @@ public class Auto6322Testing extends LinearOpMode{
 
         for (DcMotor motor : driveTrain)
             motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+    }
+
+    public void moveByTime(double power, int time) throws InterruptedException {
+
+        for(DcMotor motor : driveTrain)
+            motor.setPower(power);
+
+        sleep(time);
+
+        for(DcMotor motor : driveTrain)
+            motor.setPower(0);
     }
 
 }
