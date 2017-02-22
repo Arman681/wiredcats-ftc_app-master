@@ -233,7 +233,11 @@ public class Auto6322Testing extends LinearOpMode{
         telemetry.addData(">", "Gyro Calibrated.  Press Start.");
         telemetry.update();
 
-        waitForStart(); //START HERE
+        waitForStart();//START HERE
+
+        // testing method turnbyangle2
+        turnbyangle2(0.5,90,1);
+
 
         /*while ( !calibration_complete ) {
             *//* navX-Micro Calibration completes automatically ~15 seconds after it is
@@ -252,13 +256,13 @@ public class Auto6322Testing extends LinearOpMode{
         navx_device.close();
         telemetry.addData("LinearOp", "Complete");*/
 
-        driveStraight(0.3, 10);
-        moveByTime(0.0, 1000);
+        //driveStraight(0.3, 10);
+        //moveByTime(0.0, 1000);
         //shoot(1.0, 5, 2); //Power, time, conveyordelay
 
         //turnBySteps(0.4, 10);
-        turnByGyro(0.5, 48);
-        moveByTime(0.0, 3000);
+        //turnByGyro(0.5, 48);
+        //moveByTime(0.0, 3000);
     }
 
     //Uses gyroscopic features in the NAVX Micro Sensor
@@ -449,5 +453,64 @@ public class Auto6322Testing extends LinearOpMode{
         for(DcMotor motor : driveTrain)
             motor.setPower(0);
     }
+    public void turnbyangle2 (double power, double targetHeading, int right_Left) {
+        //double constantOfDegrees = (2 / 3);
+
+        int s;
+        boolean turnComplete = false;
+        double initialPosition = gyro.getHeading();
+
+
+        if (targetHeading ==360) {
+            targetHeading = 0;
+        }
+
+        if (right_Left == 1) {
+        while (!turnComplete) {
+
+
+            double currentPosition = gyro.getHeading();
+            double target = initialPosition + (targetHeading);
+            target = 360 - target;
+            s = -1;
+            if ((Math.abs(target)) > currentPosition) {
+                for (DcMotor motor : driveTrain) {
+                    motor.setPower(power * s);
+                    s *= -1;
+                }
+            } else
+                turnComplete = true;
+            telemetry.addData("Degrees: " + currentPosition, null);
+            telemetry.update();
+        }
+
+        for (DcMotor motor : driveTrain)
+            motor.setPower(0);
+        }
+        else if (right_Left == 0){
+            while (!turnComplete){
+
+                double currentPosition = gyro.getHeading();
+                double target = initialPosition + (targetHeading);
+                s = 1;
+
+                if ((Math.abs(target)) > currentPosition) {
+                    for (DcMotor motor : driveTrain) {
+                        motor.setPower(power * s);
+                        s *= -1;
+                    }
+                } else
+                    turnComplete = true;
+                telemetry.addData("Degrees: " + currentPosition, null);
+                telemetry.update();
+            }
+
+            for (DcMotor motor : driveTrain)
+                motor.setPower(0);
+        }
+
+    }
+
 
 }
+
