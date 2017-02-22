@@ -211,26 +211,40 @@ public class Auto6322Red extends LinearOpModeCamera {
         yawPIDController.setTolerance(navXPIDController.ToleranceType.ABSOLUTE, TOLERANCE_DEGREES);
         yawPIDController.setPID(YAW_PID_P, YAW_PID_I, YAW_PID_D);
 
+        // start calibrating the gyro.
+        telemetry.addData(">", "Gyro Calibrating. Do Not move!");
+        telemetry.update();
+        gyro.calibrate();
+
+        // make sure the gyro is calibrated.
+        while (!isStopRequested() && gyro.isCalibrating())  {
+            sleep(50);
+            idle();
+        }
+
+        telemetry.addData(">", "Gyro Calibrated.  Press Start.");
+        telemetry.update();
+
         // wait for the start button to be pressed.
         waitForStart();
 
-        driveStraight(0.4, 14);
-        moveByTime(0.0, 1000);
-        shoot(0.7, 5, 2);
+        driveStraight(0.4, 10);
+        moveByTime(0.0, 500);
+        //shoot(0.7, 5, 2);
 
-        turnBySteps(0.4, 12);
-        moveByTime(0.0, 1000);
+        turnBySteps(0.4, 6);
+        moveByTime(0.0, 500);
 
         runUntilWhite(0.4);
-        moveByTime(0.0, 1000);
+        moveByTime(0.0, 500);
 
-        turnBySteps(0.4, -5);
-        moveByTime(0.0, 1000);
+        turnBySteps(0.4, -4);
+        moveByTime(0.0, 500);
 
-        driveStraight(-0.4, -5.5);
-        moveByTime(0.0, 1000);
+        driveStraight(0.4, -7);
+        moveByTime(0.0, 500);
 
-        turnBySteps(0.4, 3);
+        /*turnBySteps(0.4, 3);
         moveByTime(0.0, 1000);
         turnBySteps(0.8, 5);
         driveStraight(0.4, 12);
@@ -297,7 +311,7 @@ public class Auto6322Red extends LinearOpModeCamera {
         shooter.setPower(1.0);
         for (DcMotor motor: driveTrain)
             motor.setPower(0);
-        sleep(2500);
+        sleep(2500);*/
 
         /*moveBySteps(0.5, 38);
         turnBySteps(0.2, -14);
