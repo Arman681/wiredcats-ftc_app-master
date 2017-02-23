@@ -261,6 +261,7 @@ public class Auto6322Testing extends Auto6322Red{
        //turnbyangle2(0.5,90,1);
 
         // Testing Juan's turn method (using MR Gyro)
+        //hi
 
         turnAbsolute(90, 0.3);
         moveByTime(0.0, 1500);
