@@ -518,19 +518,17 @@ public class Auto6322Testing extends Auto6322Red{
         target = target + gyro.getIntegratedZValue();
 
         while (Math.abs(zAccumlated - target) > 3) {
-            if (zAccumlated > target ) {
-                s = -1;
-                for (DcMotor motor : driveTrain) {
-                    motor.setPower(turnspeed * s);
-                    s *= -1;
-                }
+            if (zAccumlated > target ) { //Clockwise turn
+                FrontRight.setPower(-turnspeed);
+                FrontLeft.setPower(turnspeed);
+                BackRight.setPower(-turnspeed);
+                BackLeft.setPower(turnspeed);
             }
-            else if (zAccumlated < target) {
-                s = 1;
-                for (DcMotor motor : driveTrain) {
-                    motor.setPower(turnspeed * s);
-                    s *= -1;
-                }
+            else if (zAccumlated < target) { //Counter-clockwise turn
+                FrontRight.setPower(turnspeed);
+                FrontLeft.setPower(-turnspeed);
+                BackRight.setPower(turnspeed);
+                BackLeft.setPower(-turnspeed);
             }
         }
     }
