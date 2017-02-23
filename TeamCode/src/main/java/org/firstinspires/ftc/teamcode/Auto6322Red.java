@@ -228,26 +228,29 @@ public class Auto6322Red extends LinearOpModeCamera {
         // wait for the start button to be pressed.
         waitForStart();
 
-        driveStraight(0.5, 10);
+        /*driveStraight(0.5, 10);
         moveByTime(0.0, 500);
         //shoot(0.7, 5, 2);
 
-        turnBySteps(0.5, 3.5);
+        turnBySteps(0.5, 3.48);
         moveByTime(0.0, 500);
 
-
-        runUntilWhite(0.4);
+        runUntilWhite(0.3);
         moveByTime(0.0, 500);
 
         turnBySteps(0.5, -2.15);
-        moveByTime(0.0, 500);
+        moveByTime(0.0, 500);*/
 
-        moveBySteps(0.5, -11);
-        moveByTime(0.0, 500);
 
-        turnBySteps(0.5, 3);
 
-        driveStraight(0.3, 6);
+
+
+        //moveBySteps(0.5, -11);
+        //moveByTime(0.0, 500);
+
+        //turnBySteps(0.5, 3);
+
+        //driveStraight(0.3, 6);
 
         /*turnBySteps(0.4, 3);
         moveByTime(0.0, 1000);
@@ -401,10 +404,23 @@ public class Auto6322Red extends LinearOpModeCamera {
 
     public void runUntilWhite(double power) throws InterruptedException {
         boolean dec = false;
+        double leftSpeed = 0.0;
+        double rightSpeed = 0.0;
         while (!dec) {
             if (ODSleft.getRawLightDetected()*13 < .8 || ODSright.getRawLightDetected() < .9) {
                 for (DcMotor motor : driveTrain)
-                    motor.setPower(power);
+                leftSpeed = power;
+                rightSpeed = power;
+
+                leftSpeed = Range.clip(leftSpeed , -1.0, 1.0);
+                rightSpeed = Range.clip(rightSpeed , -1.0, 1.0);
+
+                FrontLeft.setPower(leftSpeed);
+                BackLeft.setPower(leftSpeed);
+                FrontRight.setPower(rightSpeed);
+                BackRight.setPower(rightSpeed);
+                idle();
+
             }
             else if (ODSleft.getRawLightDetected()*13 > .8 || ODSright.getRawLightDetected() > .9) {
                 for (DcMotor motor : driveTrain)
