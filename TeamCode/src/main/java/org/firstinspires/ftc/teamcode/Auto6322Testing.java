@@ -262,9 +262,9 @@ public class Auto6322Testing extends Auto6322Red{
 
         // Testing Juan's turn method (using MR Gyro)
 
-        turn(90, 0.3);
+        turnAbsolute(90, 0.3);
         moveByTime(0.0, 1500);
-        turn (90, -0.3);
+        turnAbsolute(90, -0.3);
 
         /*while ( !calibration_complete ) {
             *//* navX-Micro Calibration completes automatically ~15 seconds after it is
@@ -509,33 +509,28 @@ public class Auto6322Testing extends Auto6322Red{
         for(DcMotor motor : driveTrain)
             motor.setPower(0);
     }
+
     // Derived From Juan !!!!!!!!!! from methods turn to turnAbsolute
-    public void turn (int target, double power) throws InterruptedException
-    {
-        turnAbsolute(target + gyro.getIntegratedZValue(), power);
-    }
-    public void turnAbsolute  (int target, double power)
-    {
-        double turnspeed = power;
-        int s = -1;
-        double zAccumlated = gyro.getHeading();
-        while (Math.abs(zAccumlated - target) > 3)
-        {
-            if (zAccumlated > target )
-            {
+    public void turnAbsolute  (int target, double power) {
+
+        double turnspeed = power, zAccumlated = gyro.getHeading();
+        int s; //Alternating factor for setting motor signs
+        target = target + gyro.getIntegratedZValue();
+
+        while (Math.abs(zAccumlated - target) > 3) {
+            if (zAccumlated > target ) {
                 s = -1;
                 for (DcMotor motor : driveTrain) {
                     motor.setPower(turnspeed * s);
                     s *= -1;
                 }
             }
-            else if (zAccumlated > target)
-            {
+            else if (zAccumlated < target) {
                 s = 1;
                 for (DcMotor motor : driveTrain) {
-                motor.setPower(turnspeed * s);
-                s *= -1;
-            }
+                    motor.setPower(turnspeed * s);
+                    s *= -1;
+                }
             }
         }
     }
