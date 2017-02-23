@@ -23,6 +23,7 @@ import com.qualcomm.robotcore.util.Range;
 import com.kauailabs.navx.ftc.AHRS;
 import com.kauailabs.navx.ftc.navXPIDController;
 
+import java.lang.annotation.Target;
 import java.text.DecimalFormat;
 
 import org.firstinspires.ftc.robotcontroller.internal.LinearOpModeCamera;
@@ -235,7 +236,7 @@ public class Auto6322Testing extends Auto6322Red{
 
         waitForStart();//START HERE
 
-        driveStraight(0.5, 1);
+       /*driveStraight(0.5, 1);
         moveByTime(0.0, 500);
         //shoot(0.7, 5, 2);
 
@@ -246,7 +247,7 @@ public class Auto6322Testing extends Auto6322Red{
         driveStraight(0.5, 33.4);
         moveByTime(0.0, 500);
 
-        turnBySteps(0.5, -3.5);
+        turnBySteps(0.5, -3.5);*/
         //moveByTime(0.0, 500);
 
         //moveBySteps(0.5, -11);
@@ -257,8 +258,13 @@ public class Auto6322Testing extends Auto6322Red{
         //driveStraight(0.3, 6);
 
         // testing method turnbyangle2
-       // turnbyangle2(0.5,90,1);
+       //turnbyangle2(0.5,90,1);
 
+        // Testing Juan's turn method (using MR Gyro)
+
+        turn(90, 0.3);
+        moveByTime(0.0, 1500);
+        turn (90, -0.3);
 
         /*while ( !calibration_complete ) {
             *//* navX-Micro Calibration completes automatically ~15 seconds after it is
@@ -503,6 +509,37 @@ public class Auto6322Testing extends Auto6322Red{
         for(DcMotor motor : driveTrain)
             motor.setPower(0);
     }
+    // Derived From Juan !!!!!!!!!! from methods turn to turnAbsolute
+    public void turn (int target, double power) throws InterruptedException
+    {
+        turnAbsolute(target + gyro.getIntegratedZValue(), power);
+    }
+    public void turnAbsolute  (int target, double power)
+    {
+        double turnspeed = power;
+        int s = -1;
+        double zAccumlated = gyro.getHeading();
+        while (Math.abs(zAccumlated - target) > 3)
+        {
+            if (zAccumlated > target )
+            {
+                s = -1;
+                for (DcMotor motor : driveTrain) {
+                    motor.setPower(turnspeed * s);
+                    s *= -1;
+                }
+            }
+            else if (zAccumlated > target)
+            {
+                s = 1;
+                for (DcMotor motor : driveTrain) {
+                motor.setPower(turnspeed * s);
+                s *= -1;
+            }
+            }
+        }
+    }
+
     public void turnbyangle2 (double power, double targetHeading, int right_Left) {
         //double constantOfDegrees = (2 / 3);
 
@@ -520,7 +557,7 @@ public class Auto6322Testing extends Auto6322Red{
 
 
             double currentPosition = gyro.getHeading();
-            double target = initialPosition + (targetHeading);
+            double target = (targetHeading);
             target = 360 - target;
             s = -1;
             if ((Math.abs(target)) > currentPosition) {
@@ -530,7 +567,11 @@ public class Auto6322Testing extends Auto6322Red{
                 }
             } else
                 turnComplete = true;
+            double netdegrees = currentPosition - gyro.getHeading();
             telemetry.addData("Degrees: " + currentPosition, null);
+            telemetry.addData("Target: " + target, null);
+            telemetry.addData("Current Position: " + currentPosition ,null);
+            telemetry.addData("Net position: " + netdegrees, null);
             telemetry.update();
         }
 
@@ -541,7 +582,7 @@ public class Auto6322Testing extends Auto6322Red{
             while (!turnComplete){
 
                 double currentPosition = gyro.getHeading();
-                double target = initialPosition + (targetHeading);
+                double target = (targetHeading);
                 s = 1;
 
                 if ((Math.abs(target)) > currentPosition) {
@@ -551,7 +592,11 @@ public class Auto6322Testing extends Auto6322Red{
                     }
                 } else
                     turnComplete = true;
+                double netdegrees = currentPosition - gyro.getHeading();
                 telemetry.addData("Degrees: " + currentPosition, null);
+                telemetry.addData("Target: " + target, null);
+                telemetry.addData("Current Position: " + currentPosition ,null);
+                telemetry.addData("Net position: " + netdegrees, null);
                 telemetry.update();
             }
 
