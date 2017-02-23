@@ -239,7 +239,7 @@ public class Auto6322Testing extends Auto6322Red{
         moveByTime(0.0, 500);
         //shoot(0.7, 5, 2);
 
-        turnBySteps(0.5, 5.4);
+        turnBySteps(0.5, 4.4);
         moveByTime(0.0, 500);
 
 
