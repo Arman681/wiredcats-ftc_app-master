@@ -15,7 +15,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  */
 
 
-@TeleOp(name="Teleop10366_Test_Version", group ="Opmode")
+//@TeleOp(name="Teleop10366_Test_Version", group ="Opmode")
 
 public class Teleop10366_Test_Version extends OpMode {
 

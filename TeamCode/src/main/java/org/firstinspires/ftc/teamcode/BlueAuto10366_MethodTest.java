@@ -17,7 +17,7 @@ import java.security.PublicKey;
  */
 
 
-@Autonomous(name = "BlueAuto10366_MethodTest", group = "Autonomous")
+//@Autonomous(name = "BlueAuto10366_MethodTest", group = "Autonomous")
     public class BlueAuto10366_MethodTest extends LinearOpMode{  // LinearOpMode is for autonomous
 
     // @TeleOp(name="BlueAuto10366_MethodTest", group ="Opmode")  for TeleOp

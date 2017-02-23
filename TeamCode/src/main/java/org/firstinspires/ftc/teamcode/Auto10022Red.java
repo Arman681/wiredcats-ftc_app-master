@@ -27,7 +27,7 @@ import org.firstinspires.ftc.robotcontroller.internal.LinearOpModeCamera;
  * <p/>
  * Enables control of the robot via the gamepad
  */
-@Autonomous(name="Auto10022Red", group="Autonomous")
+//@Autonomous(name="Auto10022Red", group="Autonomous")
 //@Disabled
 
 public class Auto10022Red extends LinearOpModeCamera {

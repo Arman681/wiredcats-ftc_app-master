@@ -63,7 +63,7 @@ import java.text.DecimalFormat;
  * I2C bus transfers, and thus takes longer than acquiring
  * only the raw or only the processed data.
  */
-@TeleOp(name = "Sensor: navX Raw Data", group = "Sensor")
+//@TeleOp(name = "Sensor: navX Raw Data", group = "Sensor")
 // @Disabled Comment this in to remove this from the Driver Station OpMode List
 public class SensorNavXRawOp extends OpMode {
 

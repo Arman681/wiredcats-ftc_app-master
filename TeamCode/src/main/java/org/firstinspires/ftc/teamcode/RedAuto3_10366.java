@@ -18,7 +18,7 @@ package org.firstinspires.ftc.teamcode;
  */
 
 
-@Autonomous(name="RedAuto3_10366", group="Autonomous")
+//@Autonomous(name="RedAuto3_10366", group="Autonomous")
 
 public class RedAuto3_10366 extends LinearOpMode {  // LinearOpMode is for autonomous
     // public class BlueAuto10366_Test_Version extends LinearOpMode {

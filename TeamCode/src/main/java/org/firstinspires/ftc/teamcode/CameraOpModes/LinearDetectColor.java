@@ -14,7 +14,7 @@ import org.firstinspires.ftc.robotcontroller.internal.LinearOpModeCamera;
  * Enables control of the robot via the gamepad
  */
 
-@TeleOp(name="LinearDetectColor", group="ZZOpModeCameraPackage")
+//@TeleOp(name="LinearDetectColor", group="ZZOpModeCameraPackage")
 //@Disabled
 public class LinearDetectColor extends LinearOpModeCamera {
 

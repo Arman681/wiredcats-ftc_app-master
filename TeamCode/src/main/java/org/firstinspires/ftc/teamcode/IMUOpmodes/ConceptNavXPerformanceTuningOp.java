@@ -64,7 +64,7 @@ import java.text.DecimalFormat;
  * 3) Lower the navX-Model device update rate until the number of missed
  * samples over the last minute reaches zero.
  */
-@TeleOp(name = "Concept: navX Performance Tuning", group = "Concept")
+//@TeleOp(name = "Concept: navX Performance Tuning", group = "Concept")
 // @Disabled Comment this in to remove this from the Driver Station OpMode List
 public class ConceptNavXPerformanceTuningOp extends OpMode {
 

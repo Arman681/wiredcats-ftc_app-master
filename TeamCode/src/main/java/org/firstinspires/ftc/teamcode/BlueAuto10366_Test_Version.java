@@ -19,7 +19,7 @@ import java.security.PublicKey;
 
 // comment to push file
 
-@Autonomous(name="BlueAuto1_10366_Test", group="Autonomous")
+//@Autonomous(name="BlueAuto1_10366_Test", group="Autonomous")
 
 public class BlueAuto10366_Test_Version extends LinearOpMode {
 

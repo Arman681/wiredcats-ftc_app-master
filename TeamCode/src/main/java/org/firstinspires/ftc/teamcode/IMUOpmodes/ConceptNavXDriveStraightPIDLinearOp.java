@@ -57,7 +57,7 @@ import java.text.DecimalFormat;
  * to reduce the frequency of the updates to the drive system.
  */
 
-@TeleOp(name = "Concept: navX Drive Straight PID - Linear", group = "Concept")
+//@TeleOp(name = "Concept: navX Drive Straight PID - Linear", group = "Concept")
 // @Disabled Comment this in to remove this from the Driver Station OpMode List
 public class ConceptNavXDriveStraightPIDLinearOp extends LinearOpMode {
     DcMotor leftMotor;

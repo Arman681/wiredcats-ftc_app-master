@@ -48,7 +48,7 @@ import java.text.DecimalFormat;
  * Sensor Status and Timestamp, and World-Frame Linear
  * Acceleration data.
  */
-@TeleOp(name = "Sensor: navX Motion-processed Data", group = "Sensor")
+//@TeleOp(name = "Sensor: navX Motion-processed Data", group = "Sensor")
 // @Disabled Comment this in to remove this from the Driver Station OpMode List
 public class SensorNavXProcessedOp extends OpMode {
 

@@ -16,7 +16,7 @@ import java.security.PublicKey;
  * Created by Carol on 1/24/2017.
  */
 
-@Autonomous(name="BlueAuto2_10366", group="Autonomous")
+//@Autonomous(name="BlueAuto2_10366", group="Autonomous")
 
 public class BlueAuto2_10366 extends LinearOpMode {
 

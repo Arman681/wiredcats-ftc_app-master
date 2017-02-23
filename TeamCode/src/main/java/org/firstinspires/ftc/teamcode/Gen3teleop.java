@@ -13,7 +13,7 @@ import static android.os.SystemClock.sleep;
  * Created by Arman on 10/29/2016.
  */
 
-@TeleOp(name="Gen3Teleop", group="Opmode")
+//@TeleOp(name="Gen3Teleop", group="Opmode")
 public class Gen3teleop extends OpMode {
 
     ElapsedTime runtime1 = new ElapsedTime(); //Left Button Pusher Timer

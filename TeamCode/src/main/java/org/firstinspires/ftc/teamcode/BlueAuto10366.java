@@ -14,7 +14,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 /**
  * Created by SethHorwitz on 12/17/16.
  */
-@Autonomous(name="BlueAuto_10366", group="Autonomous")
+//@Autonomous(name="BlueAuto_10366", group="Autonomous")
 
 public class BlueAuto10366 extends LinearOpMode{
 

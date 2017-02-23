@@ -15,7 +15,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  */
 
 
-@TeleOp(name="Teleop10366", group ="Opmode")
+//@TeleOp(name="Teleop10366", group ="Opmode")
 
 public class Teleop10366 extends OpMode {
 

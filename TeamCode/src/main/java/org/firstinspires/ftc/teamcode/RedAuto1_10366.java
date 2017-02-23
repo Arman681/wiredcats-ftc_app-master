@@ -17,7 +17,7 @@ import java.security.PublicKey;
  * Created by Carol on 1/24/2017.
  */
 
-@Autonomous(name="RedAuto1_10366", group="Autonomous")
+//@Autonomous(name="RedAuto1_10366", group="Autonomous")
 
 public class RedAuto1_10366  extends LinearOpMode{
 

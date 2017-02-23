@@ -45,7 +45,7 @@ import java.text.DecimalFormat;
  * and displays it in the Robot DriveStation
  * as telemetry data.
  */
-@TeleOp(name = "Concept: navX Motion Detection", group = "Concept")
+//@TeleOp(name = "Concept: navX Motion Detection", group = "Concept")
 // @Disabled Comment this in to remove this from the Driver Station OpMode List
 public class ConceptNavXMotionDetectionOp extends OpMode {
 
