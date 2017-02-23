@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode;
 import com.kauailabs.navx.ftc.AHRS;
 import com.kauailabs.navx.ftc.navXPIDController;
 import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cGyro;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.ColorSensor;
@@ -18,6 +19,7 @@ import java.text.DecimalFormat;
  * Created by Arman on 2/23/2017.
  */
 
+@Autonomous(name="Auto6322RedAngled", group="Autonomous")
 public class Auto6322RedAngled extends LinearOpMode {
 
     String color = "";
