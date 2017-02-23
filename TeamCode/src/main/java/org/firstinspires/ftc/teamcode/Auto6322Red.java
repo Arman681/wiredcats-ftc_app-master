@@ -406,7 +406,7 @@ public class Auto6322Red extends LinearOpModeCamera {
         double rightSpeed = 0.0;
         while (!dec) {
             if (ODSleft.getRawLightDetected()*13 < .8 || ODSright.getRawLightDetected() < .9) {
-                for (DcMotor motor : driveTrain)
+                //for (DcMotor motor : driveTrain)
                 leftSpeed = power;
                 rightSpeed = power;
 
