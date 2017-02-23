@@ -32,7 +32,7 @@ import org.firstinspires.ftc.robotcontroller.internal.LinearOpModeCamera;
  */
 @Autonomous(name="Auto6322Testing", group="Autonomous")
 
-public class Auto6322Testing extends LinearOpMode{
+public class Auto6322Testing extends Auto6322Red{
 
     String color = "";
 
@@ -235,8 +235,29 @@ public class Auto6322Testing extends LinearOpMode{
 
         waitForStart();//START HERE
 
+        //driveStraight(0.5, 10);
+        //moveByTime(0.0, 500);
+        //shoot(0.7, 5, 2);
+
+        turnBySteps(0.5, 3.5);
+        moveByTime(0.0, 500);
+
+
+        runUntilWhite(0.4);
+        moveByTime(0.0, 500);
+
+        turnBySteps(0.5, -2.15);
+        moveByTime(0.0, 500);
+
+        moveBySteps(0.5, -11);
+        moveByTime(0.0, 500);
+
+        turnBySteps(0.5, 3);
+
+        driveStraight(0.3, 6);
+
         // testing method turnbyangle2
-        turnbyangle2(0.5,90,1);
+       // turnbyangle2(0.5,90,1);
 
 
         /*while ( !calibration_complete ) {
