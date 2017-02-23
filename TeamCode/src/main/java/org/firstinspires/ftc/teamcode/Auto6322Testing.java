@@ -235,26 +235,26 @@ public class Auto6322Testing extends Auto6322Red{
 
         waitForStart();//START HERE
 
-        //driveStraight(0.5, 10);
-        //moveByTime(0.0, 500);
+        driveStraight(0.5, 1);
+        moveByTime(0.0, 500);
         //shoot(0.7, 5, 2);
 
-        turnBySteps(0.5, 3.5);
+        turnBySteps(0.5, 5.4);
         moveByTime(0.0, 500);
 
 
-        runUntilWhite(0.4);
-        moveByTime(0.0, 500);
+        driveStraight(0.5, 21);
+        //moveByTime(0.0, 500);
 
-        turnBySteps(0.5, -2.15);
-        moveByTime(0.0, 500);
+        //turnBySteps(0.5, -2.15);
+        //moveByTime(0.0, 500);
 
-        moveBySteps(0.5, -11);
-        moveByTime(0.0, 500);
+        //moveBySteps(0.5, -11);
+        //moveByTime(0.0, 500);
 
-        turnBySteps(0.5, 3);
+        //turnBySteps(0.5, 3);
 
-        driveStraight(0.3, 6);
+        //driveStraight(0.3, 6);
 
         // testing method turnbyangle2
        // turnbyangle2(0.5,90,1);
@@ -463,6 +463,35 @@ public class Auto6322Testing extends Auto6322Red{
         for (DcMotor motor : driveTrain)
             motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
+
+    public void turnBySteps(double power, double inches) throws InterruptedException {
+
+        int[] startPosition = new int[4];
+
+        for (DcMotor motor : driveTrain)
+            motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        for (int i = 0; i < driveTrain.length; i++)
+            startPosition[i] = driveTrain[i].getCurrentPosition();
+
+        FrontRight.setTargetPosition((int)(startPosition[0] + -inches * COUNTS_PER_INCH));
+        FrontLeft.setTargetPosition((int)(startPosition[1] + inches * COUNTS_PER_INCH));
+        BackRight.setTargetPosition((int)(startPosition[2] + -inches * COUNTS_PER_INCH));
+        BackLeft.setTargetPosition((int)(startPosition[3] + inches * COUNTS_PER_INCH));
+
+        for (DcMotor motor : driveTrain)
+            motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        for (DcMotor motor : driveTrain)
+            motor.setPower(Math.abs(power));
+
+        while(driveTrain[0].isBusy() && driveTrain[1].isBusy() && driveTrain[2].isBusy() && driveTrain[3].isBusy() && opModeIsActive())
+            sleep(1);
+
+        for (DcMotor motor : driveTrain)
+            motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+    }
+
 
     public void moveByTime(double power, int time) throws InterruptedException {
 
