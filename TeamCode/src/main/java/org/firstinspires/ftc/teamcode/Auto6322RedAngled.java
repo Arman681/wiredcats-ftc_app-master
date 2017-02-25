@@ -218,9 +218,9 @@ public class Auto6322RedAngled extends LinearOpMode {
         waitForStart();
 
         moveByTime(0.0, 7500);
-        driveStraight(0.5, 15);
+        driveStraight(0.5, 12);
         moveByTime(0.0, 500);
-        shoot(0.8, 5, 2);
+        shoot(0.9, 5, 3);
         moveByTime(0.0, 500);
         driveStraight(0.5, 20);
 
