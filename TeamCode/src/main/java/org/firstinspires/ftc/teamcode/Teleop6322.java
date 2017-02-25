@@ -216,7 +216,7 @@ public class Teleop6322 extends OpMode {
         if (runtime2.time() > 2)
             rightPusher.setPower(0);
 
-        //Shooting Mechanism Motors Function
+        //Shooting Mechanism Motor Function
         if (gamepad2.dpad_up && c3 == 0)
             c3 = 1;
         else if (!gamepad2.dpad_up && c3 == 1) {
@@ -252,6 +252,10 @@ public class Teleop6322 extends OpMode {
                 c3 = 0;
             //sleep(500);
         }
+
+        //Shooting Mechanism Motor Function Reverse
+        if (gamepad2.dpad_down)
+            shooter.setPower(-0.7);
 
         //Intake Motor Function In
         if (gamepad2.dpad_left && c4 == 0) {
