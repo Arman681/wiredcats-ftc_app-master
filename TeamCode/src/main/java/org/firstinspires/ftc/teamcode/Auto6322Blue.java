@@ -227,15 +227,24 @@ public class Auto6322Blue extends LinearOpModeCamera {
         // wait for the start button to be pressed.
         waitForStart();
 
-        moveBySteps(0.4, 8);
-        moveByTime(0.0, 1000);
+        driveStraight(0.2, 10);
+        moveByTime(0.0, 500);
+        shoot(0.8, 5, 2);
 
-        shoot(0.7, 5, 2);
+        turnBySteps(0.2, 3.3);
+        moveByTime(0.0, 500);
+        //driveStraight(0.2, 41);
+        //moveByTime(0.0, 500);
+        //turnBySteps(0.2, -3.3);
+        //moveByTime(0.0, 500);
 
-        turnBySteps(0.4, -3);
-        moveByTime(0.0, 1000);
+        //driveStraight(0.6, 20);
+        //moveByTime(0.0, 500);
+        //oriveStraight(0.2, 10);
+        //moveByTime(0.0, 500);
 
-        runUntilWhite(0.3);
+        //runUntilWhite(0.3);
+        //moveByTime(0.0, 500);
 
         //turnByAngle(0.3, 180);
 
@@ -445,7 +454,7 @@ public class Auto6322Blue extends LinearOpModeCamera {
         }
     }
 
-    public void driveStraight(int inches, double power) throws InterruptedException{
+    public void driveStraight(double power, double inches) throws InterruptedException{
 
         double leftSpeed;
         double rightSpeed;
