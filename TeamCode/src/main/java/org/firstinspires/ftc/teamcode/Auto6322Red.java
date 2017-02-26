@@ -230,35 +230,26 @@ public class Auto6322Red extends LinearOpModeCamera {
 
         driveStraight(0.5, 10);
         moveByTime(0.0, 500);
-        //shoot(0.7, 5, 2);
 
-        turnBySteps(0.5, 3.48);
+        shoot(0.8, 5, 2);
+
+        turnBySteps(0.5, 3.1);
         moveByTime(0.0, 500);
 
-        runUntilWhite(0.3);
+        driveStraight(0.5, 47);
         moveByTime(0.0, 500);
 
-        turnBySteps(0.5, -2.15);
+        turnBySteps(0.5, -3.4);
         moveByTime(0.0, 500);
 
+        runUntilWhite(0.2);
+        moveByTime(0.0, 500);
 
-
-        //moveBySteps(0.5, -11);
-        //moveByTime(0.0, 500);
-
-        //turnBySteps(0.5, 3);
-
-        //driveStraight(0.3, 6);
-
-        /*turnBySteps(0.4, 3);
-        moveByTime(0.0, 1000);
-        turnBySteps(0.8, 5);
-        driveStraight(0.4, 12);
-        for (DcMotor motor : driveTrain)
-            motor.setPower(0);
+        moveByTime(-0.3, 500);
+        moveByTime(0.0, 500);
 
         if (determineColor() == "red") {
-            moveBySteps(0.3, -3.5);
+            moveBySteps(0.3, -2);
             rightPusher.setPower(-1.0);
             for (DcMotor motor : driveTrain)
                 motor.setPower(0);
@@ -269,7 +260,7 @@ public class Auto6322Red extends LinearOpModeCamera {
             sleep(1500);
         }
         else if (determineColor() == "blue") {
-            moveBySteps(0.3, -9);
+            moveBySteps(0.3, 4);
             rightPusher.setPower(-1.0);
             for (DcMotor motor : driveTrain)
                 motor.setPower(0);
@@ -280,7 +271,7 @@ public class Auto6322Red extends LinearOpModeCamera {
             sleep(1500);
         }
 
-        moveBySteps(0.3, -6);
+        /*moveBySteps(0.3, -6);
         runUntilWhite(0.3);
         adjustAtWhite();
 
@@ -309,7 +300,7 @@ public class Auto6322Red extends LinearOpModeCamera {
                 motor.setPower(0);
             sleep(1500);
         }
-        runUntilWhite(0.3);
+        /*runUntilWhite(0.3);
         turnBySteps(0.8, 12);
         moveBySteps(0.3, 6);
         turnBySteps(0.1, 25);
