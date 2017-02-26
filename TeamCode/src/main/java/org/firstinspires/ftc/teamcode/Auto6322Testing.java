@@ -350,26 +350,27 @@ public class Auto6322Testing extends Auto6322Red{
         double initialPosition = gyro.getIntegratedZValue();
         gyro.resetZAxisIntegrator();
 
-        while (!turnComplete) {
+        while (opModeIsActive()) {
 
+            while (!turnComplete) {
 
-            double currentPosition = gyro.getIntegratedZValue();
-            double target = initialPosition + (degrees - 45);
+                double currentPosition = gyro.getIntegratedZValue();
+                double target = initialPosition + (degrees - 45);
 
-            if ((Math.abs(target)) > currentPosition) {
-                for (DcMotor motor : driveTrain) {
-                    motor.setPower(power * s);
-                    s *= -1;
-                }
+                if ((Math.abs(target)) > currentPosition) {
+                    for (DcMotor motor : driveTrain) {
+                        motor.setPower(power * s);
+                        s *= -1;
+                    }
+                } else
+                    turnComplete = true;
+                telemetry.addData("Degrees: " + currentPosition, null);
+                telemetry.update();
             }
-            else
-                turnComplete = true;
-            telemetry.addData("Degrees: " + currentPosition, null);
-            telemetry.update();
-        }
 
-        for (DcMotor motor : driveTrain)
-            motor.setPower(0);
+            for (DcMotor motor : driveTrain)
+                motor.setPower(0);
+        }
     }
 
     public void driveStraight(double power, int inches) throws InterruptedException{
@@ -510,8 +511,7 @@ public class Auto6322Testing extends Auto6322Red{
             motor.setPower(0);
     }
 
-    // Derived From Juan !!!!!!!!!! from methods turn to turnAbsolute
-    public void turnAbsolute  (int target, double power) {
+    public void turnAbsolute  (int target, double power) { //Juan's method
 
         double turnspeed = power, zAccumlated = gyro.getHeading();
         int s; //Alternating factor for setting motor signs
@@ -533,7 +533,7 @@ public class Auto6322Testing extends Auto6322Red{
         }
     }
 
-    public void turnbyangle2 (double power, double targetHeading, int right_Left) {
+    public void turnbyangle2 (double power, double targetHeading, int right_Left) { //Dylan's method
         //double constantOfDegrees = (2 / 3);
 
         int s;
